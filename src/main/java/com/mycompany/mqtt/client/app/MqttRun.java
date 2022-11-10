@@ -28,7 +28,10 @@ public class MqttRun {
         messageReceived(client);
         publishMessage(client, topic);
     }
-    
+    /**
+     * Gets username
+     * 
+     */
     public String getUsername(){
         boolean check = false;
         String username ="";
@@ -42,7 +45,10 @@ public class MqttRun {
         }   
         return username;
     }
-    
+    /**
+     *
+     * Gets Password
+     */
     public String getPassword(){
         boolean check = false;
         char[] password ={};
@@ -58,6 +64,10 @@ public class MqttRun {
         return pass;
     }
     
+    /**
+     *
+     * Creates Client
+     */
     public Mqtt5BlockingClient createClient(String host){
         Mqtt5BlockingClient client = MqttClient.builder()
                 .useMqttVersion5()
@@ -69,6 +79,10 @@ public class MqttRun {
         return client;
     }
     
+    /**
+     *
+     * Connects Client to server
+     */
     public void connectClient(Mqtt5BlockingClient client, String username, String password){
         client.connectWith()
                 .simpleAuth()
@@ -79,12 +93,20 @@ public class MqttRun {
         System.out.println("Connected Successfully");
     }
     
+    /**
+     *
+     * Subscribes to Topic of users choice
+     */
     public void subscribeToTopic(Mqtt5BlockingClient client, String topic){
         client.subscribeWith()
                 .topicFilter(topic)
                 .send();
     }
     
+    /**
+     *
+     * Confirms messaged received
+     */
     public void messageReceived(Mqtt5BlockingClient client){
         client.toAsync().publishes(ALL, publish -> {
             System.out.println("Received message: " +
@@ -94,6 +116,10 @@ public class MqttRun {
         });
     }
     
+    /**
+     *
+     * Publishes message
+     */
     public void publishMessage(Mqtt5BlockingClient client, String topic){
         client.publishWith()
                 .topic(topic)
