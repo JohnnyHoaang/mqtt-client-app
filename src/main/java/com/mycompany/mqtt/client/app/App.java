@@ -5,7 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
+import java.io.IOException;
+import javafx.application.Platform;
 
 /**
  * JavaFX App
@@ -23,8 +24,11 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) {
-        launch();
+    public static void main(String[] args) throws IOException{
+        //launch();
+        HumidityApp humidityApp = new HumidityApp();
+        
+        humidityApp.humidityLoop();
     }
 
 }

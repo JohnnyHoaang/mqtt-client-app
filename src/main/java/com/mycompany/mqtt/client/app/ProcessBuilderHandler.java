@@ -49,7 +49,7 @@ public class ProcessBuilderHandler {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                this.theOutput = this.theOutput + line;
+                this.theOutput = this.theOutput + line  +"\n";
             }
 
         }
