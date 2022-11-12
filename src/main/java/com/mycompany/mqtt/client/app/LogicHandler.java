@@ -6,7 +6,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
-import java.security.interfaces.RSAPublicKey;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Enumeration;
@@ -22,8 +21,10 @@ public class LogicHandler {
         try {
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(new FileInputStream(path), pass);
+            System.out.println("Keystore retrieved successfully\n");
             return ks;
         } catch (Exception e) {
+            System.out.println("Unable to retreive Keystore, path or password was invalid\n");
             return null;
         }
     }
@@ -47,24 +48,50 @@ public class LogicHandler {
     }
 
     //* prompt until valid username and passwords are obtained */
-    public String getPath() {
-        String path =  con.readLine();
+    public String getPath(String path) {
         if (path.length() < 250 || path != null) {
             if (validatePath(path)) {
+                System.out.println("\nValid path");
+                
                 return path;
             }
         }
+        System.out.println("\nInvalid path");
+        
         return null;
     }
 
     public Boolean validatePath(String path) {
-        Pattern pattern = Pattern.compile("([a-zA-Z]:)?((\\\\|/)?[a-zA-Z0-9_.]+)+(\\\\|/)?([a-zA-Z0-9_].*)");
-        Normalizer.normalize(path, Form.NFC);
-        Matcher matcher = pattern.matcher(path);
-        return matcher.matches();
+        if (path.length() < 250 && path.length() != 0) {
+            Pattern pattern = Pattern.compile("([a-zA-Z]:)?((\\\\|/)?[a-zA-Z0-9_.]+)+(\\\\|/)?([a-zA-Z0-9_].*)");
+            Normalizer.normalize(path, Form.NFC);
+            Matcher matcher = pattern.matcher(path);
+            if (matcher.matches()) {
+                return true;
+            }
+            System.out.println("\nPath entered is an improper format");
+            return false;
+        }
+        System.out.println("\nPath entered is either too long or empty");
+        
+        return false;
     }
 
-    public char[] getPassword() {
-        return con.readPassword();
+    // public char[] getPassword(char[] pass) {
+        
+    //     if (validatePass(pass)) {
+    //         return pass;
+    //     } 
+    //     return null;
+    // }
+
+    public Boolean validatePass(char[] pass) {
+        if (pass.length > 6 && pass.length < 30) {
+            
+            return true;
+        }
+        System.out.println("Invalid password");
+                
+        return false;
     }
 }

@@ -98,14 +98,19 @@ public class LogicHandlerTest {
      * Test of getPassword method, of class LogicHandler.
      */
     @Test
-    public void testGetPassword() {
-        System.out.println("getPassword");
+    public void testValidPassword() {
         LogicHandler instance = new LogicHandler();
-        char[] expResult = null;
-        char[] result = instance.getPassword();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        boolean expResult = true;
+        boolean result = instance.validatePass("1842Aeris65".toCharArray());
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testInvalidPassword() {
+        LogicHandler instance = new LogicHandler();
+        boolean expResult = false;
+        boolean result = instance.validatePass("1234".toCharArray());
+        assertEquals(expResult, result);
     }
     
 }
