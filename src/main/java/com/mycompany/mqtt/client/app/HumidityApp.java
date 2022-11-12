@@ -24,11 +24,17 @@ public class HumidityApp {
         
         return result;
     }
+    // Calls humidity and temperature information in a loop to update given tile
     public void humidityLoop(){
+        // TODO: Will take tile parameter to update tile text
         Thread thread = new Thread(()-> {
             try {
                 while(true){
-                    System.out.println(this.getHumidity());
+                    String humidityInfo = this.getHumidity();
+                    String [] humidityArr = humidityInfo.split(",");
+                    double humidity = Double.parseDouble(humidityArr[0]);
+                    double temperature = Double.parseDouble(humidityArr[1]);
+                    setTileInfo(humidity, temperature);
                     Thread.sleep(2000);
                 } 
             } catch(Exception e) {
@@ -36,6 +42,10 @@ public class HumidityApp {
             }
         });
         thread.start();
-        
+    }
+    private void setTileInfo(double humidity, double temperature){
+        // TODO : Update tile text
+        System.out.println("Humidity: " + humidity);
+        System.out.println("Temperature: " + temperature);
     }
 }

@@ -17,8 +17,7 @@ def loop():
         if (chk is dht.DHTLIB_OK):      #read DHT11 and get a return value. Then determine whether data read is normal according to the return value.
             break
             time.sleep(0.1)
-    print(f"Humidity:{dht.humidity}")
-    print(f"Temperature:{dht.temperature}")      
+    print(f"{dht.humidity},{dht.temperature}")      
         
 if __name__ == '__main__':
     try:
