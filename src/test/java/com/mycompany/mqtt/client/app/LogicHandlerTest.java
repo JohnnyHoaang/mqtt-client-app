@@ -7,10 +7,7 @@ package com.mycompany.mqtt.client.app;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPublicKey;
-
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -62,6 +59,7 @@ public class LogicHandlerTest {
     /**
      * Test of extractKeys method, of class LogicHandler.
      */
+    // TODO: fix test
     @Test
     public void testExtractKeys() throws Exception {
         System.out.println("extractKeys");
@@ -70,17 +68,6 @@ public class LogicHandlerTest {
         PublicKey key = instance.extractKeys(ks);
         // assertEquals(PublicKey.class, key.getClass());
     }
-
-    /**
-     * Test of getPath method, of class LogicHandler.
-     */
-    // @Test
-    // public void testGetPath() {
-    //     LogicHandler instance = new LogicHandler();
-    //     String expResult = "keystore.ks";
-    //     String result = instance.getPath();
-    //     assertEquals(expResult, result);
-    // }
 
     /**
      * Test of validatePath method, of class LogicHandler.
