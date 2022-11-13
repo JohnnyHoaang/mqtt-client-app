@@ -8,10 +8,14 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+
 // TODO: perhaps merge with App later
 public class ConsoleApp {
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
         System.out.println("|--------------- MQTT Client App ---------------|\n");
+
+        ConsoleApp app = new ConsoleApp();
 
         boolean passValid = false;
         boolean pathValid = false;
@@ -39,7 +43,6 @@ public class ConsoleApp {
     
             System.out.println("\n<----- Keystore Password ----->");
             
-
             while (passValid != true) {
                 System.out.println("\nPlease enter the password for your keystore");
                 pass = con.readPassword();
@@ -58,5 +61,27 @@ public class ConsoleApp {
 
         keys = instance.extractKeys(ks, pass);
         System.out.println("keys[0]");
+
+        app.connectMqtt();
+
     }
+
+    private void connectMqtt() {
+        boolean connect = false;
+        MqttRun mqtt = new MqttRun();
+
+
+        while (connect == false) {
+
+            try {
+                mqtt.run();
+                connect = true;
+            } catch (Exception e) {
+                System.out.println("Unable to establish a connection, ensure Username and Password are correct and try again");
+                
+            }
+        }
+
+    }
+    
 }

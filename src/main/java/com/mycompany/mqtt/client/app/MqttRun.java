@@ -18,7 +18,7 @@ public class MqttRun {
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
     public void run(){
-        final String host = "3e093932f5a140289ec08eb559057c33.s2.eu.hivemq.cloud";
+        final String host = "a70d21edc42b4ad59d04019f79dd252c.s2.eu.hivemq.cloud";
         String username = getUsername();
         String password = getPassword();
         String topic = "my/test/topic";
