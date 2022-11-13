@@ -1,3 +1,4 @@
 /target/
 *.class
 /nbproject/
+/pi-sensor-code/__pycache__/
