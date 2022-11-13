@@ -27,7 +27,7 @@ public class LogicHandlerTest {
     @Test
     public void testLoadKeystore() throws KeyStoreException {
         LogicHandler instance = new LogicHandler();
-        KeyStore result = instance.loadKeystore("keystore.ks", "1842Aeris65".toCharArray());
+        KeyStore result = instance.loadKeystore("keystore.ks", "123456".toCharArray());
         assertEquals(result.getClass(), KeyStore.class);
     }
 
@@ -64,7 +64,7 @@ public class LogicHandlerTest {
     public void testExtractKeys() throws Exception {
         System.out.println("extractKeys");
         LogicHandler instance = new LogicHandler();
-        KeyStore ks = instance.loadKeystore("keystore.ks", "1842Aeris65".toCharArray());
+        KeyStore ks = instance.loadKeystore("keystore.ks", "123456".toCharArray());
         PublicKey key = instance.extractKeys(ks);
         // assertEquals(PublicKey.class, key.getClass());
     }
@@ -88,7 +88,7 @@ public class LogicHandlerTest {
     public void testValidPassword() {
         LogicHandler instance = new LogicHandler();
         boolean expResult = true;
-        boolean result = instance.validatePass("1842Aeris65".toCharArray());
+        boolean result = instance.validatePass("123456".toCharArray());
         assertEquals(expResult, result);
     }
 
