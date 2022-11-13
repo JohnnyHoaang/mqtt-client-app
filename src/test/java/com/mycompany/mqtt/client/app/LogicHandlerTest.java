@@ -4,6 +4,7 @@
  */
 package com.mycompany.mqtt.client.app;
 
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
@@ -64,9 +65,11 @@ public class LogicHandlerTest {
     public void testExtractKeys() throws Exception {
         System.out.println("extractKeys");
         LogicHandler instance = new LogicHandler();
-        KeyStore ks = instance.loadKeystore("keystore.ks", "123456".toCharArray());
-        PublicKey key = instance.extractKeys(ks);
-        // assertEquals(PublicKey.class, key.getClass());
+        KeyStore ks = instance.loadKeystore("./ECcertif.ks", "1842Aeris65".toCharArray());
+        Key[] keys = instance.extractKeys(ks, "1842Aeris65".toCharArray());
+        int length = keys.length;
+        assertNotNull(keys);
+        assertEquals(2, length);
     }
 
     /**

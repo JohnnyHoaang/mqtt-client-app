@@ -2,9 +2,13 @@ package com.mycompany.mqtt.client.app;
 
 import java.io.Console;
 import java.io.FileInputStream;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
@@ -39,12 +43,15 @@ public class LogicHandler {
 
     }
 
-    public PublicKey extractKeys(KeyStore ks) throws KeyStoreException {
+    public Key[] extractKeys(KeyStore ks, char[] pass) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException {
+        
         Enumeration<String> enumeration = ks.aliases();
         String alias = enumeration.nextElement();
         Certificate cert = ks.getCertificate(alias);
-        PublicKey pubKey = ((PublicKey)cert.getPublicKey());
-        return pubKey;
+        Key publicKey = cert.getPublicKey();
+        Key privateKey = ks.getKey(alias, pass);
+        Key[] keys = {publicKey, privateKey};
+        return keys;
     }
 
     //* prompt until valid username and passwords are obtained */
