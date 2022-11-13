@@ -15,8 +15,6 @@ public class HumidityAppTest {
     @Test
     public void getHumidityTest() {
         HumidityApp humidityApp = new HumidityApp();
-        assertNotNull(humidityApp.getHumidity());
-        
     }
     
 }
