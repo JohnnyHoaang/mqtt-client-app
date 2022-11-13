@@ -1,7 +1,38 @@
 package com.mycompany.mqtt.client.app;
 
 public class MotionSensorApp extends Sensor{
-    public MotionSensorApp(){
+    private String output = "";
 
+    public MotionSensorApp(){
+        this.setFilePath("./pi-sensor-code/SenseLED.py");
+    }
+
+    public void motionSensorLoop(){
+        Thread thread = new Thread(() -> {
+            try {
+                while(true){
+                    this.getSensorInfo();
+                    //Gets output from sensor
+                    String output = this.getOutput();
+                    if(output.equals("motion detected >>>")){
+                        System.out.println("Comfirmation: Motion detected.");
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            
+        });
+        thread.start();
+    }
+
+    @Override
+    public String getOutput(){
+        return this.output;
+    }
+
+    @Override
+    public void setOutput(String out){
+        this.output = out;
     }
 }

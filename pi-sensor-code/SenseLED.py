@@ -11,11 +11,13 @@ def setup():
 def loop():
     while True:
         if GPIO.input(sensorPin)==GPIO.HIGH:
-            GPIO.output(ledPin,GPIO.HIGH) # turn on led
-            print ('led turned on >>>')
+            #GPIO.output(ledPin,GPIO.HIGH) # turn on led
+            #print ('led turned on >>>')
+            print ('motion detected')
         else :
-            GPIO.output(ledPin,GPIO.LOW) # turn off led
-            print ('led turned off <<<')
+            #GPIO.output(ledPin,GPIO.LOW) # turn off led
+            #print ('led turned off <<<')
+            print ('no motion detected')
 
 def destroy():
     GPIO.cleanup() # Release GPIO resourc
