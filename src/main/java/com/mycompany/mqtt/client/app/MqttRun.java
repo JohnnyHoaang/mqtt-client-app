@@ -17,16 +17,17 @@ import java.util.Scanner;
 public class MqttRun {
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
-    public void run(){
+    public Mqtt5BlockingClient run(){
         final String host = "a70d21edc42b4ad59d04019f79dd252c.s2.eu.hivemq.cloud";
         String username = getUsername();
         String password = getPassword();
-        String topic = "my/test/topic";
+        // String topic = "my/test/topic";
         Mqtt5BlockingClient client = createClient(host);
         connectClient(client, username, password);
-        subscribeToTopic(client, topic);
-        messageReceived(client);
-        publishMessage(client, topic);
+        // subscribeToTopic(client, topic);
+        // messageReceived(client);
+        // publishMessage(client, topic);
+        return client;
     }
     /**
      * Gets username
@@ -120,10 +121,11 @@ public class MqttRun {
      *
      * Publishes message
      */
-    public void publishMessage(Mqtt5BlockingClient client, String topic){
+    public void publishMessage(Mqtt5BlockingClient client, String topic, byte[] message){
+
         client.publishWith()
                 .topic(topic)
-                .payload(UTF_8.encode("Hello"))
+                .payload(message)
                 .send();
     }
 }

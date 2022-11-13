@@ -2,12 +2,17 @@ package com.mycompany.mqtt.client.app;
 
 import java.io.Console;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.text.Normalizer;
@@ -84,14 +89,6 @@ public class LogicHandler {
         return false;
     }
 
-    // public char[] getPassword(char[] pass) {
-        
-    //     if (validatePass(pass)) {
-    //         return pass;
-    //     } 
-    //     return null;
-    // }
-
     public Boolean validatePass(char[] pass) {
         if (pass.length > 6 && pass.length < 30) {
             
@@ -101,4 +98,56 @@ public class LogicHandler {
                 
         return false;
     }
+
+    /**
+     * Method for generating digital signature.
+     * @author Carlton Davis
+     */
+    byte[] generateSignature (String algorithm, PrivateKey privatekey, String message) 
+            throws NoSuchAlgorithmException, NoSuchProviderException, 
+            InvalidKeyException, UnsupportedEncodingException, SignatureException {
+        
+        //Create an instance of the signature scheme for the given signature algorithm
+        Signature sig = Signature.getInstance(algorithm, "SunEC");
+        
+        //Initialize the signature scheme
+        sig.initSign(privatekey);
+        
+        //Compute the signature
+        sig.update(message.getBytes("UTF-8"));
+        byte[] signature = sig.sign();
+        
+        return signature;
+    }
+
+    /**
+     * Method for verifying digital signature.
+     * @author Carlton Davis
+     */
+    boolean verifySignature(byte[] signature, PublicKey publickey, String algorithm, String message) 
+            throws NoSuchAlgorithmException, NoSuchProviderException, 
+            InvalidKeyException, UnsupportedEncodingException, SignatureException {
+        
+        //Create an instance of the signature scheme for the given signature algorithm
+        Signature sig = Signature.getInstance(algorithm, "SunEC");
+        
+        //Initialize the signature verification scheme.
+        sig.initVerify(publickey);
+        
+        //Compute the signature.
+        sig.update(message.getBytes("UTF-8"));
+        
+        //Verify the signature.
+        boolean validSignature = sig.verify(signature);
+        
+        if(validSignature) {
+            System.out.println("\nSignature is valid");
+        } else {
+            System.out.println("\nSignature is not valid");
+        }
+        
+        return validSignature;
+    }
+
+
 }
