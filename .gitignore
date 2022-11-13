@@ -2,3 +2,4 @@
 *.class
 /nbproject/
 *.ks
+/pi-sensor-code/__pycache__/
