@@ -9,13 +9,12 @@ package com.mycompany.mqtt.client.app;
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
 public class BuzzerApp extends Sensor{
-    private String output = "";
     
     public BuzzerApp(){
-        this.setFilePath("./pi-sensor-code/Doorbell.py");
+        super("./pi-sensor-code/Doorbell.py");
     }
     
-    public void buzzerLoop(){
+    public void sensorLoop(){
         Thread thread = new Thread(()-> {
             try {
                 while(true){
@@ -33,13 +32,5 @@ public class BuzzerApp extends Sensor{
             
         });
         thread.start();
-    }
-    @Override
-    public String getOutput(){
-        return output;
-    }
-    @Override
-    public void setOutput(String output){
-        this.output = output;
     }
 }

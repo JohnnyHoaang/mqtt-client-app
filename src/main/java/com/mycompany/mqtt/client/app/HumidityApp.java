@@ -11,13 +11,12 @@ import javafx.application.Platform;
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
 public class HumidityApp extends Sensor{
-    private String output = "";
-    
+
     public HumidityApp(){
-        this.setFilePath("./pi-sensor-code/DHT11.py");
+        super("./pi-sensor-code/DHT11.py");
     }
     // Calls humidity and temperature information in a loop to update given tile
-    public void humidityLoop(){
+    public void sensorLoop(){
         // TODO: Will take tile parameter to update tile text
         Thread thread = new Thread(()-> {
             try {
@@ -42,13 +41,5 @@ public class HumidityApp extends Sensor{
         // TODO : Update tile text
         System.out.println("Humidity: " + humidity);
         System.out.println("Temperature: " + temperature);
-    }
-    @Override
-    public String getOutput(){
-        return this.output;
-    }
-    @Override
-    public void setOutput(String output){
-        this.output = output;
     }
 }
