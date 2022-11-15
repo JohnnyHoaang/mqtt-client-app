@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogicHandler {
+    private HumidityApp humiditySensor = new HumidityApp();
+    private BuzzerApp buzzerSensor = new BuzzerApp();
 
     Console con = System.console();
 
@@ -93,5 +95,17 @@ public class LogicHandler {
         System.out.println("Invalid password");
                 
         return false;
+    }
+    public void startHumiditySensor(){
+        this.humiditySensor.sensorLoop();
+    }
+    public void stopHumiditySensor(){
+        this.humiditySensor.stopThread();
+    }
+    public void startBuzzerSensor(){
+        this.buzzerSensor.sensorLoop();
+    }
+    public void stopBuzzerSensor(){
+        this.buzzerSensor.stopThread();
     }
 }

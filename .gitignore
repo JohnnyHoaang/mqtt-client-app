@@ -1,5 +1,10 @@
 /target/
 *.class
 /nbproject/
+<<<<<<< HEAD
 *.ks
 /pi-sensor-code/__pycache__/
+=======
+/pi-sensor-code/__pycache__/
+*.ks
+>>>>>>> ce082086ce5de0a37e2c92ed7e3ae047075f239c

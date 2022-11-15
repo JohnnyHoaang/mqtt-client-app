@@ -25,6 +25,7 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.6.0</version>
             <scope>test</scope>
+<<<<<<< HEAD
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -35,6 +36,8 @@
             <groupId>org.qbicc.rt</groupId>
             <artifactId>qbicc-rt-java.base</artifactId>
             <version>17.alpha.0.40</version>
+=======
+>>>>>>> ce082086ce5de0a37e2c92ed7e3ae047075f239c
 </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -47,6 +50,19 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.6.0</version>
             <scope>test</scope>
+<<<<<<< HEAD
+=======
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>        
+            <version>1.10.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.qbicc.rt</groupId>
+            <artifactId>qbicc-rt-java.base</artifactId>
+            <version>17.alpha.0.40</version>
+>>>>>>> ce082086ce5de0a37e2c92ed7e3ae047075f239c
         </dependency>
     </dependencies>
     <build>

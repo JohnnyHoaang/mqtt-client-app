@@ -7,9 +7,6 @@ import java.util.List;
 
 public class ProcessBuilderHandler {
     
-    //Stores the output from the process
-    private String theOutput;
-    
     private ProcessBuilder processBuilder;
     private Sensor sensor;
    //The constructor to execute Python command takes a String and a Sensor
@@ -35,11 +32,8 @@ public class ProcessBuilderHandler {
     }
     
     //Start the process and get the output
-    String startProcess() throws IOException {
-       
-        //Initialize theOutput to null String
-        this.theOutput = "";
-        
+    void startProcess() throws IOException {
+     
         //Start the process
         var process = this.processBuilder.start();
         
@@ -54,6 +48,5 @@ public class ProcessBuilderHandler {
             }
 
         }
-        return this.theOutput;
     }
 }

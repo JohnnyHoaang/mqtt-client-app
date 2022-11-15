@@ -9,37 +9,33 @@ package com.mycompany.mqtt.client.app;
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
 public class BuzzerApp extends Sensor{
-    private String output = "";
     
     public BuzzerApp(){
-        this.setFilePath("./pi-sensor-code/Doorbell.py");
+        super("./pi-sensor-code/Doorbell.py");
     }
     
-    public void buzzerLoop(){
+    public void sensorLoop(){
         Thread thread = new Thread(()-> {
             try {
+                String previousOutput = "";
                 while(true){
                     this.getSensorInfo();
                     //Receive output from sensor
                     String output = this.getOutput();
-                    if(output.equals("buzzer turned on >>>")){
+                    String buzzerOn ="buzzer turned on >>>";
+                    if(output.equals(buzzerOn) 
+                            && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
-                        System.out.println("Comfirmation: Buzzer turned on.");
+                        System.out.println("Confirmation: Buzzer turned on.");
                     }
+                    previousOutput = this.getOutput();
                 }
             } catch(Exception e) {
                 e.printStackTrace();
             }
             
         });
+        setThread(thread);
         thread.start();
-    }
-    @Override
-    public String getOutput(){
-        return output;
-    }
-    @Override
-    public void setOutput(String output){
-        this.output = output;
     }
 }
