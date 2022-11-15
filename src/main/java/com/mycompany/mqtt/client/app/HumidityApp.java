@@ -35,6 +35,7 @@ public class HumidityApp extends Sensor{
                 e.printStackTrace();
             }
         });
+        setThread(thread);
         thread.start();
     }
     private void setTileInfo(double humidity, double temperature){

@@ -26,10 +26,18 @@ public class App extends Application {
 
     public static void main(String[] args) throws IOException{
         //launch();
-        HumidityApp humidityApp = new HumidityApp();
-        humidityApp.sensorLoop();
-//        BuzzerApp buzzer = new BuzzerApp();
-//        buzzer.buzzerLoop();
+//        HumidityApp humidityApp = new HumidityApp();
+//        humidityApp.sensorLoop();
+        var console = System.console();
+        BuzzerApp buzzer = new BuzzerApp();
+        buzzer.sensorLoop();
+        while(true){
+            String choice = console.readLine("Press 0 to exit:");
+            if (choice.equals("0")){
+                buzzer.stopThread();
+                break;
+            }
+        }
     }
 
 }

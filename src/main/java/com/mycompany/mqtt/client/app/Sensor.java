@@ -9,8 +9,9 @@ package com.mycompany.mqtt.client.app;
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
 public abstract class Sensor {
-    private String filePath = "";
-    private String output = "";
+    private String filePath;
+    private String output;
+    private Thread thread;
 
     public Sensor(String filePath){
         this.filePath = filePath;
@@ -28,6 +29,17 @@ public abstract class Sensor {
     }
     public void setOutput(String output){
         this.output = output;
+    }
+    public Thread getThread(){
+        return this.thread;
+    }
+    public void setThread(Thread thread){
+        this.thread = thread;
+    }
+    public void stopThread(){
+        if(this.thread!=null){
+            this.thread.stop();
+        }
     }
     abstract void sensorLoop();
 }

@@ -17,20 +17,25 @@ public class BuzzerApp extends Sensor{
     public void sensorLoop(){
         Thread thread = new Thread(()-> {
             try {
+                String previousOutput = "";
                 while(true){
                     this.getSensorInfo();
                     //Receive output from sensor
                     String output = this.getOutput();
-                    if(output.equals("buzzer turned on >>>")){
+                    String buzzerOn ="buzzer turned on >>>";
+                    if(output.equals(buzzerOn) 
+                            && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
-                        System.out.println("Comfirmation: Buzzer turned on.");
+                        System.out.println("Confirmation: Buzzer turned on.");
                     }
+                    previousOutput = this.getOutput();
                 }
             } catch(Exception e) {
                 e.printStackTrace();
             }
             
         });
+        setThread(thread);
         thread.start();
     }
 }
