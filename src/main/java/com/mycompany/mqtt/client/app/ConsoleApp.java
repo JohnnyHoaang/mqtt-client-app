@@ -51,7 +51,6 @@ public class ConsoleApp {
 
                 case "2":
                     
-                    System.out.println("\nEnter KeyStore password to extract keys");
                     char[] pass = getPass();
                     keys = instance.extractKeys(ks, pass);
                     if (keys != null) {

@@ -76,7 +76,7 @@ public class MqttRun {
                 .serverPort(8883)
                 .sslWithDefaultConfig()
                 .buildBlocking();
-        System.out.println("\nClient Created");
+        System.out.println(Colors.GREEN + "\nClient Created" + Colors.RESET);
         return client;
     }
     
@@ -92,12 +92,11 @@ public class MqttRun {
             .password(UTF_8.encode(password))
             .applySimpleAuth()
             .send();
-            System.out.println("\nConnected Successfully");
+            System.out.println(Colors.GREEN + "\nConnected Successfully" + Colors.RESET);
         } catch (Exception e) {
             System.out.println(Colors.RED + "\nUnable to connect, ensure username and password are correct or try again later" + Colors.RESET);
             
         }
-
     }
     
     /**
