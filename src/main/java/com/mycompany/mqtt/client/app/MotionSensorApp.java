@@ -4,7 +4,7 @@ public class MotionSensorApp extends Sensor{
     private String output = "";
 
     public MotionSensorApp(){
-        this.setFilePath("./pi-sensor-code/SenseLED.py");
+        super("./pi-sensor-code/SenseLED.py");
     }
 
     public void motionSensorLoop(){
