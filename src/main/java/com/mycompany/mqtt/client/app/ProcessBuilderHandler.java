@@ -7,15 +7,12 @@ import java.util.List;
 
 public class ProcessBuilderHandler {
     
-    //Stores the output from the process
-    private String theOutput;
-    
     private ProcessBuilder processBuilder;
-    
-   //The constructor to execute Python command takes a String
-    public ProcessBuilderHandler(String theApp) {
+    private Sensor sensor;
+   //The constructor to execute Python command takes a String and a Sensor
+    public ProcessBuilderHandler(String theApp, Sensor sensor) {
         this.processBuilder = new ProcessBuilder();
-   
+        this.sensor = sensor;
         //Determine if the OS is MS Windows 
         boolean isWindows = System.getProperty("os.name")
                 .toLowerCase().startsWith("windows");
@@ -35,11 +32,8 @@ public class ProcessBuilderHandler {
     }
     
     //Start the process and get the output
-    String startProcess() throws IOException {
-       
-        //Initialize theOutput to null String
-        this.theOutput = "";
-        
+    void startProcess() throws IOException {
+     
         //Start the process
         var process = this.processBuilder.start();
         
@@ -49,10 +43,10 @@ public class ProcessBuilderHandler {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                this.theOutput = this.theOutput + line;
+                // Set output to sensor object
+                this.sensor.setOutput(line);
             }
 
         }
-        return this.theOutput;
     }
 }
