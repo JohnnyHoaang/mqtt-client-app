@@ -1,5 +1,3 @@
-
-
 /**
  *
  * Code adapted from code available at The Pi4J Project on GitHub:
@@ -7,7 +5,7 @@
  * 
  */
 
-package com.mycompany.camerapi4jexamplecode;
+package com.mycompany.mqtt.client.app;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +37,7 @@ public class Camera extends Component{
      */
     public void takeStill() {
         takeStill(PicConfig.Builder.newInstance()
-                .outputPath("/home/cdavis/Pictures/").build());
+                .outputPath("./pictures/").build());
     }
 
     /**
@@ -67,7 +65,7 @@ public class Camera extends Component{
      */
     public void takeVid() {
         takeVid(VidConfig.Builder.newInstance()
-                .outputPath("/home/cdavis/Videos/").recordTime(5000).build());
+                .outputPath("./videos").recordTime(5000).build());
     }
 
     /**
