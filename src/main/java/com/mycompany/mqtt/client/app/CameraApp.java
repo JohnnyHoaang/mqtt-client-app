@@ -33,7 +33,7 @@ public class CameraApp {//implements Application {
         //Take the picture
         camera.takeStill(config);
 
-        System.out.println("waiting for camera to take pic");
+        System.out.println("Picture taken");
         //delay(4000);
 
         // System.out.println("Taking a video for 3 seconds");

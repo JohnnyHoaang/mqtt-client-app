@@ -7,15 +7,18 @@ public class MotionSensorApp extends Sensor{
         super("./pi-sensor-code/SenseLED.py");
     }
 
-    public void motionSensorLoop(){
+    public void sensorLoop(){
         Thread thread = new Thread(() -> {
             try {
+                CameraApp camera = new CameraApp();
                 while(true){
                     this.getSensorInfo();
                     //Gets output from sensor
                     String output = this.getOutput();
                     if(output.equals("motion detected >>>")){
-                        System.out.println("Comfirmation: Motion detected.");
+                        System.out.println("Confirmation: Motion detected.");
+                        System.out.println("Taking picture");
+                        camera.execute();
                     }
                 }
             } catch(Exception e) {
