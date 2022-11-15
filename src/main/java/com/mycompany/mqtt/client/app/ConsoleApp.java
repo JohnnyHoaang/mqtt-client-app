@@ -12,7 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
-
+import java.security.cert.Certificate;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
 // TODO: perhaps merge with App later
@@ -31,37 +31,15 @@ public class ConsoleApp {
         app.menu();
     }
 
-    private void connectMqtt() {
-        boolean connect = false;
-        MqttRun mqtt = new MqttRun();
-
-
-        while (connect == false) {
-
-            try {
-                mqtt.run();
-                connect = true;
-            } catch (Exception e) {
-                System.out.println("Unable to establish a connection, ensure Username and Password are correct and try again");
-            }
-        }
-
-
-    }
-
-    private void sendMessage() {
-
-    }
-
     private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
 
         while (true) {
-            System.out.println("<|--------------- MQTT Client App ---------------|>\n");
+            System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
 
             System.out.println("1. Load a KeyStore\n"
                               +"2. Extract Keys from KeyStore\n"
                               +"3. Connect to MQTT Client\n"
-                              +"4. Store certificate to KeyStore\n"
+                              +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
                               +"5. Send a message\n"
                               +"6. Exit");
 
@@ -73,13 +51,12 @@ public class ConsoleApp {
 
                 case "2":
                     
-                    System.out.println("Enter KeyStore password to extract keys");
+                    System.out.println("\nEnter KeyStore password to extract keys");
                     char[] pass = getPass();
                     keys = instance.extractKeys(ks, pass);
-                    if (keys == null) {
-                        System.out.println("No keys were extracted, no keys present or incorrect password");
+                    if (keys != null) {
+                        System.out.println(Colors.GREEN + "\nKeys extracted" + Colors.RESET);
                     }
-                    System.out.println("Keys extracted");
                     break;
 
                 case "3":
@@ -87,7 +64,8 @@ public class ConsoleApp {
                     break;
 
                 case "4":
-
+                    System.out.println(Colors.YELLOW + "\nCERTIFICATE STORING NOT YET AVAILABLE" + Colors.RESET);
+                    
                     break;
 
                 case "5":
@@ -98,22 +76,25 @@ public class ConsoleApp {
                     System.exit(0);
 
                 default:
-                    System.out.println("That is not a valid menu option");
+                    System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
                 
                     break;
             }
         }
     }
 
+    // get the path from the user and validate it, promting again if it's invalid
     private String getPath() {
         boolean pathValid = false;
-        System.out.println("\n<----- Keystore Path ----->");
+        System.out.println(Colors.PURPLE + "\n<----- Keystore Path ----->" + Colors.RESET);
         String path = "";
 
         while (pathValid != true) {
             System.out.println("\nPlease enter the path to your keystore: ");
             path = con.readLine();
             pathValid = instance.validatePath(path);
+            System.out.println(pathValid);
+            
         }
         return path;
     }
@@ -121,7 +102,7 @@ public class ConsoleApp {
     private char[] getPass() {
         boolean passValid = false;
         char[] pass = {};
-        System.out.println("\n<----- Keystore Password ----->");
+        System.out.println(Colors.PURPLE + "\n<----- Keystore Password ----->" + Colors.RESET);
             
         while (passValid != true) {
             System.out.println("\nPlease enter the password for your keystore");
@@ -137,10 +118,8 @@ public class ConsoleApp {
         String path;
         char[] pass = {};
         KeyStore ks = null;
-        Key[] keys;
 
         LogicHandler instance = new LogicHandler();
-        Console con = System.console();
 
         while (gotKeystore != true) {
 
@@ -154,20 +133,28 @@ public class ConsoleApp {
         }
         return ks;
     }
+    
+    // TODO: be used later when fetching certs from mqtt
+    private void storeCertificate(String alias, Certificate cert) throws KeyStoreException{
+        ks.setCertificateEntry(alias, cert);
+        
+    }
 
     private void writeMessage() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
-        System.out.println("<----- Write a Message ----->");
+        System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
         System.out.println("\nFirst please enter the topic you wish to subscribe to:");
         String topic = con.readLine();
         System.out.println("\nNext please enter the message you wish to send:");
         String message = con.readLine();
         try {
             mqtt.publishMessage(client, topic, instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], message));
+            System.out.println(Colors.GREEN + "\nMessage Sent.\n" + Colors.RESET);
+            
         } catch (Exception e) {
-            System.out.println("\nCould not publish message, please ensure you have successfully:\n"
+            System.out.println(Colors.RED + "\nCould not publish message, please ensure you have successfully:\n"
                               +"- Loaded a keystore\n"
                               +"- Extracted the keys\n"
-                              +"- Connected to the client\n");
+                              +"- Connected to the client\n" + Colors.RESET);
         }
     }
 

@@ -25,15 +25,14 @@ public class LogicHandler {
 
     Console con = System.console();
 
-    // TODO: user input for loading JAVA keystore username and password
     public KeyStore loadKeystore(String path, char[] pass) {
         try {
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(new FileInputStream(path), pass);
-            System.out.println("Keystore retrieved successfully\n");
+            System.out.println(Colors.GREEN + "Keystore retrieved successfully\n" + Colors.RESET);
             return ks;
         } catch (Exception e) {
-            System.out.println("Unable to retreive Keystore, path or password was invalid\n");
+            System.out.println(Colors.RED + "Unable to retreive Keystore, path or password was invalid\n" + Colors.RESET);
             return null;
         }
     }
@@ -49,42 +48,46 @@ public class LogicHandler {
     }
 
     public Key[] extractKeys(KeyStore ks, char[] pass) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException {
-        
-        Enumeration<String> enumeration = ks.aliases();
-        String alias = enumeration.nextElement();
-        Certificate cert = ks.getCertificate(alias);
-        Key publicKey = cert.getPublicKey();
-        Key privateKey = ks.getKey(alias, pass);
-        Key[] keys = {publicKey, privateKey};
-        return keys;
+        try {
+            Enumeration<String> enumeration = ks.aliases();
+            String alias = enumeration.nextElement();
+            Certificate cert = ks.getCertificate(alias);
+            Key publicKey = cert.getPublicKey();
+            Key privateKey = ks.getKey(alias, pass);
+            Key[] keys = {publicKey, privateKey};
+            return keys;
+        } catch (Exception e) {
+            System.out.println(Colors.RED + "Unable to extract keys, please ensure your password is correct" + Colors.RESET);
+        }
+        return null;
     }
 
     //* prompt until valid username and passwords are obtained */
     public String getPath(String path) {
         if (path.length() < 250 || path != null) {
             if (validatePath(path)) {
-                System.out.println("\nValid path");
+                System.out.println(Colors.GREEN + "\nValid path" + Colors.RESET);
                 
                 return path;
             }
         }
-        System.out.println("\nInvalid path");
+        System.out.println(Colors.RED + "\nInvalid path" + Colors.RESET);
         
         return null;
     }
 
-    public Boolean validatePath(String path) {
+    public boolean validatePath(String path) {
         if (path.length() < 250 && path.length() != 0) {
-            Pattern pattern = Pattern.compile("([a-zA-Z]:)?((\\\\|/)?[a-zA-Z0-9_.]+)+(\\\\|/)?([a-zA-Z0-9_].*)");
+            Pattern pattern = Pattern.compile("([a-zA-Z]:)?((\\\\|\\/)?([a-zA-Z0-9_.][^-<>=+])+)+(\\\\|\\/)?(([a-zA-Z0-9_][^-<>=+]).*)");
             Normalizer.normalize(path, Form.NFC);
             Matcher matcher = pattern.matcher(path);
             if (matcher.matches()) {
                 return true;
             }
-            System.out.println("\nPath entered is an improper format");
+            System.out.println(Colors.RED + "\nPath entered is an improper format" + Colors.RESET);
             return false;
         }
-        System.out.println("\nPath entered is either too long or empty");
+        System.out.println(Colors.RED + "\nPath entered is either too long or empty" + Colors.RESET);
         
         return false;
     }
@@ -94,7 +97,7 @@ public class LogicHandler {
             
             return true;
         }
-        System.out.println("Invalid password");
+        System.out.println(Colors.RED + "Invalid password" + Colors.RESET);
                 
         return false;
     }
@@ -123,6 +126,7 @@ public class LogicHandler {
     /**
      * Method for verifying digital signature.
      * @author Carlton Davis
+     * TODO: Be used to verify received messages from mqtt later
      */
     boolean verifySignature(byte[] signature, PublicKey publickey, String algorithm, String message) 
             throws NoSuchAlgorithmException, NoSuchProviderException, 
@@ -141,9 +145,9 @@ public class LogicHandler {
         boolean validSignature = sig.verify(signature);
         
         if(validSignature) {
-            System.out.println("\nSignature is valid");
+            System.out.println(Colors.GREEN + "\nSignature is valid" + Colors.RESET);
         } else {
-            System.out.println("\nSignature is not valid");
+            System.out.println(Colors.RED + "\nSignature is not valid" + Colors.RESET);
         }
         
         return validSignature;

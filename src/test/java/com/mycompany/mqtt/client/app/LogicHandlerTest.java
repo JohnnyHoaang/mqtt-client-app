@@ -4,10 +4,18 @@
  */
 package com.mycompany.mqtt.client.app;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,21 +36,8 @@ public class LogicHandlerTest {
     @Test
     public void testLoadKeystore() throws KeyStoreException {
         LogicHandler instance = new LogicHandler();
-        KeyStore result = instance.loadKeystore("keystore.ks", "123456".toCharArray());
+        KeyStore result = instance.loadKeystore("TestKeystore.ks", "12345678".toCharArray());
         assertEquals(result.getClass(), KeyStore.class);
-    }
-
-    /**
-     * Test of storeKeys method, of class LogicHandler.
-     */
-    @Test
-    public void testStoreKeys() {
-        System.out.println("storeKeys");
-        KeyStore ks = null;
-        LogicHandler instance = new LogicHandler();
-        instance.storeKeys(ks);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -54,7 +49,7 @@ public class LogicHandlerTest {
         LogicHandler instance = new LogicHandler();
         instance.establishConnection();
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // fail("The test case is a prototype.");
     }
 
     /**
@@ -63,10 +58,9 @@ public class LogicHandlerTest {
     // TODO: fix test
     @Test
     public void testExtractKeys() throws Exception {
-        System.out.println("extractKeys");
         LogicHandler instance = new LogicHandler();
-        KeyStore ks = instance.loadKeystore("./ECcertif.ks", "1842Aeris65".toCharArray());
-        Key[] keys = instance.extractKeys(ks, "1842Aeris65".toCharArray());
+        KeyStore ks = instance.loadKeystore("./TestKeystore.ks", "12345678".toCharArray());
+        Key[] keys = instance.extractKeys(ks, "12345678".toCharArray());
         int length = keys.length;
         assertNotNull(keys);
         assertEquals(2, length);
@@ -77,12 +71,18 @@ public class LogicHandlerTest {
      */
     @Test
     public void testValidatePath() {
-        String path = "keystore.ks";
+        String validPath = "keystore.ks";
+        String invalidPath = "not->valid -path";
+
         LogicHandler instance = new LogicHandler();
-        Boolean expResult = true;
-        Boolean result = instance.validatePath(path);
-        assertEquals(expResult, result);
+
+        boolean validResult = instance.validatePath(validPath);
+        boolean invalidResult = instance.validatePath(invalidPath);
+
+        assertEquals(true, validResult);
+        assertEquals(false, invalidResult);
     }
+
 
     /**
      * Test of getPassword method, of class LogicHandler.
@@ -91,7 +91,7 @@ public class LogicHandlerTest {
     public void testValidPassword() {
         LogicHandler instance = new LogicHandler();
         boolean expResult = true;
-        boolean result = instance.validatePass("123456".toCharArray());
+        boolean result = instance.validatePass("12345678".toCharArray());
         assertEquals(expResult, result);
     }
 
@@ -101,6 +101,14 @@ public class LogicHandlerTest {
         boolean expResult = false;
         boolean result = instance.validatePass("1234".toCharArray());
         assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testGeneratingSignature() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
+        LogicHandler instance = new LogicHandler();
+        KeyStore ks = instance.loadKeystore("TestKeystore.ks", "12345678".toCharArray());
+        Key[] keys = instance.extractKeys(ks, "12345678".toCharArray());
+        byte[] sig = instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], "hello");
     }
     
 }

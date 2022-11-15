@@ -37,7 +37,7 @@ public class MqttRun {
         boolean check = false;
         String username ="";
         while(check == false){
-            System.out.println("Enter Username:");
+            System.out.println("\nEnter Username:");
             //username = sc.nextLine();
             username = System.console().readLine();
             if(username.length() <= 30){
@@ -54,7 +54,7 @@ public class MqttRun {
         boolean check = false;
         char[] password ={};
         while(check == false){
-            System.out.println("Enter Password:");
+            System.out.println("\nEnter Password:");
             password = cnsl.readPassword();
             //password = sc.nextLine();
             if(password.length >= 8){
@@ -76,7 +76,7 @@ public class MqttRun {
                 .serverPort(8883)
                 .sslWithDefaultConfig()
                 .buildBlocking();
-        System.out.println("Client Created");
+        System.out.println("\nClient Created");
         return client;
     }
     
@@ -85,13 +85,19 @@ public class MqttRun {
      * Connects Client to server
      */
     public void connectClient(Mqtt5BlockingClient client, String username, String password){
-        client.connectWith()
-                .simpleAuth()
-                .username(username)
-                .password(UTF_8.encode(password))
-                .applySimpleAuth()
-                .send();
-        System.out.println("Connected Successfully");
+        try {
+            client.connectWith()
+            .simpleAuth()
+            .username(username)
+            .password(UTF_8.encode(password))
+            .applySimpleAuth()
+            .send();
+            System.out.println("\nConnected Successfully");
+        } catch (Exception e) {
+            System.out.println(Colors.RED + "\nUnable to connect, ensure username and password are correct or try again later" + Colors.RESET);
+            
+        }
+
     }
     
     /**
@@ -110,7 +116,7 @@ public class MqttRun {
      */
     public void messageReceived(Mqtt5BlockingClient client){
         client.toAsync().publishes(ALL, publish -> {
-            System.out.println("Received message: " +
+            System.out.println("\nReceived message: " +
                 publish.getTopic() + " -> " +
                 UTF_8.decode(publish.getPayload().get()));
             client.disconnect();
