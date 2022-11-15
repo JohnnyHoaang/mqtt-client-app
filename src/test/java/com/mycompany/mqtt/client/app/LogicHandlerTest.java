@@ -12,7 +12,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 
@@ -24,10 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Katharina Orfanidis
  */
 public class LogicHandlerTest {
-    
-    public LogicHandlerTest() {
-    }
-    
 
     /**
      * Test of loadKeystore method, of class LogicHandler.
@@ -42,6 +37,7 @@ public class LogicHandlerTest {
 
     /**
      * Test of establishConnection method, of class LogicHandler.
+     * TODO: make later
      */
     @Test
     public void testEstablishConnection() {
@@ -55,7 +51,6 @@ public class LogicHandlerTest {
     /**
      * Test of extractKeys method, of class LogicHandler.
      */
-    // TODO: fix test
     @Test
     public void testExtractKeys() throws Exception {
         LogicHandler instance = new LogicHandler();
@@ -83,7 +78,6 @@ public class LogicHandlerTest {
         assertEquals(false, invalidResult);
     }
 
-
     /**
      * Test of getPassword method, of class LogicHandler.
      */
@@ -109,6 +103,6 @@ public class LogicHandlerTest {
         KeyStore ks = instance.loadKeystore("TestKeystore.ks", "12345678".toCharArray());
         Key[] keys = instance.extractKeys(ks, "12345678".toCharArray());
         byte[] sig = instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], "hello");
+        assertNotNull(sig);
     }
-    
 }

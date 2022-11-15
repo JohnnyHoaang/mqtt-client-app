@@ -47,7 +47,7 @@ public class LogicHandler {
 
     }
 
-    public Key[] extractKeys(KeyStore ks, char[] pass) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException {
+    public Key[] extractKeys(KeyStore ks, char[] pass) {
         try {
             Enumeration<String> enumeration = ks.aliases();
             String alias = enumeration.nextElement();

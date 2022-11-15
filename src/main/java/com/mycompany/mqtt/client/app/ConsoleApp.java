@@ -119,8 +119,6 @@ public class ConsoleApp {
         char[] pass = {};
         KeyStore ks = null;
 
-        LogicHandler instance = new LogicHandler();
-
         while (gotKeystore != true) {
 
             path = getPath();
@@ -140,7 +138,7 @@ public class ConsoleApp {
         
     }
 
-    private void writeMessage() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void writeMessage() {
         System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
         System.out.println("\nFirst please enter the topic you wish to subscribe to:");
         String topic = con.readLine();
@@ -157,5 +155,4 @@ public class ConsoleApp {
                               +"- Connected to the client\n" + Colors.RESET);
         }
     }
-
 }
