@@ -18,12 +18,12 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 // TODO: perhaps merge with App later
 public class ConsoleApp {
 
-    Console con = System.console();
-    LogicHandler instance = new LogicHandler();
-    KeyStore ks = null;
-    Key[] keys;
-    MqttRun mqtt = new MqttRun();
-    Mqtt5BlockingClient client;
+    private Console con = System.console();
+    private LogicHandler instance = new LogicHandler();
+    private KeyStore ks = null;
+    private Key[] keys;
+    private MqttRun mqtt = new MqttRun();
+    private Mqtt5BlockingClient client;
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
         ConsoleApp app = new ConsoleApp();
@@ -41,12 +41,14 @@ public class ConsoleApp {
                               +"3. Connect to MQTT Client\n"
                               +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
                               +"5. Send a message\n"
-                              +"6. Exit");
+                              +"6. Humidity Sensor"
+                              +"7. Buzzer Sensor"
+                              +"8. Exit");
 
             String choice = con.readLine();
             switch (choice) {
                 case "1":
-                    ks = loadKeystore();
+                    ks = getKeystore();
                     break;
 
                 case "2":
@@ -72,6 +74,14 @@ public class ConsoleApp {
                     break;
 
                 case "6":
+                    instance.startHumiditySensor();
+                    break;
+
+                case "7":
+                    instance.startBuzzerSensor();
+                    break;
+
+                case "8":
                     System.exit(0);
 
                 default:
@@ -92,8 +102,6 @@ public class ConsoleApp {
             System.out.println("\nPlease enter the path to your keystore: ");
             path = con.readLine();
             pathValid = instance.validatePath(path);
-            System.out.println(pathValid);
-            
         }
         return path;
     }
@@ -111,7 +119,7 @@ public class ConsoleApp {
         return pass;
     }
 
-    private KeyStore loadKeystore() {
+    private KeyStore getKeystore() {
         boolean gotKeystore = false;
 
         String path;

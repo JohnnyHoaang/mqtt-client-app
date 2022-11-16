@@ -37,16 +37,6 @@ public class LogicHandler {
         }
     }
 
-    // TODO: user input for storing keys in keystore, username and password
-    public void storeKeys(KeyStore ks) {
-        
-    }
-
-    // TODO: user input to establish connection to MQTT broker
-    public void establishConnection(){
-
-    }
-
     public Key[] extractKeys(KeyStore ks, char[] pass) {
         try {
             Enumeration<String> enumeration = ks.aliases();
@@ -59,20 +49,6 @@ public class LogicHandler {
         } catch (Exception e) {
             System.out.println(Colors.RED + "Unable to extract keys, please ensure your password is correct" + Colors.RESET);
         }
-        return null;
-    }
-
-    //* prompt until valid username and passwords are obtained */
-    public String getPath(String path) {
-        if (path.length() < 250 || path != null) {
-            if (validatePath(path)) {
-                System.out.println(Colors.GREEN + "\nValid path" + Colors.RESET);
-                
-                return path;
-            }
-        }
-        System.out.println(Colors.RED + "\nInvalid path" + Colors.RESET);
-        
         return null;
     }
 
