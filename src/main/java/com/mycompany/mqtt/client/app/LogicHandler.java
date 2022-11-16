@@ -141,4 +141,5 @@ public class LogicHandler {
     public void stopBuzzerSensor(){
         this.buzzerSensor.stopThread();
     }
+    
 }

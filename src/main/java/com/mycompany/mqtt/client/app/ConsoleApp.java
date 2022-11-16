@@ -41,8 +41,8 @@ public class ConsoleApp {
                               +"3. Connect to MQTT Client\n"
                               +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
                               +"5. Send a message\n"
-                              +"6. Humidity Sensor"
-                              +"7. Buzzer Sensor"
+                              +"6. Humidity Sensor\n"
+                              +"7. Buzzer Sensor\n"
                               +"8. Exit");
 
             String choice = con.readLine();
