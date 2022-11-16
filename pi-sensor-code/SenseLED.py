@@ -12,15 +12,15 @@ def loop():
     if GPIO.input(sensorPin)==GPIO.HIGH:
         print ('motion detected >>>')
     else :
-        print ('no motion detected <<<')
+        print ('no motion detected <<<')    
 
 def destroy():
     GPIO.cleanup() # Release GPIO resourc
 
-    if __name__ == '__main__': # Program entrance
-        print ('Program is starting...')
-        setup()
-        try:
-            loop()
-        except KeyboardInterrupt: # Press ctrl-c to end the program.
-            destroy()
+if __name__ == '__main__': # Program entrance
+    print ('Program is starting...')
+    setup()
+    try:
+        loop()                
+    except KeyboardInterrupt: # Press ctrl-c to end the program.
+        destroy()

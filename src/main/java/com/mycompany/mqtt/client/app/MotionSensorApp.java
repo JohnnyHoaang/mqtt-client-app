@@ -19,6 +19,10 @@ public class MotionSensorApp extends Sensor{
                         System.out.println("Confirmation: Motion detected.");
                         System.out.println("Taking picture");
                         camera.execute();
+                    } else if(output.equals("no motion detected <<<")){
+                        System.out.println("no motion");
+                    } else {
+                        System.out.print("output" + output);
                     }
                 }
             } catch(Exception e) {
