@@ -8,7 +8,7 @@ package com.mycompany.mqtt.client.app;
  * https://pi4j.com
  * 
  */
-public class CameraApp {//implements Application {
+public class CameraApp {
     
     //Pi4J code to control camera
     
@@ -34,19 +34,5 @@ public class CameraApp {//implements Application {
         camera.takeStill(config);
 
         System.out.println("Picture taken");
-        //delay(4000);
-
-        // System.out.println("Taking a video for 3 seconds");
-        
-        // //Configure the video setup
-        // var vidconfig = Camera.VidConfig.Builder.newInstance()
-        //         .outputPath("/home/cdavis/Videos/")
-        //         .disablePreview(true)
-		// .recordTime(3000)
-		// .useDate(true)
-		// .build();
-        
-        // //Take the video
-        // camera.takeVid(vidconfig); 
     }
 }
