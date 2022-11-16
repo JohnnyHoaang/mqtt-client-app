@@ -11,19 +11,20 @@ public class MotionSensorApp extends Sensor{
         Thread thread = new Thread(() -> {
             try {
                 CameraApp camera = new CameraApp();
+                String previousOutput = "";
                 while(true){
                     this.getSensorInfo();
                     //Gets output from sensor
                     String output = this.getOutput();
-                    if(output.equals("motion detected >>>")){
+                    String motionOn = "motion detected >>>";
+                    if(output.equals(motionOn)&& !previousOutput.equals(motionOn)){
                         System.out.println("Confirmation: Motion detected.");
                         System.out.println("Taking picture");
                         camera.execute();
-                    } else if(output.equals("no motion detected <<<")){
-                        System.out.println("no motion");
                     } else {
-                        System.out.print("output" + output);
+                        System.out.println(output);
                     }
+                    previousOutput = this.getOutput();
                 }
             } catch(Exception e) {
                 e.printStackTrace();
