@@ -26,6 +26,7 @@ public class MotionSensorApp extends Sensor{
             }
             
         });
+        setThread(thread);
         thread.start();
     }
 
