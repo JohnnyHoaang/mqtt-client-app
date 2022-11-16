@@ -22,8 +22,8 @@ public class HumidityApp extends Sensor{
         // TODO: Will take tile parameter to update tile text
         Thread thread = new Thread(()-> {
             try {
-                String exit = scanner.next();
-                while(!exit.equals("f")){
+//                String exit = scanner.next();
+                while(true){
                     this.getSensorInfo();
                     // Receive output from sensor
                     String humidityInfo = this.getOutput();
@@ -32,10 +32,10 @@ public class HumidityApp extends Sensor{
                     double temperature = Double.parseDouble(humidityArr[1]);
                     // Set tile info with provided output
                     setTileInfo(humidity, temperature);
-                    exit = scanner.next();
+//                    exit = scanner.next();
                     Thread.sleep(2000);
                 }
-                scanner.close();
+//                scanner.close();
             } catch(Exception e) {
                 e.printStackTrace();
             }

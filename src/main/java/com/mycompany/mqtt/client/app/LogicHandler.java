@@ -130,6 +130,7 @@ public class LogicHandler {
     }
 
     public void startHumiditySensor(){
+        System.out.println("Entered");
         this.humiditySensor.sensorLoop();
     }
     public void stopHumiditySensor(){
