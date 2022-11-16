@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 public class LogicHandler {
     private HumidityApp humiditySensor = new HumidityApp();
     private BuzzerApp buzzerSensor = new BuzzerApp();
+    private MotionSensorApp motionSensor = new MotionSensorApp();
 
     Console con = System.console();
 
@@ -165,4 +166,11 @@ public class LogicHandler {
     public void stopBuzzerSensor(){
         this.buzzerSensor.stopThread();
     }
+    public void startMotionSensor(){
+        this.motionSensor.sensorLoop();
+    }
+    public void stopMotionSensor(){
+        this.motionSensor.stopThread();
+    }
+    
 }
