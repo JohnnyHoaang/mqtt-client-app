@@ -7,11 +7,10 @@ import java.util.List;
 
 public class ProcessBuilderHandler {
     
-    private ProcessBuilder processBuilder;
+    private ProcessBuilder processBuilder = new ProcessBuilder();
     private Sensor sensor;
    //The constructor to execute Python command takes a String and a Sensor
     public ProcessBuilderHandler(String theApp, Sensor sensor) {
-        this.processBuilder = new ProcessBuilder();
         this.sensor = sensor;
         //Determine if the OS is MS Windows 
         boolean isWindows = System.getProperty("os.name")
