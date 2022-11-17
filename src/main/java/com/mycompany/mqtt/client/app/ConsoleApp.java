@@ -72,7 +72,7 @@ public class ConsoleApp {
                     break;
 
                 case "6":
-                    System.exit(0);
+                    instance.startBuzzerSensor();
 
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
