@@ -26,9 +26,7 @@ public class BuzzerApp extends Sensor{
                     if(output.equals(buzzerOn) 
                             && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
-                        // System.out.println("Confirmation: Buzzer turned on.");
-                    } else {
-                        // System.out.println("output:"+output);
+                        System.out.println("Confirmation: Buzzer turned on.");
                     }
                     previousOutput = this.getOutput();
                 }
