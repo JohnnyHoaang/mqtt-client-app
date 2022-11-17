@@ -43,7 +43,6 @@
             <artifactId>mockito-core</artifactId>        
             <version>1.10.19</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

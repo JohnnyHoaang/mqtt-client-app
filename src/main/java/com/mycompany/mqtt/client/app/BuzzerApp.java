@@ -4,6 +4,8 @@
  */
 package com.mycompany.mqtt.client.app;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
@@ -26,7 +28,8 @@ public class BuzzerApp extends Sensor{
                     if(output.equals(buzzerOn) 
                             && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
-                        System.out.println("Confirmation: Buzzer turned on.");
+                        System.out.println("Confirmation: Buzzer turned on: " + LocalDateTime.now());
+                        
                     }
                     previousOutput = this.getOutput();
                 }

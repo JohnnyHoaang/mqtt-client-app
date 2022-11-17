@@ -23,6 +23,7 @@ public class MqttRun {
         String password = getPassword();
         // String topic = "my/test/topic";
         Mqtt5BlockingClient client = createClient(host);
+        System.out.println("Connecting...");
         connectClient(client, username, password);
         // subscribeToTopic(client, topic);
         // messageReceived(client);

@@ -4,8 +4,9 @@
  */
 
 package com.mycompany.mqtt.client.app;
-import java.io.IOException;
-import javafx.application.Platform;
+
+import java.util.Scanner;
+
 /**
  *
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
@@ -17,6 +18,7 @@ public class HumidityApp extends Sensor{
     }
     // Calls humidity and temperature information in a loop to update given tile
     public void sensorLoop(){
+        Scanner scanner = new Scanner(System.in);
         // TODO: Will take tile parameter to update tile text
         Thread thread = new Thread(()-> {
             try {
@@ -29,8 +31,8 @@ public class HumidityApp extends Sensor{
                     double temperature = Double.parseDouble(humidityArr[1]);
                     // Set tile info with provided output
                     setTileInfo(humidity, temperature);
-                    Thread.sleep(2000);
-                } 
+                    Thread.sleep(3000);
+                }
             } catch(Exception e) {
                 e.printStackTrace();
             }
