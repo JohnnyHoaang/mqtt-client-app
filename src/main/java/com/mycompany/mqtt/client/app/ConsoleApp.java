@@ -13,6 +13,8 @@ import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.util.Scanner;
+
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
 // TODO: perhaps merge with App later
@@ -32,8 +34,8 @@ public class ConsoleApp {
     }
 
     private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
-
-        while (true) {
+        boolean menu = true;
+        while (menu) {
             System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
 
             System.out.println("1. Load a KeyStore\n"
@@ -75,10 +77,12 @@ public class ConsoleApp {
 
                 case "6":
                     instance.startHumiditySensor();
+                    menu = false;
                     break;
 
                 case "7":
                     instance.startBuzzerSensor();
+
                     break;
 
                 case "8":
