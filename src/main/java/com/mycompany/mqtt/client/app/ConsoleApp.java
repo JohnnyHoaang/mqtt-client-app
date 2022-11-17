@@ -46,7 +46,8 @@ public class ConsoleApp {
                               +"6. Start Buzzer Sensor\n"
                               +"7. Start Temperature/Humidity Sensor\n"
                               +"8. Start Motion Sensor\n"
-                              +"9. Exit");
+                              +"9. Start all sensors\n"
+                              +"10. Exit");
 
             String choice = con.readLine();
             switch (choice) {
@@ -78,21 +79,46 @@ public class ConsoleApp {
 
                 case "6":
                     instance.startBuzzerSensor();
-                    menu = false;
+                    sensorMenu();
                     break;
                 case "7":
                     instance.startHumiditySensor();
-                    menu = false;
+                    sensorMenu();
                     break;
                 case "8":
                     instance.startMotionSensor();
-                    menu = false;
+                    sensorMenu();
                     break;
                 case "9":
+                    instance.startBuzzerSensor();
+                    instance.startHumiditySensor();
+                    instance.startMotionSensor();
+                    sensorMenu();
+                    break;
+                case "10":
                     System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
                 
+                    break;
+            }
+        }
+    }
+
+    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+        boolean menu = true;
+        while (menu) {
+            String choice = con.readLine();
+            System.out.println("Press f to exit back to MainMenu");
+            switch (choice) {
+                case "f":
+                    instance.stopBuzzerSensor();
+                    instance.stopHumiditySensor();
+                    instance.stopMotionSensor();
+                    menu();
+                    break;
+            
+                default:
                     break;
             }
         }

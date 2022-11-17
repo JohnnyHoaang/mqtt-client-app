@@ -37,7 +37,7 @@ public class Camera extends Component{
      */
     public void takeStill() {
         takeStill(PicConfig.Builder.newInstance()
-                .outputPath("./pictures/").build());
+                .outputPath("home/" + System.getenv("USER") + "/Pictures").build());
     }
 
     /**
@@ -65,7 +65,7 @@ public class Camera extends Component{
      */
     public void takeVid() {
         takeVid(VidConfig.Builder.newInstance()
-                .outputPath("./videos").recordTime(5000).build());
+                .outputPath("home/" + System.getenv("USER") + "/Pictures").recordTime(5000).build());
     }
 
     /**
