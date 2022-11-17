@@ -13,17 +13,19 @@ import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.util.Scanner;
+
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
 // TODO: perhaps merge with App later
 public class ConsoleApp {
 
-    Console con = System.console();
-    LogicHandler instance = new LogicHandler();
-    KeyStore ks = null;
-    Key[] keys;
-    MqttRun mqtt = new MqttRun();
-    Mqtt5BlockingClient client;
+    private Console con = System.console();
+    private LogicHandler instance = new LogicHandler();
+    private KeyStore ks = null;
+    private Key[] keys;
+    private MqttRun mqtt = new MqttRun();
+    private Mqtt5BlockingClient client;
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
         ConsoleApp app = new ConsoleApp();
@@ -32,8 +34,8 @@ public class ConsoleApp {
     }
 
     private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
-
-        while (true) {
+        boolean menu = true;
+        while (menu) {
             System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
 
             System.out.println("1. Load a KeyStore\n"
@@ -41,12 +43,16 @@ public class ConsoleApp {
                               +"3. Connect to MQTT Client\n"
                               +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
                               +"5. Send a message\n"
-                              +"6. Exit");
+                              +"6. Start Buzzer Sensor\n"
+                              +"7. Start Temperature/Humidity Sensor\n"
+                              +"8. Start Motion Sensor\n"
+                              +"9. Start all sensors\n"
+                              +"10. Exit");
 
             String choice = con.readLine();
             switch (choice) {
                 case "1":
-                    ks = loadKeystore();
+                    ks = getKeystore();
                     break;
 
                 case "2":
@@ -72,11 +78,48 @@ public class ConsoleApp {
                     break;
 
                 case "6":
-                    System.exit(0);
-
+                    instance.startBuzzerSensor();
+                    sensorMenu();
+                    break;
+                case "7":
+                    instance.startHumiditySensor();
+                    sensorMenu();
+                    break;
+                case "8":
+                    instance.startMotionSensor();
+                    sensorMenu();
+                    break;
+                case "9":
+                    instance.startBuzzerSensor();
+                    instance.startHumiditySensor();
+                    instance.startMotionSensor();
+                    sensorMenu();
+                    break;
+                case "10":
+                    System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
                 
+                    break;
+            }
+        }
+    }
+
+    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+        boolean menu = true;
+        while (menu) {
+            System.out.println("Press f to exit back to MainMenu");
+            String choice = con.readLine();
+
+            switch (choice) {
+                case "f":
+                    instance.stopBuzzerSensor();
+                    instance.stopHumiditySensor();
+                    instance.stopMotionSensor();
+                    menu();
+                    break;
+            
+                default:
                     break;
             }
         }
@@ -92,8 +135,6 @@ public class ConsoleApp {
             System.out.println("\nPlease enter the path to your keystore: ");
             path = con.readLine();
             pathValid = instance.validatePath(path);
-            System.out.println(pathValid);
-            
         }
         return path;
     }
@@ -111,7 +152,7 @@ public class ConsoleApp {
         return pass;
     }
 
-    private KeyStore loadKeystore() {
+    private KeyStore getKeystore() {
         boolean gotKeystore = false;
 
         String path;

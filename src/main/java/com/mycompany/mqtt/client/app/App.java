@@ -25,7 +25,12 @@ public class App extends Application {
     }
 
     public static void main(String[] args) throws IOException{
-        launch();
+//        launch();
+    System.out.println("started");
+    //MotionSensorApp motion = new MotionSensorApp();
+    BuzzerApp buzzer = new BuzzerApp();
+    buzzer.sensorLoop();
+    //motion.sensorLoop();
     }
 
 }

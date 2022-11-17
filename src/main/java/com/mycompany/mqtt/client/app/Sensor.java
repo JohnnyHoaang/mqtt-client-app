@@ -12,14 +12,15 @@ public abstract class Sensor {
     private String filePath;
     private String output;
     private Thread thread;
+    private ProcessBuilderHandler processBuilder;
 
     public Sensor(String filePath){
         this.filePath = filePath;
+        this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
     }
     public void getSensorInfo(){
         try {
-            ProcessBuilderHandler processBuilder = new ProcessBuilderHandler(this.filePath, this);
-            processBuilder.startProcess();
+            this.processBuilder.startProcess();
         } catch(Exception e){
             e.printStackTrace();
         }

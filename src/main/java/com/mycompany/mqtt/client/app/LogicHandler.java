@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 public class LogicHandler {
     private HumidityApp humiditySensor = new HumidityApp();
     private BuzzerApp buzzerSensor = new BuzzerApp();
+    private MotionSensorApp motionSensor = new MotionSensorApp();
 
     Console con = System.console();
 
@@ -37,16 +38,6 @@ public class LogicHandler {
         }
     }
 
-    // TODO: user input for storing keys in keystore, username and password
-    public void storeKeys(KeyStore ks) {
-        
-    }
-
-    // TODO: user input to establish connection to MQTT broker
-    public void establishConnection(){
-
-    }
-
     public Key[] extractKeys(KeyStore ks, char[] pass) {
         try {
             Enumeration<String> enumeration = ks.aliases();
@@ -59,20 +50,6 @@ public class LogicHandler {
         } catch (Exception e) {
             System.out.println(Colors.RED + "Unable to extract keys, please ensure your password is correct" + Colors.RESET);
         }
-        return null;
-    }
-
-    //* prompt until valid username and passwords are obtained */
-    public String getPath(String path) {
-        if (path.length() < 250 || path != null) {
-            if (validatePath(path)) {
-                System.out.println(Colors.GREEN + "\nValid path" + Colors.RESET);
-                
-                return path;
-            }
-        }
-        System.out.println(Colors.RED + "\nInvalid path" + Colors.RESET);
-        
         return null;
     }
 
@@ -154,6 +131,7 @@ public class LogicHandler {
     }
 
     public void startHumiditySensor(){
+        System.out.println("Entered");
         this.humiditySensor.sensorLoop();
     }
     public void stopHumiditySensor(){
@@ -165,4 +143,11 @@ public class LogicHandler {
     public void stopBuzzerSensor(){
         this.buzzerSensor.stopThread();
     }
+    public void startMotionSensor(){
+        this.motionSensor.sensorLoop();
+    }
+    public void stopMotionSensor(){
+        this.motionSensor.stopThread();
+    }
+    
 }
