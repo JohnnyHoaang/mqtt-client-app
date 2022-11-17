@@ -41,7 +41,10 @@ public class ConsoleApp {
                               +"3. Connect to MQTT Client\n"
                               +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
                               +"5. Send a message\n"
-                              +"6. Exit");
+                              +"6. Start Buzzer Sensor\n"
+                              +"7. Start Temperature/Humidity Sensor\n"
+                              +"8. Start Motion Sensor\n"
+                              +"9. Exit");
 
             String choice = con.readLine();
             switch (choice) {
@@ -73,7 +76,15 @@ public class ConsoleApp {
 
                 case "6":
                     instance.startBuzzerSensor();
-
+                    break;
+                case "7":
+                    instance.startHumiditySensor();
+                    break;
+                case "8":
+                    instance.startMotionSensor();
+                    break;
+                case "9":
+                    System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
                 
