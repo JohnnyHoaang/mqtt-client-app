@@ -2,8 +2,6 @@ package com.mycompany.mqtt.client.app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.application.Platform;
@@ -14,23 +12,19 @@ import javafx.application.Platform;
 public class App extends Application {
 
     @Override
-    public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
+    public void start(Stage stage) throws IOException {
 
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        var scene = new Scene(new FXDashboard(), 1920, 1080);
         stage.setScene(scene);
         stage.show();
+
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
     public static void main(String[] args) throws IOException{
-//        launch();
-    System.out.println("started");
-    //MotionSensorApp motion = new MotionSensorApp();
-    BuzzerApp buzzer = new BuzzerApp();
-    buzzer.sensorLoop();
-    //motion.sensorLoop();
+       launch();
     }
-
 }
