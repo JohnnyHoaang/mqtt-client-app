@@ -14,7 +14,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        var scene = new Scene(new FXDashboard(), 1920, 1080);
+        var scene = new Scene(new FXDashboard(), 1215, 600);
         stage.setScene(scene);
         stage.show();
 

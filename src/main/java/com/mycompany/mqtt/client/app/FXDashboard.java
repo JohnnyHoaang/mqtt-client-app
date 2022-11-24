@@ -4,14 +4,15 @@ import java.io.IOException;
 
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Stop;
+import javafx.scene.text.TextAlignment;
 
 public class FXDashboard extends HBox {
     
@@ -20,29 +21,69 @@ public class FXDashboard extends HBox {
     }
     private void buildScreen() throws IOException {
 
-        var PREF_WIDTH = 350;
-        var PREF_HEIGHT = 300;
-        var gaugeTile = TileBuilder.create()
+        var PREF_WIDTH = 300;
+        var PREF_HEIGHT = 200;
+
+        var gaugeTileJ = TileBuilder.create()
             .skinType(Tile.SkinType.GAUGE)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
             .title("Temp Gauge")
             .text("Temperature")
             .unit("Celsius")
             .textVisible(true)
+            .textAlignment(TextAlignment.LEFT)
             .value(0)
             .threshold(75)
-            .gradientStops(new Stop(0, Tile.BLUE),
-                           new Stop(0.25, Tile.GREEN),
-                           new Stop(0.5, Tile.YELLOW),
-                           new Stop(0.75, Tile.ORANGE),
-                           new Stop(1, Tile.RED))
-            .strokeWithGradient(true)
             .animated(true)
             .build();
-
-        var percentageTile = TileBuilder.create()
+        
+        var percentageTileJ = TileBuilder.create()
             .skinType(Tile.SkinType.PERCENTAGE)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
+            .title("Humidity")
+            .unit("Percent")
+            .description("Humidity")
+            .maxValue(60)
+            .build();
+
+        var gaugeTileA = TileBuilder.create()
+            .skinType(Tile.SkinType.GAUGE)
+            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
+            .title("Temp Gauge")
+            .text("Temperature")
+            .unit("Celsius")
+            .textVisible(true)
+            .textAlignment(TextAlignment.LEFT)
+            .value(0)
+            .threshold(75)
+            .animated(true)
+            .build();
+        
+        var percentageTileA = TileBuilder.create()
+            .skinType(Tile.SkinType.PERCENTAGE)
+            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
+            .title("Humidity")
+            .unit("Percent")
+            .description("Humidity")
+            .maxValue(60)
+            .build();
+
+        var gaugeTileK = TileBuilder.create()
+            .skinType(Tile.SkinType.GAUGE)
+            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
+            .title("Temp Gauge")
+            .text("Temperature")
+            .unit("Celsius")
+            .textVisible(true)
+            .textAlignment(TextAlignment.LEFT)
+            .value(0)
+            .threshold(75)
+            .animated(true)
+            .build();
+        
+        var percentageTileK = TileBuilder.create()
+            .skinType(Tile.SkinType.PERCENTAGE)
+            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
             .title("Humidity")
             .unit("Percent")
             .description("Humidity")
@@ -65,27 +106,100 @@ public class FXDashboard extends HBox {
         //Write output to TextArea
         textArea.setText("\n\nOUTPUT");
 
-        //Layout to contain the TextArea
-        VBox textAreaVbox = new VBox(textArea);
+        HBox tempHumidJ = new HBox(gaugeTileJ, percentageTileJ);
+        HBox tempHumidA = new HBox(gaugeTileA, percentageTileA);
+        HBox tempHumidK = new HBox(gaugeTileK, percentageTileK);
 
-        // //Setup the tile
-        // var textAreaTile = TileBuilder.create()
-        //         .skinType(Tile.SkinType.CUSTOM)
-        //         .prefSize(PREF_WIDTH, PREF_HEIGHT)
-        //         .textSize(Tile.TextSize.BIGGER)
-        //         .title("Member 1 Buzzer")
-        //         .graphic(textAreaVbox)
-        //         .build();
-
-        var textTile = TileBuilder.create()
+        var buzzerJ = TileBuilder.create()
                 .skinType(SkinType.TEXT)
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
-                .title("Member 1 Buzzer")
+                .title("Johnny Buzzer")
                 .text("TimeStamp when buzzer is pressed")
                 .description("Timstamp:")
                 .descriptionAlignment(Pos.BASELINE_LEFT)
                 .textVisible(true)
                 .build();
+
+        var buzzerA = TileBuilder.create()
+            .skinType(SkinType.TEXT)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Alexandre Buzzer")
+            .text("TimeStamp when buzzer is pressed")
+            .description("Timstamp:")
+            .descriptionAlignment(Pos.BASELINE_LEFT)
+            .textVisible(true)
+            .build();
+
+        var buzzerK = TileBuilder.create()
+            .skinType(SkinType.TEXT)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Katharina Buzzer")
+            .text("TimeStamp when buzzer is pressed")
+            .description("Timstamp:")
+            .descriptionAlignment(Pos.BASELINE_LEFT)
+            .textVisible(true)
+            .build();
+
+
+        var motionJ = TileBuilder.create()
+            .skinType(SkinType.TEXT)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Johnny Motion Detector")
+            .text("TimeStamp when motion is detected")
+            .description("Timstamp:")
+            .descriptionAlignment(Pos.BASELINE_LEFT)
+            .textVisible(true)
+            .build();
+
+        var motionA = TileBuilder.create()
+            .skinType(SkinType.TEXT)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Alexandre Motion Detector")
+            .text("TimeStamp when motion is detected")
+            .description("Timstamp:")
+            .descriptionAlignment(Pos.BASELINE_LEFT)
+            .textVisible(true)
+            .build();
+
+        var motionK = TileBuilder.create()
+            .skinType(SkinType.TEXT)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Katharina Motion Detector")
+            .text("TimeStamp when motion is detected")
+            .description("Timstamp:")
+            .descriptionAlignment(Pos.BASELINE_LEFT)
+            .textVisible(true)
+            .build();
+
+        var imageJ = TileBuilder.create()
+            .skinType(SkinType.IMAGE)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Johnny Motion Sensor Image")
+            .image(null)
+            .imageMask(ImageMask.RECTANGULAR)
+            .text("Image taken when motion is detected")
+            .textAlignment(TextAlignment.CENTER)
+            .build();
+
+        var imageA = TileBuilder.create()
+            .skinType(SkinType.IMAGE)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Alexandre Motion Sensor Image")
+            .image(null)
+            .imageMask(ImageMask.RECTANGULAR)
+            .text("Image taken when motion is detected")
+            .textAlignment(TextAlignment.CENTER)
+            .build();
+
+        var imageK = TileBuilder.create()
+            .skinType(SkinType.IMAGE)
+            .prefSize(PREF_WIDTH, PREF_HEIGHT)
+            .title("Katharina Motion Sensor Image")
+            .image(null)
+            .imageMask(ImageMask.RECTANGULAR)
+            .text("Image taken when motion is detected")
+            .textAlignment(TextAlignment.CENTER)
+            .build();
 
         // //Setup a tile with an exit button to end the application
         // var exitButton = new Button("Exit");
@@ -102,11 +216,25 @@ public class FXDashboard extends HBox {
         //     .roundedCorners(false)
         //     .build();
         
-        var tilesColumn1 = new VBox(gaugeTile, percentageTile, textTile);
-        tilesColumn1.setMinWidth(PREF_WIDTH);
-        tilesColumn1.setSpacing(5);
+        var tilesColumnTempHumid = new VBox(tempHumidJ, tempHumidA, tempHumidK);
+        var tilesColumnBuzzer = new VBox(buzzerJ, buzzerA, buzzerK);
+        var tilesColumnMotion = new VBox(motionJ, motionA, motionK);
+        var tilesColumnImage = new VBox(imageJ, imageA, imageK);
 
-        this.getChildren().add(tilesColumn1);
+        // var tilesColumnK = new VBox(tempHumidK);
+        tilesColumnTempHumid.setMinWidth(PREF_WIDTH);
+        tilesColumnTempHumid.setSpacing(5);
+
+        tilesColumnBuzzer.setMinWidth(PREF_WIDTH);
+        tilesColumnBuzzer.setSpacing(5);
+
+        tilesColumnMotion.setMinWidth(PREF_WIDTH);
+        tilesColumnMotion.setSpacing(5);
+
+        tilesColumnImage.setMinWidth(PREF_WIDTH);
+        tilesColumnImage.setSpacing(5);
+
+        this.getChildren().addAll(tilesColumnTempHumid, tilesColumnBuzzer, tilesColumnMotion, tilesColumnImage);
         this.setSpacing(5);
     }
 
