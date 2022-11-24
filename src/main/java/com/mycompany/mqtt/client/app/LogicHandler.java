@@ -20,8 +20,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogicHandler {
-    private HumidityApp humiditySensor = new HumidityApp();
-    private BuzzerApp buzzerSensor = new BuzzerApp();
+    private HumidityApp humiditySensor = new HumidityApp(null,null);
+    private BuzzerApp buzzerSensor = new BuzzerApp(null,null);
     private MotionSensorApp motionSensor = new MotionSensorApp();
 
     Console con = System.console();

@@ -4,6 +4,7 @@
  */
 package com.mycompany.mqtt.client.app;
 
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import java.time.LocalDateTime;
 
 /**
@@ -11,9 +12,9 @@ import java.time.LocalDateTime;
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
 public class BuzzerApp extends Sensor{
-    
-    public BuzzerApp(){
-        super("./pi-sensor-code/Doorbell.py");
+   
+    public BuzzerApp(MqttRun mqtt, Mqtt5BlockingClient client){
+        super("./pi-sensor-code/Doorbell.py", mqtt, client);
     }
     
     public void sensorLoop(){
@@ -29,6 +30,7 @@ public class BuzzerApp extends Sensor{
                             && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
                         System.out.println("Confirmation: Buzzer turned on: " + LocalDateTime.now());
+                        sendSensorData("example/buzzer/");
                         
                     }
                     previousOutput = this.getOutput();
@@ -41,4 +43,5 @@ public class BuzzerApp extends Sensor{
         setThread(thread);
         thread.start();
     }
+   
 }
