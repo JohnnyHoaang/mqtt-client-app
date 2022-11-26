@@ -7,7 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.application.Platform;
-
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 /**
  * JavaFX App
  */
@@ -26,11 +26,18 @@ public class App extends Application {
 
     public static void main(String[] args) throws IOException{
 //        launch();
-    System.out.println("started");
-    //MotionSensorApp motion = new MotionSensorApp();
-    BuzzerApp buzzer = new BuzzerApp();
+    MqttRun mqtt = new MqttRun();
+    Mqtt5BlockingClient client = mqtt.run();
+    HumidityApp humidity = new HumidityApp(mqtt , client);
+    humidity.sensorLoop();
+    BuzzerApp buzzer = new BuzzerApp(mqtt, client);
     buzzer.sensorLoop();
-    //motion.sensorLoop();
+    MotionSensorApp motion = new MotionSensorApp(mqtt, client);
+    motion.sensorLoop();
+    while(true){
+        mqtt.messageReceived(client);
+    }
+   
     }
 
 }

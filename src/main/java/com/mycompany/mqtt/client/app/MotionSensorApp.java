@@ -1,10 +1,12 @@
 package com.mycompany.mqtt.client.app;
 
-public class MotionSensorApp extends Sensor{
-    //private String output = "";
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
-    public MotionSensorApp(){
-        super("./pi-sensor-code/SenseLED.py");
+public class MotionSensorApp extends Sensor{
+
+    public MotionSensorApp(MqttRun mqtt, Mqtt5BlockingClient client){
+        super("./pi-sensor-code/SenseLED.py", mqtt, client);
+   
     }
 
     public void sensorLoop(){
@@ -21,6 +23,7 @@ public class MotionSensorApp extends Sensor{
                         System.out.println("Confirmation: Motion detected.");
                         System.out.println("Taking picture");
                         camera.execute();
+                        sendSensorData("example/motion/");
                     } else if (output.equals("no motion detected <<<")){
                         System.out.println(output);
                     }
@@ -34,4 +37,5 @@ public class MotionSensorApp extends Sensor{
         setThread(thread);
         thread.start();
     }
+    
 }

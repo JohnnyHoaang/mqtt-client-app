@@ -5,6 +5,8 @@
 
 package com.mycompany.mqtt.client.app;
 
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 /**
@@ -12,9 +14,10 @@ import java.util.Scanner;
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
 public class HumidityApp extends Sensor{
-
-    public HumidityApp(){
-        super("./pi-sensor-code/DHT11.py");
+    private double humidity;
+    private double temperature;
+    public HumidityApp(MqttRun mqtt, Mqtt5BlockingClient client){
+        super("./pi-sensor-code/DHT11.py", mqtt, client);
     }
     // Calls humidity and temperature information in a loop to update given tile
     public void sensorLoop(){
@@ -27,10 +30,10 @@ public class HumidityApp extends Sensor{
                     // Receive output from sensor
                     String humidityInfo = this.getOutput();
                     String [] humidityArr = humidityInfo.split(",");
-                    double humidity = Double.parseDouble(humidityArr[0]);
-                    double temperature = Double.parseDouble(humidityArr[1]);
+                    this.humidity = Double.parseDouble(humidityArr[0]);
+                    this.temperature = Double.parseDouble(humidityArr[1]);
                     // Set tile info with provided output
-                    setTileInfo(humidity, temperature);
+                    sendSensorData("example/humidity/");
                     Thread.sleep(3000);
                 }
             } catch(Exception e) {
@@ -40,9 +43,13 @@ public class HumidityApp extends Sensor{
         setThread(thread);
         thread.start();
     }
-    private void setTileInfo(double humidity, double temperature){
+    @Override
+    public void sendSensorData(String topic){
         // TODO : Update tile text
-        System.out.println("Humidity: " + humidity);
-        System.out.println("Temperature: " + temperature);
+//        System.out.println("Humidity: " + humidity);
+//        System.out.println("Temperature: " + temperature);
+        String message = String.format("{ humidity: %s, temperature: %s, time: }",
+                this.humidity, this.temperature, LocalDateTime.now());
+        getMqtt().publishMessage(getClient(), topic, message.getBytes());
     }
 }
