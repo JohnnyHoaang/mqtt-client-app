@@ -23,6 +23,7 @@ public class FXDashboard extends HBox {
         var PREF_WIDTH = 300;
         var PREF_HEIGHT = 200;
 
+        // tiles for temperature and humidity, one for each member
         var gaugeTileJ = TileBuilder.create()
             .skinType(Tile.SkinType.GAUGE)
             .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
@@ -89,10 +90,12 @@ public class FXDashboard extends HBox {
             .maxValue(60)
             .build();
 
+        // group temperature and humidity tiles together to look like one tile
         HBox tempHumidJ = new HBox(gaugeTileJ, percentageTileJ);
         HBox tempHumidA = new HBox(gaugeTileA, percentageTileA);
         HBox tempHumidK = new HBox(gaugeTileK, percentageTileK);
 
+        // buzzer timestamp tiles, one for each member
         var buzzerJ = TileBuilder.create()
                 .skinType(SkinType.TEXT)
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
@@ -124,6 +127,7 @@ public class FXDashboard extends HBox {
             .build();
 
 
+        // motion timestamp tile, one for each member
         var motionJ = TileBuilder.create()
             .skinType(SkinType.TEXT)
             .prefSize(PREF_WIDTH, PREF_HEIGHT)
@@ -154,6 +158,7 @@ public class FXDashboard extends HBox {
             .textVisible(true)
             .build();
 
+        // motion image tile, one for each memeber
         var imageJ = TileBuilder.create()
             .skinType(SkinType.IMAGE)
             .prefSize(PREF_WIDTH, PREF_HEIGHT)
@@ -184,6 +189,7 @@ public class FXDashboard extends HBox {
             .textAlignment(TextAlignment.CENTER)
             .build();
 
+        // group tiles so each member has a row
         var tilesColumnTempHumid = new VBox(tempHumidJ, tempHumidA, tempHumidK);
         var tilesColumnBuzzer = new VBox(buzzerJ, buzzerA, buzzerK);
         var tilesColumnMotion = new VBox(motionJ, motionA, motionK);
