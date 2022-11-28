@@ -8,6 +8,7 @@ package com.mycompany.mqtt.client.app;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import java.time.LocalDateTime;
 import java.util.Scanner;
+import org.json.JSONObject;
 
 /**
  *
@@ -45,11 +46,10 @@ public class HumidityApp extends Sensor{
     }
     @Override
     public void sendSensorData(String topic){
-        // TODO : Update tile text
-//        System.out.println("Humidity: " + humidity);
-//        System.out.println("Temperature: " + temperature);
-        String message = String.format("{ humidity: %s, temperature: %s, time: }",
-                this.humidity, this.temperature, LocalDateTime.now());
-        getMqtt().publishMessage(getClient(), topic, message.getBytes());
+        JSONObject jsonMessage = new JSONObject();
+        jsonMessage.put("time",LocalDateTime.now());
+        jsonMessage.put("temperature",this.temperature);
+        jsonMessage.put("humidity",this.humidity);
+        getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
     }
 }

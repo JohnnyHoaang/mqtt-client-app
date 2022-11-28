@@ -18,7 +18,7 @@ public class MqttRun {
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
     public Mqtt5BlockingClient run(){
-        final String host = "a70d21edc42b4ad59d04019f79dd252c.s2.eu.hivemq.cloud";
+        final String host = "061d9ed673164eda847418a5b5609221.s2.eu.hivemq.cloud";
         String username = getUsername();
         String password = getPassword();
         // String topic = "my/test/topic";
