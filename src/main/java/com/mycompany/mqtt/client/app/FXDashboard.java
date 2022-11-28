@@ -6,9 +6,7 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,6 +17,7 @@ public class FXDashboard extends HBox {
     public FXDashboard() throws IOException {
         this.buildScreen();
     }
+
     private void buildScreen() throws IOException {
 
         var PREF_WIDTH = 300;
@@ -89,22 +88,6 @@ public class FXDashboard extends HBox {
             .description("Humidity")
             .maxValue(60)
             .build();
-
-        //Setup tile with TextArea to display output from external program
-        TextArea textArea = new TextArea();
-
-        //Make the TextArea non editable
-        textArea.setEditable(false);
-
-        /*Change the background and the font color of the TextArea
-           and make the border of the TextArea transparent
-         */
-        textArea.setStyle("-fx-control-inner-background: #2A2A2A; "
-                + "-fx-text-inner-color: white;"
-                + "-fx-text-box-border: transparent;");
-
-        //Write output to TextArea
-        textArea.setText("\n\nOUTPUT");
 
         HBox tempHumidJ = new HBox(gaugeTileJ, percentageTileJ);
         HBox tempHumidA = new HBox(gaugeTileA, percentageTileA);
@@ -201,21 +184,6 @@ public class FXDashboard extends HBox {
             .textAlignment(TextAlignment.CENTER)
             .build();
 
-        // //Setup a tile with an exit button to end the application
-        // var exitButton = new Button("Exit");
-
-        // //Setup event handler for the exit button
-        // exitButton.setOnAction(e -> endApplication());
-
-        // var exitTile = TileBuilder.create()
-        //     .skinType(Tile.SkinType.CUSTOM)
-        //     .prefSize(PREF_WIDTH, PREF_HEIGHT)
-        //     .textSize(Tile.TextSize.BIGGER)
-        //     .title("Quit the application")
-        //     .graphic(exitButton)
-        //     .roundedCorners(false)
-        //     .build();
-        
         var tilesColumnTempHumid = new VBox(tempHumidJ, tempHumidA, tempHumidK);
         var tilesColumnBuzzer = new VBox(buzzerJ, buzzerA, buzzerK);
         var tilesColumnMotion = new VBox(motionJ, motionA, motionK);
@@ -237,9 +205,4 @@ public class FXDashboard extends HBox {
         this.getChildren().addAll(tilesColumnTempHumid, tilesColumnBuzzer, tilesColumnMotion, tilesColumnImage);
         this.setSpacing(5);
     }
-
-    private void endApplication() {
-        Platform.exit();
-    }
-
 }
