@@ -4,6 +4,9 @@
  */
 package com.mycompany.mqtt.client.app;
 
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
@@ -13,9 +16,13 @@ public abstract class Sensor {
     private String output;
     private Thread thread;
     private ProcessBuilderHandler processBuilder;
+    private MqttRun mqtt;
+    private Mqtt5BlockingClient client;
 
-    public Sensor(String filePath){
+    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client ){
         this.filePath = filePath;
+        this.client = client;
+        this.mqtt = mqtt;
         this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
     }
     public void getSensorInfo(){
@@ -42,5 +49,16 @@ public abstract class Sensor {
             this.thread.stop();
         }
     }
+    public void sendSensorData(String topic){
+        String message = String.format("{ time: %s }", LocalDateTime.now());
+        mqtt.publishMessage(client, topic, message.getBytes());
+    }
+    public MqttRun getMqtt(){
+        return this.mqtt;
+    }
+    public Mqtt5BlockingClient getClient(){
+        return this.client;
+    }
     abstract void sensorLoop();
+    
 }
