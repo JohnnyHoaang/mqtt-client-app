@@ -31,12 +31,12 @@ public class App extends Application {
         MqttRun mqtt = new MqttRun();
         Mqtt5BlockingClient client = mqtt.run();
 
-        HumidityApp humidity = new HumidityApp(mqtt , client);
-        humidity.sensorLoop();
-        BuzzerApp buzzer = new BuzzerApp(mqtt, client);
-        buzzer.sensorLoop();
-        MotionSensorApp motion = new MotionSensorApp(mqtt, client);
-        motion.sensorLoop();
+        // HumidityApp humidity = new HumidityApp(mqtt , client);
+        // humidity.sensorLoop();
+        // BuzzerApp buzzer = new BuzzerApp(mqtt, client);
+        // buzzer.sensorLoop();
+        // MotionSensorApp motion = new MotionSensorApp(mqtt, client);
+        // motion.sensorLoop();
         
         while(true){
             mqtt.messageReceived(client);

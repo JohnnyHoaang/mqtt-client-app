@@ -21,12 +21,13 @@ public class FXDashboard extends HBox {
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
 
+    public String test = "";
+
     public FXDashboard() throws IOException {
         this.buildScreen();
     }
 
     private void buildScreen() throws IOException {
-
 
 
         // tiles for temperature and humidity, one for each member
@@ -134,7 +135,7 @@ public class FXDashboard extends HBox {
             column.setSpacing(5);
             vboxs.add(column);
         }
-
+        tiles.get(0).setDescription(test);
         tilesColumnTempHumid.setMinWidth(PREF_WIDTH);
         tilesColumnTempHumid.setSpacing(5);
 
