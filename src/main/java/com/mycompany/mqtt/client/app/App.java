@@ -38,7 +38,7 @@ public class App extends Application {
     motion.sensorLoop();
     mqtt.subscribeToTopic(client,"example/+/johnny/");
     
-        mqtt.messageReceived(client);
+    mqtt.messageReceived(client);
     while(true){
         System.out.println(mqtt.getResult());
         Thread.sleep(1000);
