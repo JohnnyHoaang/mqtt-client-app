@@ -9,12 +9,15 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 /**
  * JavaFX App
  */
-public class App extends Application {
-
+public class App extends Application{
+    private FXDashboard dashboard;
+    private static MqttRun mqtt;
     @Override
     public void start(Stage stage) throws IOException {
-
-        var scene = new Scene(new FXDashboard(), 1215, 600);
+        var console = System.console();
+        String topicUser = console.readLine("Enter your topic user:");
+        mqtt = new MqttRun();
+        var scene = new Scene(new FXDashboard(mqtt,topicUser), 1215, 600);
         stage.setScene(scene);
         stage.show();
 
@@ -24,27 +27,8 @@ public class App extends Application {
         });
     }
 
-
     public static void main(String[] args) throws IOException, InterruptedException{
-//        launch();
-    var console = System.console();
-    String topicUser = console.readLine("Enter your topic user:");
-    MqttRun mqtt = new MqttRun();
-    Mqtt5BlockingClient client = mqtt.run();
-    HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
-    humidity.sensorLoop();
-    BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
-    buzzer.sensorLoop();
-    MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
-    motion.sensorLoop();
-    mqtt.subscribeToTopic(client,"example/+/johnny/");
-    
-    mqtt.messageReceived(client);
-    while(true){
-        System.out.println(mqtt.getResult());
-        Thread.sleep(1000);
-       
-    }
-   
+        launch();
+
     }
 }

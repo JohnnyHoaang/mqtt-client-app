@@ -10,23 +10,43 @@ import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.application.Platform;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.concurrent.Task;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import org.json.*;
 
 public class FXDashboard extends HBox {
-    
+    private MqttRun mqtt;
+    private Mqtt5BlockingClient client;
+    private String topicUser;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
 
-    public FXDashboard() throws IOException {
-        this.buildScreen();
+    public String test = "";
+
+    public FXDashboard(MqttRun mqtt, String topicUser){
+        
+            this.mqtt = mqtt;
+            this.client = mqtt.run();
+            this.topicUser = topicUser;
+            try {
+                this.buildScreen();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            
+            
+    
+        
+        
     }
 
     private void buildScreen() throws IOException {
-
 
 
         // tiles for temperature and humidity, one for each member
@@ -134,7 +154,6 @@ public class FXDashboard extends HBox {
             column.setSpacing(5);
             vboxs.add(column);
         }
-
         tilesColumnTempHumid.setMinWidth(PREF_WIDTH);
         tilesColumnTempHumid.setSpacing(5);
 
@@ -142,6 +161,12 @@ public class FXDashboard extends HBox {
             this.getChildren().add(vbox);
         }
         this.setSpacing(5);
+
+        runSensors(); 
+
+                
+         
+
     }
 
     private void createTextTiles(String prefix, String desc) {
@@ -167,4 +192,76 @@ public class FXDashboard extends HBox {
             tiles.add(buzzer);
         }
     }
+    public void runSensors(){
+        HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
+        humidity.sensorLoop();
+        BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
+        buzzer.sensorLoop();
+        MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
+        motion.sensorLoop();
+        mqtt.subscribeToTopic(client,"example/+/johnny/");
+        mqtt.messageReceived(client);
+       
+
+        Task task = new Task<Void>() {
+            @Override public Void call() {
+                while(true){
+                    if (isCancelled()) {
+                       break;
+                    }
+                    try {
+                        Thread.sleep(100);
+                   Platform.runLater(new Runnable(){
+               @Override
+                 public void run(){
+                    handleResult(mqtt.getResult());                 
+                   }});
+                    } catch(Exception e){
+
+                    }
+
+                }
+                return null;
+            }
+        };
+        new Thread(task).start();
+    }
+    private void handleResult(String result){
+        
+        String [] informations = result.split("'");
+        JSONObject json = new JSONObject(informations[1]);
+        String []topics = informations[0].split("/");
+        if(topics[0].equals("example")){
+            String sensorType = topics[1];
+            String user = topics[2];
+            switch(sensorType){
+                case "buzzer":
+                    String buzzerTime = json.get("time").toString();
+                    if(user.equals("johnny")){
+                        tiles.get(6).setDescription(buzzerTime);
+                    }
+                    break;
+                case "motion":
+                    String motionTime = json.get("time").toString();
+                    if(user.equals("johnny")){
+                        tiles.get(9).setDescription(motionTime);
+                    }
+                    break;
+                case "humidity":
+                    double humidity = Double.parseDouble(json.get("humidity").toString());
+                    double temperature = Double.parseDouble(json.get("temperature").toString());
+                    if(user.equals("johnny")){
+                        tiles.get(0).setValue(temperature);
+                        tiles.get(1).setValue(humidity);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            
+        }
+    }
+    
+    
 }

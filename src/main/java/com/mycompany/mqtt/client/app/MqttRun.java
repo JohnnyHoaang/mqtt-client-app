@@ -119,7 +119,7 @@ public class MqttRun {
         System.out.println("start");
         Thread thread = new Thread(()->{
             client.toAsync().publishes(ALL, publish -> {
-            this.result = publish.getTopic() + "," + UTF_8.decode(publish.getPayload().get()).toString();
+            this.result = publish.getTopic() + "'" + UTF_8.decode(publish.getPayload().get()).toString();
         });
         });
         thread.start();
