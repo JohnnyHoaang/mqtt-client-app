@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class LogicHandler {
     private HumidityApp humiditySensor = new HumidityApp(null,null);
     private BuzzerApp buzzerSensor = new BuzzerApp(null,null);
-    private MotionSensorApp motionSensor = new MotionSensorApp();
+    private MotionSensorApp motionSensor = new MotionSensorApp(null, null);
 
     Console con = System.console();
 
