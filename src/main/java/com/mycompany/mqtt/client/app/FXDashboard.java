@@ -1,10 +1,10 @@
 package com.mycompany.mqtt.client.app;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -14,6 +14,10 @@ import javafx.scene.text.TextAlignment;
 
 public class FXDashboard extends HBox {
     
+    private ArrayList<Tile> tiles = new ArrayList<Tile>();
+    private ArrayList<VBox> vboxs = new ArrayList<VBox>();
+    private ArrayList<HBox> hboxs = new ArrayList<HBox>();
+
     public FXDashboard() throws IOException {
         this.buildScreen();
     }
@@ -24,191 +28,155 @@ public class FXDashboard extends HBox {
         var PREF_HEIGHT = 200;
 
         // tiles for temperature and humidity, one for each member
-        var gaugeTileJ = TileBuilder.create()
-            .skinType(Tile.SkinType.GAUGE)
-            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
-            .title("Temp Gauge")
-            .text("Temperature")
-            .unit("Celsius")
-            .textVisible(true)
-            .textAlignment(TextAlignment.LEFT)
-            .value(0)
-            .threshold(75)
-            .animated(true)
-            .build();
-        
-        var percentageTileJ = TileBuilder.create()
-            .skinType(Tile.SkinType.PERCENTAGE)
-            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
-            .title("Humidity")
-            .unit("Percent")
-            .description("Humidity")
-            .maxValue(60)
-            .build();
+        for (int i = 0; i < 3; i++) {
+            String titleTemp = "";
+            String titleHum = "";
+            if (i == 0) {
+                titleTemp = "Temperature - Johnny";
+                titleHum = "Humidity - Johnny";
+            } else if(i == 1) {
+                titleTemp = "Temperature - Alexandre";
+                titleHum = "Humidity - Alexandre";
+            } else {
+                titleTemp = "Temperature - Katharina";
+                titleHum = "Humidity - Katharina";
+            }
+            var gaugeTile = TileBuilder.create()
+                .skinType(Tile.SkinType.GAUGE)
+                .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
+                .title(titleTemp)
+                .text("Temperature")
+                .unit("Celsius")
+                .textVisible(true)
+                .textAlignment(TextAlignment.LEFT)
+                .value(0)
+                .threshold(75)
+                .animated(true)
+                .build();
 
-        var gaugeTileA = TileBuilder.create()
-            .skinType(Tile.SkinType.GAUGE)
-            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
-            .title("Temp Gauge")
-            .text("Temperature")
-            .unit("Celsius")
-            .textVisible(true)
-            .textAlignment(TextAlignment.LEFT)
-            .value(0)
-            .threshold(75)
-            .animated(true)
-            .build();
-        
-        var percentageTileA = TileBuilder.create()
-            .skinType(Tile.SkinType.PERCENTAGE)
-            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
-            .title("Humidity")
-            .unit("Percent")
-            .description("Humidity")
-            .maxValue(60)
-            .build();
+            tiles.add(gaugeTile);
 
-        var gaugeTileK = TileBuilder.create()
-            .skinType(Tile.SkinType.GAUGE)
-            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
-            .title("Temp Gauge")
-            .text("Temperature")
-            .unit("Celsius")
-            .textVisible(true)
-            .textAlignment(TextAlignment.LEFT)
-            .value(0)
-            .threshold(75)
-            .animated(true)
-            .build();
-        
-        var percentageTileK = TileBuilder.create()
-            .skinType(Tile.SkinType.PERCENTAGE)
-            .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
-            .title("Humidity")
-            .unit("Percent")
-            .description("Humidity")
-            .maxValue(60)
-            .build();
+            var percentageTile = TileBuilder.create()
+                .skinType(Tile.SkinType.PERCENTAGE)
+                .prefSize(PREF_WIDTH/2, PREF_HEIGHT)
+                .title(titleHum)
+                .unit("Percent")
+                .description("Humidity")
+                .maxValue(60)
+                .build();
+
+            tiles.add(percentageTile);
+        }
 
         // group temperature and humidity tiles together to look like one tile
-        HBox tempHumidJ = new HBox(gaugeTileJ, percentageTileJ);
-        HBox tempHumidA = new HBox(gaugeTileA, percentageTileA);
-        HBox tempHumidK = new HBox(gaugeTileK, percentageTileK);
+        var num = 0;
+        for (int i = 0; i < 3; i++) {
+            
+            var row = new HBox();
 
-        // buzzer timestamp tiles, one for each member
-        var buzzerJ = TileBuilder.create()
+            if(i == 1)
+                num = 2;
+            if(i == 2) 
+                num = 4;
+            for (int j = num; j < num+2; j++) {
+                row.getChildren().add(tiles.get(j));
+            }
+            hboxs.add(row);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            String title = "BUZZER - ";
+            if (i == 0) {
+                title += "Johnny";
+            } else if(i == 1) {
+                title += "Alexandre";
+            } else {
+                title += "Katharina";
+            }
+            var buzzer = TileBuilder.create()
                 .skinType(SkinType.TEXT)
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
-                .title("Johnny Buzzer")
+                .title(title)
                 .text("TimeStamp when buzzer is pressed")
                 .description("Timstamp:")
                 .descriptionAlignment(Pos.BASELINE_LEFT)
                 .textVisible(true)
                 .build();
 
-        var buzzerA = TileBuilder.create()
-            .skinType(SkinType.TEXT)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Alexandre Buzzer")
-            .text("TimeStamp when buzzer is pressed")
-            .description("Timstamp:")
-            .descriptionAlignment(Pos.BASELINE_LEFT)
-            .textVisible(true)
-            .build();
+            tiles.add(buzzer);
+        }
 
-        var buzzerK = TileBuilder.create()
-            .skinType(SkinType.TEXT)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Katharina Buzzer")
-            .text("TimeStamp when buzzer is pressed")
-            .description("Timstamp:")
-            .descriptionAlignment(Pos.BASELINE_LEFT)
-            .textVisible(true)
-            .build();
+        for (int i = 0; i < 3; i++) {
+            String title = "MOTION DETECTOR - ";
+            if (i == 0) {
+                title += "Johnny";
+            } else if(i == 1) {
+                title += "Alexandre";
+            } else {
+                title += "Katharina";
+            }
+            var motion = TileBuilder.create()
+                .skinType(SkinType.TEXT)
+                .prefSize(PREF_WIDTH, PREF_HEIGHT)
+                .title(title)
+                .text("TimeStamp when motion is detected")
+                .description("Timstamp:")
+                .descriptionAlignment(Pos.BASELINE_LEFT)
+                .textVisible(true)
+                .build();
 
+            tiles.add(motion);
+        }
 
-        // motion timestamp tile, one for each member
-        var motionJ = TileBuilder.create()
-            .skinType(SkinType.TEXT)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Johnny Motion Detector")
-            .text("TimeStamp when motion is detected")
-            .description("Timstamp:")
-            .descriptionAlignment(Pos.BASELINE_LEFT)
-            .textVisible(true)
-            .build();
+        for (int i = 0; i < 3; i++) {
+            String title = "IMAGE - ";
+            if (i == 0) {
+                title += "Johnny";
+            } else if(i == 1) {
+                title += "Alexandre";
+            } else {
+                title += "Katharina";
+            }
+            var image = TileBuilder.create()
+                .skinType(SkinType.TEXT)
+                .prefSize(PREF_WIDTH, PREF_HEIGHT)
+                .title(title)
+                .text("Image taken when motion is detected")
+                .description("Timstamp:")
+                .descriptionAlignment(Pos.BASELINE_LEFT)
+                .textVisible(true)
+                .build();
 
-        var motionA = TileBuilder.create()
-            .skinType(SkinType.TEXT)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Alexandre Motion Detector")
-            .text("TimeStamp when motion is detected")
-            .description("Timstamp:")
-            .descriptionAlignment(Pos.BASELINE_LEFT)
-            .textVisible(true)
-            .build();
+            tiles.add(image);
+        }
+        num = 6;
+        VBox tilesColumnTempHumid = new VBox();
+        for (HBox hBox : hboxs) {
+            tilesColumnTempHumid.getChildren().add(hBox);
+        }
 
-        var motionK = TileBuilder.create()
-            .skinType(SkinType.TEXT)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Katharina Motion Detector")
-            .text("TimeStamp when motion is detected")
-            .description("Timstamp:")
-            .descriptionAlignment(Pos.BASELINE_LEFT)
-            .textVisible(true)
-            .build();
+        vboxs.add(tilesColumnTempHumid);
+        for (int i = 0; i < 3; i++) {
+            
+            var column = new VBox();
+            if (i == 1) 
+                num = 9;
+            if(i == 2) 
+                num = 12;
+            
+            for (int j = num; j < num+3; j++) {
+                column.getChildren().add(tiles.get(j));
+            }
+            column.setSpacing(5);
+            vboxs.add(column);
+        }
 
-        // motion image tile, one for each memeber
-        var imageJ = TileBuilder.create()
-            .skinType(SkinType.IMAGE)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Johnny Motion Sensor Image")
-            .image(null)
-            .imageMask(ImageMask.RECTANGULAR)
-            .text("Image taken when motion is detected")
-            .textAlignment(TextAlignment.CENTER)
-            .build();
-
-        var imageA = TileBuilder.create()
-            .skinType(SkinType.IMAGE)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Alexandre Motion Sensor Image")
-            .image(null)
-            .imageMask(ImageMask.RECTANGULAR)
-            .text("Image taken when motion is detected")
-            .textAlignment(TextAlignment.CENTER)
-            .build();
-
-        var imageK = TileBuilder.create()
-            .skinType(SkinType.IMAGE)
-            .prefSize(PREF_WIDTH, PREF_HEIGHT)
-            .title("Katharina Motion Sensor Image")
-            .image(null)
-            .imageMask(ImageMask.RECTANGULAR)
-            .text("Image taken when motion is detected")
-            .textAlignment(TextAlignment.CENTER)
-            .build();
-
-        // group tiles so each member has a row
-        var tilesColumnTempHumid = new VBox(tempHumidJ, tempHumidA, tempHumidK);
-        var tilesColumnBuzzer = new VBox(buzzerJ, buzzerA, buzzerK);
-        var tilesColumnMotion = new VBox(motionJ, motionA, motionK);
-        var tilesColumnImage = new VBox(imageJ, imageA, imageK);
-
-        // var tilesColumnK = new VBox(tempHumidK);
         tilesColumnTempHumid.setMinWidth(PREF_WIDTH);
         tilesColumnTempHumid.setSpacing(5);
 
-        tilesColumnBuzzer.setMinWidth(PREF_WIDTH);
-        tilesColumnBuzzer.setSpacing(5);
-
-        tilesColumnMotion.setMinWidth(PREF_WIDTH);
-        tilesColumnMotion.setSpacing(5);
-
-        tilesColumnImage.setMinWidth(PREF_WIDTH);
-        tilesColumnImage.setSpacing(5);
-
-        this.getChildren().addAll(tilesColumnTempHumid, tilesColumnBuzzer, tilesColumnMotion, tilesColumnImage);
+        for (VBox vbox : vboxs) {
+            this.getChildren().add(vbox);
+        }
         this.setSpacing(5);
     }
 }
