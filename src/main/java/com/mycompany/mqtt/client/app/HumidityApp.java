@@ -17,8 +17,8 @@ import org.json.JSONObject;
 public class HumidityApp extends Sensor{
     private double humidity;
     private double temperature;
-    public HumidityApp(MqttRun mqtt, Mqtt5BlockingClient client){
-        super("./pi-sensor-code/DHT11.py", mqtt, client);
+    public HumidityApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
+        super("./pi-sensor-code/DHT11.py", mqtt, client, topicUser);
     }
     // Calls humidity and temperature information in a loop to update given tile
     public void sensorLoop(){
@@ -34,7 +34,7 @@ public class HumidityApp extends Sensor{
                     this.humidity = Double.parseDouble(humidityArr[0]);
                     this.temperature = Double.parseDouble(humidityArr[1]);
                     // Set tile info with provided output
-                    sendSensorData("example/humidity/");
+                    sendSensorData("example/humidity/"+getTopicUser()+"/");
                     Thread.sleep(3000);
                 }
             } catch(Exception e) {

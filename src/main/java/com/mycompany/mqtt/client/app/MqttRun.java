@@ -15,6 +15,7 @@ import java.util.Scanner;
  * @author 2043441
  */
 public class MqttRun {
+    private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
     public Mqtt5BlockingClient run(){
@@ -115,14 +116,21 @@ public class MqttRun {
      * Confirms messaged received
      */
     public void messageReceived(Mqtt5BlockingClient client){
-        client.toAsync().publishes(ALL, publish -> {
-            System.out.println("\nReceived message: " +
-                publish.getTopic() + " -> " +
-                UTF_8.decode(publish.getPayload().get()));
-            client.disconnect();
+        System.out.println("start");
+        Thread thread = new Thread(()->{
+            client.toAsync().publishes(ALL, publish -> {
+            this.result = publish.getTopic() + "," + UTF_8.decode(publish.getPayload().get()).toString();
         });
+        });
+        thread.start();
+        System.out.println("end");
     }
-    
+    public void close(Mqtt5BlockingClient client){
+        client.disconnect();
+    }
+    public String getResult(){
+        return this.result;
+    }
     /**
      *
      * Publishes message

@@ -24,18 +24,25 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException, InterruptedException{
 //        launch();
+    var console = System.console();
+    String topicUser = console.readLine("Enter your topic user:");
     MqttRun mqtt = new MqttRun();
     Mqtt5BlockingClient client = mqtt.run();
-    HumidityApp humidity = new HumidityApp(mqtt , client);
+    HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
     humidity.sensorLoop();
-    BuzzerApp buzzer = new BuzzerApp(mqtt, client);
+    BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
     buzzer.sensorLoop();
-    MotionSensorApp motion = new MotionSensorApp(mqtt, client);
+    MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
     motion.sensorLoop();
-    while(true){
+    mqtt.subscribeToTopic(client,"example/+/johnny/");
+    
         mqtt.messageReceived(client);
+    while(true){
+        System.out.println(mqtt.getResult());
+        Thread.sleep(1000);
+       
     }
    
     }
