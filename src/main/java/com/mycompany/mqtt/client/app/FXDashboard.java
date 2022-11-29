@@ -17,6 +17,8 @@ public class FXDashboard extends HBox {
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
+    private int PREF_WIDTH = 300;
+    private int PREF_HEIGHT = 200;
 
     public FXDashboard() throws IOException {
         this.buildScreen();
@@ -24,8 +26,7 @@ public class FXDashboard extends HBox {
 
     private void buildScreen() throws IOException {
 
-        var PREF_WIDTH = 300;
-        var PREF_HEIGHT = 200;
+
 
         // tiles for temperature and humidity, one for each member
         for (int i = 0; i < 3; i++) {
@@ -84,49 +85,9 @@ public class FXDashboard extends HBox {
             hboxs.add(row);
         }
 
-        for (int i = 0; i < 3; i++) {
-            String title = "BUZZER - ";
-            if (i == 0) {
-                title += "Johnny";
-            } else if(i == 1) {
-                title += "Alexandre";
-            } else {
-                title += "Katharina";
-            }
-            var buzzer = TileBuilder.create()
-                .skinType(SkinType.TEXT)
-                .prefSize(PREF_WIDTH, PREF_HEIGHT)
-                .title(title)
-                .text("TimeStamp when buzzer is pressed")
-                .description("Timstamp:")
-                .descriptionAlignment(Pos.BASELINE_LEFT)
-                .textVisible(true)
-                .build();
+        createTextTiles("BUZZER - ");
 
-            tiles.add(buzzer);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            String title = "MOTION DETECTOR - ";
-            if (i == 0) {
-                title += "Johnny";
-            } else if(i == 1) {
-                title += "Alexandre";
-            } else {
-                title += "Katharina";
-            }
-            var motion = TileBuilder.create()
-                .skinType(SkinType.TEXT)
-                .prefSize(PREF_WIDTH, PREF_HEIGHT)
-                .title(title)
-                .text("TimeStamp when motion is detected")
-                .description("Timstamp:")
-                .descriptionAlignment(Pos.BASELINE_LEFT)
-                .textVisible(true)
-                .build();
-
-            tiles.add(motion);
-        }
+        createTextTiles("MOTION - ");
 
         for (int i = 0; i < 3; i++) {
             String title = "IMAGE - ";
@@ -178,5 +139,28 @@ public class FXDashboard extends HBox {
             this.getChildren().add(vbox);
         }
         this.setSpacing(5);
+    }
+
+    private void createTextTiles(String title) {
+        for (int i = 0; i < 3; i++) {;
+            if (i == 0) {
+                title += "Johnny";
+            } else if(i == 1) {
+                title += "Alexandre";
+            } else {
+                title += "Katharina";
+            }
+            var buzzer = TileBuilder.create()
+                .skinType(SkinType.TEXT)
+                .prefSize(PREF_WIDTH, PREF_HEIGHT)
+                .title(title)
+                .text("TimeStamp when buzzer is pressed")
+                .description("Timstamp:")
+                .descriptionAlignment(Pos.BASELINE_LEFT)
+                .textVisible(true)
+                .build();
+
+            tiles.add(buzzer);
+        }
     }
 }
