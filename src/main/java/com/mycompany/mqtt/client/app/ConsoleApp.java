@@ -108,8 +108,9 @@ public class ConsoleApp {
     private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
         boolean menu = true;
         while (menu) {
-            String choice = con.readLine();
             System.out.println("Press f to exit back to MainMenu");
+            String choice = con.readLine();
+
             switch (choice) {
                 case "f":
                     instance.stopBuzzerSensor();

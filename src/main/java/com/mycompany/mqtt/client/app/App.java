@@ -2,8 +2,6 @@ package com.mycompany.mqtt.client.app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.application.Platform;
@@ -14,15 +12,18 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 public class App extends Application {
 
     @Override
-    public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
+    public void start(Stage stage) throws IOException {
 
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        var scene = new Scene(new FXDashboard(), 1215, 600);
         stage.setScene(scene);
         stage.show();
+
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
+
 
     public static void main(String[] args) throws IOException, InterruptedException{
 //        launch();
@@ -46,5 +47,4 @@ public class App extends Application {
     }
    
     }
-
 }
