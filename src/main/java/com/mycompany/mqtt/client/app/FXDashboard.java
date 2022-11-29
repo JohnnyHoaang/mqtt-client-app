@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -85,26 +86,28 @@ public class FXDashboard extends HBox {
             hboxs.add(row);
         }
 
-        createTextTiles("BUZZER - ");
+        createTextTiles("BUZZER - ", "Timesatamp when buzzer is pressed");
 
-        createTextTiles("MOTION - ");
+        createTextTiles("MOTION - ", "Timestamp when motion is detected");
 
         for (int i = 0; i < 3; i++) {
-            String title = "IMAGE - ";
+            String prefix = "IMAGE - ";
+            String title = "";
             if (i == 0) {
-                title += "Johnny";
+                title = prefix + "Johnny";
             } else if(i == 1) {
-                title += "Alexandre";
+                title = prefix +"Alexandre";
             } else {
-                title += "Katharina";
+                title = prefix + "Katharina";
             }
             var image = TileBuilder.create()
-                .skinType(SkinType.TEXT)
+                .skinType(SkinType.IMAGE)
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
                 .title(title)
+                .image(null)
+                .imageMask(ImageMask.RECTANGULAR)
                 .text("Image taken when motion is detected")
-                .description("Timstamp:")
-                .descriptionAlignment(Pos.BASELINE_LEFT)
+                .textAlignment(TextAlignment.LEFT)
                 .textVisible(true)
                 .build();
 
@@ -141,20 +144,21 @@ public class FXDashboard extends HBox {
         this.setSpacing(5);
     }
 
-    private void createTextTiles(String title) {
+    private void createTextTiles(String prefix, String desc) {
+        var title = "";
         for (int i = 0; i < 3; i++) {;
             if (i == 0) {
-                title += "Johnny";
+                title = prefix + "Johnny";
             } else if(i == 1) {
-                title += "Alexandre";
+                title = prefix + "Alexandre";
             } else {
-                title += "Katharina";
+                title = prefix + "Katharina";
             }
             var buzzer = TileBuilder.create()
                 .skinType(SkinType.TEXT)
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
                 .title(title)
-                .text("TimeStamp when buzzer is pressed")
+                .text(desc)
                 .description("Timstamp:")
                 .descriptionAlignment(Pos.BASELINE_LEFT)
                 .textVisible(true)
