@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
  */
 public class BuzzerApp extends Sensor{
    
-    public BuzzerApp(MqttRun mqtt, Mqtt5BlockingClient client){
-        super("./pi-sensor-code/Doorbell.py", mqtt, client);
+    public BuzzerApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
+        super("./pi-sensor-code/Doorbell.py", mqtt, client, topicUser);
     }
     
     public void sensorLoop(){
@@ -30,7 +30,7 @@ public class BuzzerApp extends Sensor{
                             && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
                         System.out.println("Confirmation: Buzzer turned on: " + LocalDateTime.now());
-                        sendSensorData("example/buzzer/");
+                        sendSensorData("example/buzzer/"+getTopicUser()+"/");
                         
                     }
                     previousOutput = this.getOutput();

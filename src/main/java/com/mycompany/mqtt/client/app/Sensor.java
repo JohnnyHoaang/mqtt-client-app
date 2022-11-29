@@ -6,6 +6,7 @@ package com.mycompany.mqtt.client.app;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import java.time.LocalDateTime;
+import org.json.JSONObject;
 
 /**
  *
@@ -18,12 +19,14 @@ public abstract class Sensor {
     private ProcessBuilderHandler processBuilder;
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
+    private String topicUser;
 
-    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client ){
+    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client, String topicUser ){
         this.filePath = filePath;
         this.client = client;
         this.mqtt = mqtt;
         this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
+        this.topicUser = topicUser;
     }
     public void getSensorInfo(){
         try {
@@ -50,14 +53,18 @@ public abstract class Sensor {
         }
     }
     public void sendSensorData(String topic){
-        String message = String.format("{ time: %s }", LocalDateTime.now());
-        mqtt.publishMessage(client, topic, message.getBytes());
+        JSONObject jsonMessage = new JSONObject();
+        jsonMessage.put("time",LocalDateTime.now());
+        mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());
     }
     public MqttRun getMqtt(){
         return this.mqtt;
     }
     public Mqtt5BlockingClient getClient(){
         return this.client;
+    }
+    public String getTopicUser(){
+        return this.topicUser;
     }
     abstract void sensorLoop();
     
