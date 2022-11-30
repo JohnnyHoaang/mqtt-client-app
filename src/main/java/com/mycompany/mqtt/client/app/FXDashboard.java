@@ -18,6 +18,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
 public class FXDashboard extends HBox {
+    
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -25,8 +26,6 @@ public class FXDashboard extends HBox {
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
-
-    // public String test = "";
 
     public FXDashboard(MqttRun mqtt, String topicUser){
         
@@ -50,7 +49,7 @@ public class FXDashboard extends HBox {
                 titleHum = "Humidity - Johnny";
             } else if(i == 1) {
                 titleTemp = "Temperature - Alexander";
-                titleHum = "Humidity - Alexandre";
+                titleHum = "Humidity - Alexander";
             } else {
                 titleTemp = "Temperature - Katharina";
                 titleHum = "Humidity - Katharina";
@@ -100,7 +99,6 @@ public class FXDashboard extends HBox {
 
         // call method to create text tiles for buzzer and motion timestamps
         createTextTiles("BUZZER - ", "Timesatamp when buzzer is pressed");
-
         createTextTiles("MOTION - ", "Timestamp when motion is detected");
 
         // Create image tile for each member
@@ -162,7 +160,6 @@ public class FXDashboard extends HBox {
         this.setSpacing(5);
 
         retrieveData(); 
-
     }
 
     /**
@@ -199,7 +196,9 @@ public class FXDashboard extends HBox {
      */
     public void retrieveData(){
 
+        // subscribe to all topics under sensor
         mqtt.subscribeToTopic(client,"sensor/#");
+
         mqtt.messageReceived(client);
        
         Task task = new Task<Void>() {
@@ -209,16 +208,16 @@ public class FXDashboard extends HBox {
                        break;
                     }
                     try {
+                        // used to update display with data retieved from mqtt server
                         Thread.sleep(100);
-                   Platform.runLater(new Runnable(){
-               @Override
-                 public void run(){
-                    handleResult(mqtt.getResult());                 
-                   }});
+                        Platform.runLater(new Runnable(){
+                        @Override
+                        public void run(){
+                            handleResult(mqtt.getResult());                 
+                        }});
                     } catch(Exception e){
 
                     }
-
                 }
                 return null;
             }
@@ -233,9 +232,12 @@ public class FXDashboard extends HBox {
     private void handleResult(String result){
         
         try {
+            // parse data to get topic and info
             String [] informations = result.split("'");
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
+
+            // check sensor type and display accordingly
             if(topics[0].equals("sensor")){
                 String sensorType = topics[1];
                 String user = topics[2];
@@ -250,7 +252,6 @@ public class FXDashboard extends HBox {
                         String motionDate = json.get("time").toString().substring(1, 10);
                         String motionTime = json.get("time").toString().substring(11, 22);
                         String motionTimestamp = motionDate + " | " + motionTime;
-
                         updateMotionTile(user, motionTimestamp);
                         break;
                     case "humidity":
