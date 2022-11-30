@@ -9,6 +9,7 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Base64;
 import java.util.Enumeration;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -133,9 +134,9 @@ public class LogicHandler {
         String alias = enumeration.nextElement();
         Key [] keys = this.extractKeys(ks, pass);
         JSONObject json = new JSONObject();
-        byte[] bytes = Base64.getEncoder().encode(json.toString().getBytes());
-        json.put("certificate", ks.getCertificate(alias));
-        mqtt.publishMessage(client, "certificate/"+topicUser+"/", bytes);
+        String encodedString = Base64.getEncoder().encodeToString(ks.getCertificate(alias).toString().getBytes());
+        json.put("certificate", encodedString);
+        mqtt.publishMessage(client, "certificate/"+topicUser+"/", json.toString().getBytes());
         
     }
     public void startHumiditySensor(){
