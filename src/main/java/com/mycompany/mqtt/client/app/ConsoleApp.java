@@ -23,10 +23,10 @@ public class ConsoleApp {
     private Console con = System.console();
     private KeyStore ks = null;
     private Key[] keys;
-    private MqttRun mqtt = new MqttRun();
-    private Mqtt5BlockingClient client;
-    private String user;
-    private LogicHandler instance = new LogicHandler(mqtt, client, user);
+    public static MqttRun mqtt = new MqttRun();
+    public static Mqtt5BlockingClient client;
+    public static String user;
+    private LogicHandler instance = new LogicHandler();
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
         ConsoleApp app = new ConsoleApp();
@@ -66,8 +66,9 @@ public class ConsoleApp {
                     break;
 
                 case "3":
+                    System.out.println("Enter your topic user name");
+                    user = con.readLine();
                     client = mqtt.run();
-                    user = mqtt.username;
                     break;
 
                 case "4":
@@ -92,6 +93,7 @@ public class ConsoleApp {
                     sensorMenu();
                     break;
                 case "9":
+                    
                     instance.startBuzzerSensor();
                     instance.startHumiditySensor();
                     instance.startMotionSensor();

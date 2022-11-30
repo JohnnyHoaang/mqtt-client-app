@@ -10,7 +10,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
  * JavaFX App
  */
 public class App extends Application{
-    private FXDashboard dashboard;
+    // private FXDashboard dashboard;
     private static MqttRun mqtt;
     @Override
     public void start(Stage stage) throws IOException {

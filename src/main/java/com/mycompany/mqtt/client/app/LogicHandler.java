@@ -19,20 +19,11 @@ import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
-
 public class LogicHandler {
 
-    private HumidityApp humiditySensor;
-    private BuzzerApp buzzerSensor;
-    private MotionSensorApp motionSensor;
-
-    public LogicHandler(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser) {
-        humiditySensor = new HumidityApp(mqtt, client, topicUser);
-        buzzerSensor = new BuzzerApp(mqtt, client, topicUser);
-        motionSensor = new MotionSensorApp(mqtt, client, topicUser);
-    }
-
+    private HumidityApp humiditySensor = new HumidityApp(ConsoleApp.mqtt, ConsoleApp.client, ConsoleApp.user);
+    private BuzzerApp buzzerSensor  = new BuzzerApp(ConsoleApp.mqtt, ConsoleApp.client, ConsoleApp.user);
+    private MotionSensorApp motionSensor = new MotionSensorApp(ConsoleApp.mqtt, ConsoleApp.client, ConsoleApp.user);
 
     Console con = System.console();
 
