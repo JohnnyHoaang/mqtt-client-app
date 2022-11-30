@@ -197,6 +197,7 @@ public class FXDashboard extends HBox {
     public void retrieveData(){
 
         // subscribe to all topics under sensor
+        mqtt.subscribeToTopic(client, "certificate/#");
         mqtt.subscribeToTopic(client,"sensor/#");
 
         mqtt.messageReceived(client);
@@ -230,13 +231,14 @@ public class FXDashboard extends HBox {
      * @param result
      */
     private void handleResult(String result){
-        
         try {
             // parse data to get topic and info
             String [] informations = result.split("'");
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
-
+            if(json.has("certificate")){
+                System.out.println("Certificate received");
+            }
             // check sensor type and display accordingly
             if(topics[0].equals("sensor")){
                 String sensorType = topics[1];

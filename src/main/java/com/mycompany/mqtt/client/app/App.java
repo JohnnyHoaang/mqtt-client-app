@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.application.Platform;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import java.security.*;
+import java.util.Enumeration;
 /**
  * JavaFX App
  */
@@ -27,8 +29,8 @@ public class App extends Application{
         });
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException{
+    public static void main(String[] args) throws IOException, InterruptedException, KeyStoreException{
         launch();
-
+        
     }
 }

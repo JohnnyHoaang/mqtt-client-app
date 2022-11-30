@@ -3,21 +3,15 @@ package com.mycompany.mqtt.client.app;
 import java.io.Console;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import org.json.*;
 
 public class LogicHandler {
 
@@ -130,7 +124,18 @@ public class LogicHandler {
         
         return validSignature;
     }
-
+    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser) throws KeyStoreException{
+        var console = System.console();
+        char [] pass = console.readPassword("Enter password: ");
+        KeyStore ks = this.loadKeystore("./JohnnyECcertif.ks", pass);
+        Enumeration<String> enumeration = ks.aliases();
+        String alias = enumeration.nextElement();
+        Key [] keys = this.extractKeys(ks, pass);
+        JSONObject json = new JSONObject();
+        json.put("certificate", ks.getCertificate(alias).toString());
+        mqtt.publishMessage(client, "certificate/"+topicUser+"/", json.toString().getBytes());
+        
+    }
     public void startHumiditySensor(){
         System.out.println("Entered");
         this.humiditySensor.sensorLoop();

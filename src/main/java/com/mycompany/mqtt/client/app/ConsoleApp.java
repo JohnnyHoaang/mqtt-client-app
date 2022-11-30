@@ -32,13 +32,13 @@ public class ConsoleApp {
     // public static String user;
     private LogicHandler instance = new LogicHandler();
 
-    public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, InterruptedException {
         ConsoleApp app = new ConsoleApp();
         
         app.menu();
     }
 
-    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, InterruptedException {
         boolean menu = true;
         while (menu) {
             System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
@@ -67,6 +67,8 @@ public class ConsoleApp {
                 case "3":
                     topicUser = con.readLine("Enter topic user name");
                     client = mqtt.run();
+                    instance.sendCertificate(mqtt, client, topicUser);
+                    
                     humidity = new HumidityApp(mqtt , client, topicUser);
                     humidity.sensorLoop();
                     buzzer = new BuzzerApp(mqtt, client, topicUser);
@@ -91,7 +93,7 @@ public class ConsoleApp {
         }
     }
 
-    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, InterruptedException {
         boolean menu = true;
         while (menu) {
             System.out.println("Press f to exit back to MainMenu");
