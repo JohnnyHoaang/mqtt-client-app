@@ -13,7 +13,6 @@ import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.util.Scanner;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
@@ -68,11 +67,11 @@ public class ConsoleApp {
                     topicUser = con.readLine("Enter topic user name");
                     client = mqtt.run();
                     humidity = new HumidityApp(mqtt , client, topicUser);
-                    humidity.sensorLoop();
+                    humidity.sensorLoop((PrivateKey)keys[1]);
                     buzzer = new BuzzerApp(mqtt, client, topicUser);
-                    buzzer.sensorLoop();
+                    buzzer.sensorLoop((PrivateKey)keys[1]);
                     motion = new MotionSensorApp(mqtt, client, topicUser);
-                    motion.sensorLoop();
+                    motion.sensorLoop((PrivateKey)keys[1]);
                     sensorMenu();
                     break;
                    

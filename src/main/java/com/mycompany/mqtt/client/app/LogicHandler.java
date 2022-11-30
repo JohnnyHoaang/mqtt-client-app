@@ -130,25 +130,5 @@ public class LogicHandler {
         
         return validSignature;
     }
-
-    public void startHumiditySensor(){
-        System.out.println("Entered");
-        this.humiditySensor.sensorLoop();
-    }
-    public void stopHumiditySensor(){
-        this.humiditySensor.stopThread();
-    }
-    public void startBuzzerSensor(){
-        this.buzzerSensor.sensorLoop();
-    }
-    public void stopBuzzerSensor(){
-        this.buzzerSensor.stopThread();
-    }
-    public void startMotionSensor(){
-        this.motionSensor.sensorLoop();
-    }
-    public void stopMotionSensor(){
-        this.motionSensor.stopThread();
-    }
     
 }

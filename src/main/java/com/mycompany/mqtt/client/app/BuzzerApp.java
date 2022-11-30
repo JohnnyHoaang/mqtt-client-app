@@ -5,6 +5,8 @@
 package com.mycompany.mqtt.client.app;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+
+import java.security.PrivateKey;
 import java.time.LocalDateTime;
 
 /**
@@ -17,7 +19,7 @@ public class BuzzerApp extends Sensor{
         super("./pi-sensor-code/Doorbell.py", mqtt, client, topicUser);
     }
     
-    public void sensorLoop(){
+    public void sensorLoop(PrivateKey key){
         Thread thread = new Thread(()-> {
             try {
                 String previousOutput = "";
@@ -30,7 +32,7 @@ public class BuzzerApp extends Sensor{
                             && !previousOutput.equals(buzzerOn)){
                         // TODO: Notify to MQTT server if buzzer turned on 
                         System.out.println("Confirmation: Buzzer turned on: " + LocalDateTime.now());
-                        sendSensorData("sensor/buzzer/"+getTopicUser()+"/");
+                        sendSensorData("sensor/buzzer/"+getTopicUser()+"/", key);
                         
                     }
                     previousOutput = this.getOutput();
