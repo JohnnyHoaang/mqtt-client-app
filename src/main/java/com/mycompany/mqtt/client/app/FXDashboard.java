@@ -41,7 +41,6 @@ public class FXDashboard extends HBox {
 
     private void buildScreen() throws IOException {
 
-
         // tiles for temperature and humidity, one for each member
         for (int i = 0; i < 3; i++) {
             String titleTemp = "";
@@ -128,7 +127,6 @@ public class FXDashboard extends HBox {
 
             tiles.add(image);
         }
-
 
         VBox tilesColumnTempHumid = new VBox();
 
@@ -243,12 +241,17 @@ public class FXDashboard extends HBox {
                 String user = topics[2];
                 switch(sensorType){
                     case "buzzer":
-                        String buzzerTime = json.get("time").toString();
-                        updateBuzzerTile(user, buzzerTime);
+                        String buzzerDate = json.get("time").toString().substring(0, 10);
+                        String buzzerTime = json.get("time").toString().substring(11, 22);
+                        String buzzerTimestamp = buzzerDate + " | " + buzzerTime;
+                        updateBuzzerTile(user, buzzerTimestamp);
                         break;
                     case "motion":
-                        String motionTime = json.get("time").toString();
-                        updateMotionTile(user, motionTime);
+                        String motionDate = json.get("time").toString().substring(1, 10);
+                        String motionTime = json.get("time").toString().substring(11, 22);
+                        String motionTimestamp = motionDate + " | " + motionTime;
+
+                        updateMotionTile(user, motionTimestamp);
                         break;
                     case "humidity":
                         double temperature = Double.parseDouble(json.get("temperature").toString());
@@ -281,7 +284,6 @@ public class FXDashboard extends HBox {
             tiles.get(8).setDescription(time);
         }
     }
-
 
     /**
      * Update corresponding tiles for motion sensor
