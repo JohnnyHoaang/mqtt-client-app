@@ -7,7 +7,7 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -132,7 +132,8 @@ public class LogicHandler {
         String alias = enumeration.nextElement();
         Key [] keys = this.extractKeys(ks, pass);
         JSONObject json = new JSONObject();
-        json.put("certificate", ks.getCertificate(alias).toString());
+        String encodedString = Base64.getEncoder().encodeToString(ks.getCertificate(alias).toString().getBytes());
+        json.put("certificate", encodedString);
         mqtt.publishMessage(client, "certificate/"+topicUser+"/", json.toString().getBytes());
         
     }
