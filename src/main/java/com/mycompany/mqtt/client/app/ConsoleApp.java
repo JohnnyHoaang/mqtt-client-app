@@ -25,6 +25,7 @@ public class ConsoleApp {
     private Key[] keys;
     public static MqttRun mqtt = new MqttRun();
     public static Mqtt5BlockingClient client;
+    private String topicUser = "";
     // public static String user;
     private LogicHandler instance = new LogicHandler();
 
@@ -66,6 +67,7 @@ public class ConsoleApp {
                     break;
 
                 case "3":
+                    topicUser = con.readLine("Enter topic user name");
                     client = mqtt.run();
                     break;
 
@@ -92,9 +94,12 @@ public class ConsoleApp {
                     break;
                 case "9":
                     
-                    instance.startBuzzerSensor();
-                    instance.startHumiditySensor();
-                    instance.startMotionSensor();
+                    HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
+                    humidity.sensorLoop();
+                    BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
+                    buzzer.sensorLoop();
+                    MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
+                    motion.sensorLoop();
                     sensorMenu();
                     break;
                 case "10":

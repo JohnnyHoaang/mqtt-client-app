@@ -185,13 +185,13 @@ public class FXDashboard extends HBox {
         }
     }
     public void retrieveData(){
-        HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
-        humidity.sensorLoop();
-        BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
-        buzzer.sensorLoop();
-        MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
-        motion.sensorLoop();
-        mqtt.subscribeToTopic(client,"example/+/katharina/");
+        // HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
+        // humidity.sensorLoop();
+        // BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
+        // buzzer.sensorLoop();
+        // MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
+        // motion.sensorLoop();
+        mqtt.subscribeToTopic(client,"example/#");
         mqtt.messageReceived(client);
        
         Task task = new Task<Void>() {
@@ -219,32 +219,37 @@ public class FXDashboard extends HBox {
     }
     private void handleResult(String result){
         
-        String [] informations = result.split("'");
-        JSONObject json = new JSONObject(informations[1]);
-        String []topics = informations[0].split("/");
-        if(topics[0].equals("example")){
-            String sensorType = topics[1];
-            String user = topics[2];
-            switch(sensorType){
-                case "buzzer":
-                    String buzzerTime = json.get("time").toString();
-                    updateBuzzerTile(user, buzzerTime);
-                    break;
-                case "motion":
-                    String motionTime = json.get("time").toString();
-                    updateMotionTile(user, motionTime);
-                    break;
-                case "humidity":
-                    double temperature = Double.parseDouble(json.get("temperature").toString());
-                    double humidity = Double.parseDouble(json.get("humidity").toString());
-                    updateTempHum(user, temperature, humidity);
-                    break;
-                default:
-                    break;
+        try {
+            String [] informations = result.split("'");
+            JSONObject json = new JSONObject(informations[1]);
+            String []topics = informations[0].split("/");
+            if(topics[0].equals("example")){
+                String sensorType = topics[1];
+                String user = topics[2];
+                switch(sensorType){
+                    case "buzzer":
+                        String buzzerTime = json.get("time").toString();
+                        updateBuzzerTile(user, buzzerTime);
+                        break;
+                    case "motion":
+                        String motionTime = json.get("time").toString();
+                        updateMotionTile(user, motionTime);
+                        break;
+                    case "humidity":
+                        double temperature = Double.parseDouble(json.get("temperature").toString());
+                        double humidity = Double.parseDouble(json.get("humidity").toString());
+                        updateTempHum(user, temperature, humidity);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                
             }
-        } else {
-            
+        } catch (Exception e) {
+            // TODO: handle exception
         }
+
     }
     
     private void updateBuzzerTile(String user, String time) {
