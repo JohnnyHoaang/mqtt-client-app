@@ -3,6 +3,7 @@ module com.mycompany.mqtt.client.app {
     requires com.hivemq.client.mqtt;
     requires java.logging;
     requires eu.hansolo.tilesfx;
+    requires org.json;
     exports com.mycompany.mqtt.client.app;
     
 }

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HumidityAppTest {
     @Test
     public void getHumidityTest() {
-        HumidityApp humidityApp = new HumidityApp(null, null);
+        HumidityApp humidityApp = new HumidityApp(null, null, null);
     }
     
 }

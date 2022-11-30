@@ -31,19 +31,14 @@ public class FXDashboard extends HBox {
 
     public FXDashboard(MqttRun mqtt, String topicUser){
         
-            this.mqtt = mqtt;
-            this.client = mqtt.run();
-            this.topicUser = topicUser;
-            try {
-                this.buildScreen();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-            
-            
-    
-        
-        
+        this.mqtt = mqtt;
+        this.client = mqtt.run();
+        this.topicUser = topicUser;
+        try {
+            this.buildScreen();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private void buildScreen() throws IOException {
@@ -57,7 +52,7 @@ public class FXDashboard extends HBox {
                 titleTemp = "Temperature - Johnny";
                 titleHum = "Humidity - Johnny";
             } else if(i == 1) {
-                titleTemp = "Temperature - Alexandre";
+                titleTemp = "Temperature - Alexander";
                 titleHum = "Humidity - Alexandre";
             } else {
                 titleTemp = "Temperature - Katharina";
@@ -116,7 +111,7 @@ public class FXDashboard extends HBox {
             if (i == 0) {
                 title = prefix + "Johnny";
             } else if(i == 1) {
-                title = prefix +"Alexandre";
+                title = prefix +"Alexander";
             } else {
                 title = prefix + "Katharina";
             }
@@ -164,9 +159,6 @@ public class FXDashboard extends HBox {
 
         runSensors(); 
 
-                
-         
-
     }
 
     private void createTextTiles(String prefix, String desc) {
@@ -175,7 +167,7 @@ public class FXDashboard extends HBox {
             if (i == 0) {
                 title = prefix + "Johnny";
             } else if(i == 1) {
-                title = prefix + "Alexandre";
+                title = prefix + "Alexander";
             } else {
                 title = prefix + "Katharina";
             }
@@ -193,16 +185,15 @@ public class FXDashboard extends HBox {
         }
     }
     public void runSensors(){
-        HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
-        humidity.sensorLoop();
-        BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
-        buzzer.sensorLoop();
-        MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
-        motion.sensorLoop();
-        mqtt.subscribeToTopic(client,"example/+/johnny/");
+        // HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
+        // humidity.sensorLoop();
+        // BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
+        // buzzer.sensorLoop();
+        // MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
+        // motion.sensorLoop();
+        mqtt.subscribeToTopic(client,"example/+/katharina/");
         mqtt.messageReceived(client);
        
-
         Task task = new Task<Void>() {
             @Override public Void call() {
                 while(true){
@@ -237,23 +228,16 @@ public class FXDashboard extends HBox {
             switch(sensorType){
                 case "buzzer":
                     String buzzerTime = json.get("time").toString();
-                    if(user.equals("johnny")){
-                        tiles.get(6).setDescription(buzzerTime);
-                    }
+                    updateBuzzerTile(user, buzzerTime);
                     break;
                 case "motion":
                     String motionTime = json.get("time").toString();
-                    if(user.equals("johnny")){
-                        tiles.get(9).setDescription(motionTime);
-                    }
+                    updateMotionTile(user, motionTime);
                     break;
                 case "humidity":
-                    double humidity = Double.parseDouble(json.get("humidity").toString());
                     double temperature = Double.parseDouble(json.get("temperature").toString());
-                    if(user.equals("johnny")){
-                        tiles.get(0).setValue(temperature);
-                        tiles.get(1).setValue(humidity);
-                    }
+                    double humidity = Double.parseDouble(json.get("humidity").toString());
+                    updateTempHum(user, temperature, humidity);
                     break;
                 default:
                     break;
@@ -263,5 +247,36 @@ public class FXDashboard extends HBox {
         }
     }
     
-    
+    private void updateBuzzerTile(String user, String time) {
+        if(user.equals("johnny")){
+            tiles.get(6).setDescription(time);
+        } else if(user.equals("alexander")) {
+            tiles.get(7).setDescription(time);
+        } else if(user.equals("katharina")) {
+            tiles.get(8).setDescription(time);
+        }
+    }
+
+    private void updateMotionTile(String user, String time) {
+        if(user.equals("johnny")){
+            tiles.get(6).setDescription(time);
+        } else if(user.equals("alexander")) {
+            tiles.get(7).setDescription(time);
+        } else if(user.equals("katharina")) {
+            tiles.get(8).setDescription(time);
+        }
+    }
+
+    private void updateTempHum(String user, double temperature, double humidity) {
+        if(user.equals("johnny")){
+            tiles.get(0).setValue(temperature);
+            tiles.get(1).setValue(humidity);
+        } else if (user.equals("alexander")) {
+            tiles.get(2).setValue(temperature);
+            tiles.get(3).setValue(humidity);
+        } else if (user.equals("katharina")) {
+            tiles.get(4).setValue(temperature);
+            tiles.get(5).setValue(humidity);
+        }
+    }
 }
