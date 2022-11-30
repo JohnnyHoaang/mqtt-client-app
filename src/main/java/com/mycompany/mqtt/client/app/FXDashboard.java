@@ -106,7 +106,7 @@ public class FXDashboard extends HBox {
             hboxs.add(row);
         }
 
-        createTextTiles("BUZZER - ", "Timesatamp when buzzer is pressed");
+        createTextTiles("BUZZER - ", "Timestamp when buzzer is pressed");
 
         createTextTiles("MOTION - ", "Timestamp when motion is detected");
 
@@ -184,7 +184,7 @@ public class FXDashboard extends HBox {
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
                 .title(title)
                 .text(desc)
-                .description("Timstamp:")
+                .description("Timestamp:")
                 .descriptionAlignment(Pos.BASELINE_LEFT)
                 .textVisible(true)
                 .build();
