@@ -34,7 +34,7 @@ public class HumidityApp extends Sensor{
                     this.humidity = Double.parseDouble(humidityArr[0]);
                     this.temperature = Double.parseDouble(humidityArr[1]);
                     // Set tile info with provided output
-                    sendSensorData("example/humidity/"+getTopicUser()+"/");
+                    sendSensorData("sensor/humidity/"+getTopicUser()+"/");
                     Thread.sleep(3000);
                 }
             } catch(Exception e) {

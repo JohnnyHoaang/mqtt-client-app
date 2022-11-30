@@ -23,9 +23,12 @@ public class ConsoleApp {
     private Console con = System.console();
     private KeyStore ks = null;
     private Key[] keys;
-    public static MqttRun mqtt = new MqttRun();
-    public static Mqtt5BlockingClient client;
+    private MqttRun mqtt = new MqttRun();
+    private Mqtt5BlockingClient client;
     private String topicUser = "";
+    private HumidityApp humidity;
+    private BuzzerApp buzzer;
+    private MotionSensorApp motion;
     // public static String user;
     private LogicHandler instance = new LogicHandler();
 
@@ -69,6 +72,13 @@ public class ConsoleApp {
                 case "3":
                     topicUser = con.readLine("Enter topic user name");
                     client = mqtt.run();
+                    humidity = new HumidityApp(mqtt , client, topicUser);
+                    humidity.sensorLoop();
+                    buzzer = new BuzzerApp(mqtt, client, topicUser);
+                    buzzer.sensorLoop();
+                    motion = new MotionSensorApp(mqtt, client, topicUser);
+                    motion.sensorLoop();
+                    sensorMenu();
                     break;
 
                 case "4":
@@ -77,32 +87,6 @@ public class ConsoleApp {
                     break;
 
                 case "5":
-                    writeMessage();
-                    break;
-
-                case "6":
-                    instance.startBuzzerSensor();
-                    sensorMenu();
-                    break;
-                case "7":
-                    instance.startHumiditySensor();
-                    sensorMenu();
-                    break;
-                case "8":
-                    instance.startMotionSensor();
-                    sensorMenu();
-                    break;
-                case "9":
-                    
-                    HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
-                    humidity.sensorLoop();
-                    BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
-                    buzzer.sensorLoop();
-                    MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
-                    motion.sensorLoop();
-                    sensorMenu();
-                    break;
-                case "10":
                     System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
@@ -120,9 +104,9 @@ public class ConsoleApp {
 
             switch (choice) {
                 case "f":
-                    instance.stopBuzzerSensor();
-                    instance.stopHumiditySensor();
-                    instance.stopMotionSensor();
+                    humidity.stopThread();
+                    buzzer.stopThread();;
+                    motion.stopThread();;
                     menu();
                     break;
             
@@ -185,6 +169,7 @@ public class ConsoleApp {
         
     }
 
+    // TODO: potentially modify to only sign data sent
     private void writeMessage() {
         System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
         System.out.println("\nFirst please enter the topic you wish to subscribe to:");

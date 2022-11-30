@@ -20,7 +20,6 @@ import org.json.*;
 public class FXDashboard extends HBox {
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
-    private String topicUser;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
@@ -33,7 +32,6 @@ public class FXDashboard extends HBox {
         
         this.mqtt = mqtt;
         this.client = mqtt.run();
-        this.topicUser = topicUser;
         try {
             this.buildScreen();
         } catch (IOException e){
@@ -101,10 +99,12 @@ public class FXDashboard extends HBox {
             hboxs.add(row);
         }
 
+        // call method to create text tiles for buzzer and motion timestamps
         createTextTiles("BUZZER - ", "Timesatamp when buzzer is pressed");
 
         createTextTiles("MOTION - ", "Timestamp when motion is detected");
 
+        // Create image tile for each member
         for (int i = 0; i < 3; i++) {
             String prefix = "IMAGE - ";
             String title = "";
@@ -128,13 +128,19 @@ public class FXDashboard extends HBox {
 
             tiles.add(image);
         }
-        num = 6;
+
+
         VBox tilesColumnTempHumid = new VBox();
+
+        // add tiles to vbox
         for (HBox hBox : hboxs) {
             tilesColumnTempHumid.getChildren().add(hBox);
         }
 
         vboxs.add(tilesColumnTempHumid);
+
+        // indicate where to start reading the tile list
+        num = 6;
         for (int i = 0; i < 3; i++) {
             
             var column = new VBox();
@@ -161,6 +167,11 @@ public class FXDashboard extends HBox {
 
     }
 
+    /**
+     * Create text tiles for timestamps for each member
+     * @param prefix
+     * @param desc
+     */
     private void createTextTiles(String prefix, String desc) {
         var title = "";
         for (int i = 0; i < 3; i++) {;
@@ -176,7 +187,7 @@ public class FXDashboard extends HBox {
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
                 .title(title)
                 .text(desc)
-                .description("Timstamp:")
+                .description("")
                 .descriptionAlignment(Pos.BASELINE_LEFT)
                 .textVisible(true)
                 .build();
@@ -184,14 +195,13 @@ public class FXDashboard extends HBox {
             tiles.add(buzzer);
         }
     }
+
+    /**
+     * Retieve sensor data from the mqtt server
+     */
     public void retrieveData(){
-        // HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
-        // humidity.sensorLoop();
-        // BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
-        // buzzer.sensorLoop();
-        // MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
-        // motion.sensorLoop();
-        mqtt.subscribeToTopic(client,"example/#");
+
+        mqtt.subscribeToTopic(client,"sensor/#");
         mqtt.messageReceived(client);
        
         Task task = new Task<Void>() {
@@ -217,13 +227,18 @@ public class FXDashboard extends HBox {
         };
         new Thread(task).start();
     }
+
+    /**
+     * Parse data accordingly and send to appropriate methods to be displayed
+     * @param result
+     */
     private void handleResult(String result){
         
         try {
             String [] informations = result.split("'");
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
-            if(topics[0].equals("example")){
+            if(topics[0].equals("sensor")){
                 String sensorType = topics[1];
                 String user = topics[2];
                 switch(sensorType){
@@ -252,6 +267,11 @@ public class FXDashboard extends HBox {
 
     }
     
+    /**
+     * Update corresponding tiles for buzzer sensor
+     * @param user
+     * @param time
+     */
     private void updateBuzzerTile(String user, String time) {
         if(user.equals("johnny")){
             tiles.get(6).setDescription(time);
@@ -262,16 +282,27 @@ public class FXDashboard extends HBox {
         }
     }
 
+
+    /**
+     * Update corresponding tiles for motion sensor
+     * @param user
+     * @param time
+     */
     private void updateMotionTile(String user, String time) {
         if(user.equals("johnny")){
-            tiles.get(6).setDescription(time);
+            tiles.get(9).setDescription(time);
         } else if(user.equals("alexander")) {
-            tiles.get(7).setDescription(time);
+            tiles.get(10).setDescription(time);
         } else if(user.equals("katharina")) {
-            tiles.get(8).setDescription(time);
+            tiles.get(11).setDescription(time);
         }
     }
 
+    /**
+     * Update corresponding tiles for temperature/humididty sensor
+     * @param user
+     * @param time
+     */
     private void updateTempHum(String user, double temperature, double humidity) {
         if(user.equals("johnny")){
             tiles.get(0).setValue(temperature);
