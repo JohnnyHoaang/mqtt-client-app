@@ -21,11 +21,12 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 public class ConsoleApp {
 
     private Console con = System.console();
-    private LogicHandler instance = new LogicHandler();
     private KeyStore ks = null;
     private Key[] keys;
     private MqttRun mqtt = new MqttRun();
     private Mqtt5BlockingClient client;
+    private String user;
+    private LogicHandler instance = new LogicHandler(mqtt, client, user);
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
         ConsoleApp app = new ConsoleApp();
@@ -66,6 +67,7 @@ public class ConsoleApp {
 
                 case "3":
                     client = mqtt.run();
+                    user = mqtt.username;
                     break;
 
                 case "4":

@@ -16,6 +16,9 @@ import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 
 import org.junit.jupiter.api.Test;
+
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +33,11 @@ public class LogicHandlerTest {
      */
     @Test
     public void testLoadKeystore() throws KeyStoreException {
-        LogicHandler instance = new LogicHandler();
+        MqttRun mqtt = new MqttRun();
+        Mqtt5BlockingClient client = mqtt.run();
+        String user = "";
+
+        LogicHandler instance = new LogicHandler(mqtt, client, user);
         KeyStore result = instance.loadKeystore("TestKeystore.ks", "12345678".toCharArray());
         assertEquals(result.getClass(), KeyStore.class);
     }
@@ -40,7 +47,11 @@ public class LogicHandlerTest {
      */
     @Test
     public void testExtractKeys() throws Exception {
-        LogicHandler instance = new LogicHandler();
+        MqttRun mqtt = new MqttRun();
+        Mqtt5BlockingClient client = mqtt.run();
+        String user = "";
+
+        LogicHandler instance = new LogicHandler(mqtt, client, user);
         KeyStore ks = instance.loadKeystore("./TestKeystore.ks", "12345678".toCharArray());
         Key[] keys = instance.extractKeys(ks, "12345678".toCharArray());
         int length = keys.length;
@@ -53,10 +64,14 @@ public class LogicHandlerTest {
      */
     @Test
     public void testValidatePath() {
+        MqttRun mqtt = new MqttRun();
+        Mqtt5BlockingClient client = mqtt.run();
+        String user = "";
+
+        LogicHandler instance = new LogicHandler(mqtt, client, user);
         String validPath = "keystore.ks";
         String invalidPath = "not->valid -path";
 
-        LogicHandler instance = new LogicHandler();
 
         boolean validResult = instance.validatePath(validPath);
         boolean invalidResult = instance.validatePath(invalidPath);
@@ -70,7 +85,11 @@ public class LogicHandlerTest {
      */
     @Test
     public void testValidPassword() {
-        LogicHandler instance = new LogicHandler();
+        MqttRun mqtt = new MqttRun();
+        Mqtt5BlockingClient client = mqtt.run();
+        String user = "";
+
+        LogicHandler instance = new LogicHandler(mqtt, client, user);
         boolean expResult = true;
         boolean result = instance.validatePass("12345678".toCharArray());
         assertEquals(expResult, result);
@@ -78,7 +97,11 @@ public class LogicHandlerTest {
 
     @Test
     public void testInvalidPassword() {
-        LogicHandler instance = new LogicHandler();
+        MqttRun mqtt = new MqttRun();
+        Mqtt5BlockingClient client = mqtt.run();
+        String user = "";
+
+        LogicHandler instance = new LogicHandler(mqtt, client, user);
         boolean expResult = false;
         boolean result = instance.validatePass("1234".toCharArray());
         assertEquals(expResult, result);
@@ -86,7 +109,11 @@ public class LogicHandlerTest {
 
     @Test
     public void testGeneratingSignature() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        LogicHandler instance = new LogicHandler();
+        MqttRun mqtt = new MqttRun();
+        Mqtt5BlockingClient client = mqtt.run();
+        String user = "";
+
+        LogicHandler instance = new LogicHandler(mqtt, client, user);
         KeyStore ks = instance.loadKeystore("TestKeystore.ks", "12345678".toCharArray());
         Key[] keys = instance.extractKeys(ks, "12345678".toCharArray());
         byte[] sig = instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], "hello");

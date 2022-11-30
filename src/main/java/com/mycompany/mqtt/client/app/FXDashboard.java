@@ -27,7 +27,7 @@ public class FXDashboard extends HBox {
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
 
-    public String test = "";
+    // public String test = "";
 
     public FXDashboard(MqttRun mqtt, String topicUser){
         
@@ -157,7 +157,7 @@ public class FXDashboard extends HBox {
         }
         this.setSpacing(5);
 
-        runSensors(); 
+        retrieveData(); 
 
     }
 
@@ -184,7 +184,7 @@ public class FXDashboard extends HBox {
             tiles.add(buzzer);
         }
     }
-    public void runSensors(){
+    public void retrieveData(){
         // HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
         // humidity.sensorLoop();
         // BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);

@@ -15,12 +15,14 @@ import java.util.Scanner;
  * @author 2043441
  */
 public class MqttRun {
+
     private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
+    String username = "";
     public Mqtt5BlockingClient run(){
         final String host = "061d9ed673164eda847418a5b5609221.s2.eu.hivemq.cloud";
-        String username = getUsername();
+        username = getUsername();
         String password = getPassword();
         // String topic = "my/test/topic";
         Mqtt5BlockingClient client = createClient(host);
