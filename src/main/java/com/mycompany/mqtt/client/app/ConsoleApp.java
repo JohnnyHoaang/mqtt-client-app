@@ -45,14 +45,9 @@ public class ConsoleApp {
 
             System.out.println("1. Load a KeyStore\n"
                               +"2. Extract Keys from KeyStore\n"
-                              +"3. Connect to MQTT Client\n"
+                              +"3. Connect to MQTT and Start all sensors\n"
                               +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
-                              +"5. Send a message\n"
-                              +"6. Start Buzzer Sensor\n"
-                              +"7. Start Temperature/Humidity Sensor\n"
-                              +"8. Start Motion Sensor\n"
-                              +"9. Start all sensors\n"
-                              +"10. Exit");
+                              +"5. Exit");
 
             String choice = con.readLine();
             switch (choice) {
@@ -80,7 +75,7 @@ public class ConsoleApp {
                     motion.sensorLoop();
                     sensorMenu();
                     break;
-
+                   
                 case "4":
                     System.out.println(Colors.YELLOW + "\nCERTIFICATE STORING NOT YET AVAILABLE" + Colors.RESET);
                     
