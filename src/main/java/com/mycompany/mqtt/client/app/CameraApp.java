@@ -9,12 +9,11 @@ package com.mycompany.mqtt.client.app;
  * 
  */
 public class CameraApp {
-    
     //Pi4J code to control camera
-    
+    private Camera camera;
     public void execute() {
         System.out.println("\nInitializing the camera");
-        Camera camera = new Camera();
+        camera = new Camera();
 
         System.out.println("Setting up the config to take a picture.");
         System.out.println("/home/" + System.getenv("USER") + "/Pictures/");
@@ -48,4 +47,13 @@ public class CameraApp {
         camera.takeVid(vidconfig);
         System.out.println("Video taken");
     }
+    public String getOutPutPath(){
+        return this.camera.getOutputPath();
+    }
+
+    public int getCameraCount(){
+        return camera.getCameraCount();
+    }
+
+    
 }

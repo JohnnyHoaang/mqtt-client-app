@@ -21,7 +21,8 @@ import java.time.LocalDateTime;
  * on all raspbian-versions after Buster. (Crowpi is raspbian Version Bullseye)
  */
 public class Camera extends Component{
-
+    private static int cameraCount = 0;
+    private String outputPath = "home/" + System.getenv("USER") + "/Pictures";
     /**
      * Constructor for using the picture and video functionality
      * calling the init function to test if a camera is active
@@ -38,6 +39,15 @@ public class Camera extends Component{
     public void takeStill() {
         takeStill(PicConfig.Builder.newInstance()
                 .outputPath("home/" + System.getenv("USER") + "/Pictures").build());
+        cameraCount++;
+    }
+
+    public int getCameraCount(){
+        return cameraCount;
+    }
+
+    public String getOutputPath(){
+        return this.outputPath;
     }
 
     /**
@@ -380,9 +390,11 @@ public class Camera extends Component{
             StringBuilder command = new StringBuilder("libcamera-vid -t " + recordTime);
             if (useDate){
                 command.append(" -o '").append(outputPath)
-                        .append(LocalDateTime.now()).append(".")
+                        //.append(LocalDateTime.now()).append(".")
+                        .append(cameraCount).append(".")
                         .append((encoding != null) ? encoding : "h264")
                         .append("'");
+                cameraCount++;
             }else{
                 command.append(" -o '").append(outputPath).append("'");}
             if(encoding != null){
