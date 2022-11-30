@@ -199,7 +199,7 @@ public class FXDashboard extends HBox {
         buzzer.sensorLoop();
         MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
         motion.sensorLoop();
-        mqtt.subscribeToTopic(client,"example/+/johnny/");
+        mqtt.subscribeToTopic(client,"sensor/+/johnny/");
         mqtt.messageReceived(client);
        
 
@@ -212,7 +212,7 @@ public class FXDashboard extends HBox {
                     try {
                         Thread.sleep(100);
                    Platform.runLater(new Runnable(){
-               @Override
+                 @Override
                  public void run(){
                     handleResult(mqtt.getResult());                 
                    }});
@@ -231,7 +231,7 @@ public class FXDashboard extends HBox {
         String [] informations = result.split("'");
         JSONObject json = new JSONObject(informations[1]);
         String []topics = informations[0].split("/");
-        if(topics[0].equals("example")){
+        if(topics[0].equals("sensor")){
             String sensorType = topics[1];
             String user = topics[2];
             switch(sensorType){
@@ -240,13 +240,13 @@ public class FXDashboard extends HBox {
                     if(user.equals("johnny")){
                         tiles.get(6).setDescription(buzzerTime);
                     }
-                    break;
+                break;
                 case "motion":
                     String motionTime = json.get("time").toString();
                     if(user.equals("johnny")){
                         tiles.get(9).setDescription(motionTime);
                     }
-                    break;
+                break;
                 case "humidity":
                     double humidity = Double.parseDouble(json.get("humidity").toString());
                     double temperature = Double.parseDouble(json.get("temperature").toString());
@@ -254,9 +254,9 @@ public class FXDashboard extends HBox {
                         tiles.get(0).setValue(temperature);
                         tiles.get(1).setValue(humidity);
                     }
-                    break;
+                break;
                 default:
-                    break;
+                break;
             }
         } else {
             
