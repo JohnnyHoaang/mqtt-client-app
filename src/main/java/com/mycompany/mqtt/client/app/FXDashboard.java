@@ -1,7 +1,17 @@
 package com.mycompany.mqtt.client.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Scanner;
 
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -214,7 +224,12 @@ public class FXDashboard extends HBox {
                         Platform.runLater(new Runnable(){
                         @Override
                         public void run(){
-                            handleResult(mqtt.getResult());                 
+                            try {
+                                handleResult(mqtt.getResult());
+                            } catch(IOException e){
+                                e.printStackTrace();
+                            }
+                                             
                         }});
                     } catch(Exception e){
 
@@ -230,14 +245,24 @@ public class FXDashboard extends HBox {
      * Parse data accordingly and send to appropriate methods to be displayed
      * @param result
      */
-    private void handleResult(String result){
+    private void handleResult(String result) throws IOException{
         try {
             // parse data to get topic and info
             String [] informations = result.split("'");
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
             if(json.has("certificate")){
-                System.out.println("Certificate received");
+                byte[] publicBytes = Base64.getDecoder().decode(json.get("certificate").toString());
+                String certificateString = new String(publicBytes);
+                //certificateString = "----BEGIN CERTIFICATE-----\n" + certificateString + "\n-----END CERTIFICATE-----";
+                InputStream is = new ByteArrayInputStream(certificateString.getBytes());
+                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                Certificate cert = cf.generateCertificate(is);
+                // if(cert==null){
+                //     throw new Error("No cert");
+                // } else {
+                //     System.out.println(cert.getPublicKey().toString());
+                // }
             }
             // check sensor type and display accordingly
             if(topics[0].equals("sensor")){
@@ -268,7 +293,7 @@ public class FXDashboard extends HBox {
                 
             }
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
 
     }
