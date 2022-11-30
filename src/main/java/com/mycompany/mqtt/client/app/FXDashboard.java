@@ -187,7 +187,7 @@ public class FXDashboard extends HBox {
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
                 .title(title)
                 .text(desc)
-                .description("")
+                .description("Timestamp")
                 .descriptionAlignment(Pos.BASELINE_LEFT)
                 .textVisible(true)
                 .build();

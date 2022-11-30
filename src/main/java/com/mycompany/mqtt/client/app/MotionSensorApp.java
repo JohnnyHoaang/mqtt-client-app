@@ -21,7 +21,7 @@ public class MotionSensorApp extends Sensor{
                     String motionOn = "motion detected >>>";
                     if(output.equals(motionOn) && !previousOutput.equals(motionOn)){
                         camera.execute();
-                        sendSensorData("example/motion/"+getTopicUser()+"/");
+                        sendSensorData("sensor/motion/"+getTopicUser()+"/");
                     } 
                     previousOutput = this.getOutput();
                 }
