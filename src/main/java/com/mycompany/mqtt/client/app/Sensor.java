@@ -61,7 +61,7 @@ public abstract class Sensor {
         }
     }
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        byte[] signedMessage = instance.generateSignature("SHA256withECDSA", key, LocalDateTime.now().toString());
+        byte[] signedMessage = instance.generateSignature("SunEC", key, LocalDateTime.now().toString());
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time", signedMessage);
         mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());

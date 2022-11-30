@@ -33,7 +33,6 @@ public class BuzzerApp extends Sensor{
                         // TODO: Notify to MQTT server if buzzer turned on 
                         System.out.println("Confirmation: Buzzer turned on: " + LocalDateTime.now());
                         sendSensorData("sensor/buzzer/"+getTopicUser()+"/", key);
-                        
                     }
                     previousOutput = this.getOutput();
                 }
