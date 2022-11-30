@@ -25,7 +25,7 @@ public class ConsoleApp {
     private Key[] keys;
     public static MqttRun mqtt = new MqttRun();
     public static Mqtt5BlockingClient client;
-    public static String user;
+    // public static String user;
     private LogicHandler instance = new LogicHandler();
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
@@ -66,8 +66,6 @@ public class ConsoleApp {
                     break;
 
                 case "3":
-                    System.out.println("Enter your topic user name");
-                    user = con.readLine();
                     client = mqtt.run();
                     break;
 

@@ -185,12 +185,12 @@ public class FXDashboard extends HBox {
         }
     }
     public void retrieveData(){
-        // HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
-        // humidity.sensorLoop();
-        // BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
-        // buzzer.sensorLoop();
-        // MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
-        // motion.sensorLoop();
+        HumidityApp humidity = new HumidityApp(mqtt , client, topicUser);
+        humidity.sensorLoop();
+        BuzzerApp buzzer = new BuzzerApp(mqtt, client, topicUser);
+        buzzer.sensorLoop();
+        MotionSensorApp motion = new MotionSensorApp(mqtt, client, topicUser);
+        motion.sensorLoop();
         mqtt.subscribeToTopic(client,"example/+/katharina/");
         mqtt.messageReceived(client);
        

@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
 
 public class LogicHandler {
 
-    private HumidityApp humiditySensor = new HumidityApp(ConsoleApp.mqtt, ConsoleApp.client, ConsoleApp.user);
-    private BuzzerApp buzzerSensor  = new BuzzerApp(ConsoleApp.mqtt, ConsoleApp.client, ConsoleApp.user);
-    private MotionSensorApp motionSensor = new MotionSensorApp(ConsoleApp.mqtt, ConsoleApp.client, ConsoleApp.user);
+    private HumidityApp humiditySensor = new HumidityApp(null, null, null);
+    private BuzzerApp buzzerSensor  = new BuzzerApp(null, null, null);
+    private MotionSensorApp motionSensor = new MotionSensorApp(null, null, null);
 
     Console con = System.console();
 
