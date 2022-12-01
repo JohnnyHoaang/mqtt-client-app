@@ -23,7 +23,7 @@ public class ConsoleApp {
     private Console con = System.console();
     private KeyStore ks = null;
     private Key[] keys;
-    private MqttRun mqtt = App.mqtt;
+    private MqttRun mqtt = new MqttRun();
     private Mqtt5BlockingClient client;
     private String topicUser = "";
     private HumidityApp humidity;
