@@ -21,10 +21,6 @@ import java.util.regex.Pattern;
 
 public class LogicHandler {
 
-    private HumidityApp humiditySensor = new HumidityApp(null, null, null);
-    private BuzzerApp buzzerSensor  = new BuzzerApp(null, null, null);
-    private MotionSensorApp motionSensor = new MotionSensorApp(null, null, null);
-
     Console con = System.console();
 
     public KeyStore loadKeystore(String path, char[] pass) {

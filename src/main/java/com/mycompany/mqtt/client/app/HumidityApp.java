@@ -23,7 +23,7 @@ import org.json.JSONObject;
 public class HumidityApp extends Sensor{
     private double humidity;
     private double temperature;
-    LogicHandler instance = new LogicHandler();
+
     public HumidityApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
         super("./pi-sensor-code/DHT11.py", mqtt, client, topicUser);
     }
@@ -52,8 +52,8 @@ public class HumidityApp extends Sensor{
     }
     @Override
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        byte[] signedTemp = instance.generateSignature("SHA256withRSA", key, Double.toString(this.temperature));
-        byte[] signedHumidity = instance.generateSignature("SHA256withRSA", key, Double.toString(this.humidity));
+        byte[] signedTemp = getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.temperature));
+        byte[] signedHumidity = getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.humidity));
 
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time",LocalDateTime.now());
