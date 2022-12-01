@@ -43,7 +43,8 @@ public class MotionSensorApp extends Sensor{
     }
 
     @Override
-    public void sendSensorData(String topic) throws IOException{
+    public void sendSensorData(String topic){
+        try{
         //byte[] fileContent = FileUtils.readFileToByteArray(new File(camera.getOutPutPath() + camera.getCameraCount()));
         File f = new File(camera.getOutPutPath() + camera.getCameraCount());
         FileInputStream fin = new FileInputStream(f);
@@ -55,6 +56,11 @@ public class MotionSensorApp extends Sensor{
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("pic",encodedString);
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
+        }
+        catch(IOException exception){
+            System.out.println(exception);
+        }
     }
+        
     
 }
