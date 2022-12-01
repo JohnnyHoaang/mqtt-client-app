@@ -7,6 +7,7 @@ package com.mycompany.mqtt.client.app;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import java.time.LocalDateTime;
 import org.json.JSONObject;
+import java.io.IOException;
 
 /**
  *
@@ -52,7 +53,7 @@ public abstract class Sensor {
             this.thread.stop();
         }
     }
-    public void sendSensorData(String topic){
+    public void sendSensorData(String topic)throws IOException{
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time",LocalDateTime.now());
         mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());
