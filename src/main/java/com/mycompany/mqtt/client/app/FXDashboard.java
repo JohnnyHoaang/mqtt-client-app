@@ -1,7 +1,18 @@
 package com.mycompany.mqtt.client.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Scanner;
 
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -21,6 +32,7 @@ public class FXDashboard extends HBox {
 
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
+    private LogicHandler instance;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
@@ -31,6 +43,7 @@ public class FXDashboard extends HBox {
         
         this.mqtt = mqtt;
         this.client = mqtt.run();
+        this.instance = new LogicHandler();
         try {
             this.buildScreen();
         } catch (IOException e){
@@ -197,6 +210,7 @@ public class FXDashboard extends HBox {
     public void retrieveData(){
 
         // subscribe to all topics under sensor
+        mqtt.subscribeToTopic(client, "certificate/#");
         mqtt.subscribeToTopic(client,"sensor/#");
 
         mqtt.messageReceived(client);
@@ -213,7 +227,12 @@ public class FXDashboard extends HBox {
                         Platform.runLater(new Runnable(){
                         @Override
                         public void run(){
-                            handleResult(mqtt.getResult());
+                            try {
+                                handleResult(mqtt.getResult());
+                            } catch(IOException e){
+                                e.printStackTrace();
+                            }
+                                             
                         }});
                     } catch(Exception e){
 
@@ -229,24 +248,44 @@ public class FXDashboard extends HBox {
      * Parse data accordingly and send to appropriate methods to be displayed
      * @param result
      */
-    private void handleResult(String result){
-        
+    private void handleResult(String result) throws IOException{
         try {
             // parse data to get topic and info
             String [] informations = result.split("'");
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
+            if(json.has("certificate")){
+                String user = topics[1];
+                String certString = json.get("certificate").toString();
 
+                InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
+                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+                mqtt.getKeyStore().setCertificateEntry(user, cert);
+            }
             // check sensor type and display accordingly
             if(topics[0].equals("sensor")){
                 String sensorType = topics[1];
                 String user = topics[2];
+                PublicKey publicKey = null; 
+                
+                if(user.equals("johnny")){
+                    Certificate cert = mqtt.getKeyStore().getCertificate(user);
+                    publicKey = cert.getPublicKey();
+                }
                 switch(sensorType){
                     case "buzzer":
-                        String buzzerDate = json.get("time").toString().substring(0, 10);
+                        boolean dateCheck = this.instance.verifySignature(json.get("signedTime").toString().getBytes(), publicKey,"SHA256withECDSA",json.get("time").toString());
+                        if(dateCheck){
+                            String buzzerDate = json.get("time").toString().substring(0, 10);
                         String buzzerTime = json.get("time").toString().substring(11, 22);
                         String buzzerTimestamp = buzzerDate + " | " + buzzerTime;
+                        
                         updateBuzzerTile(user, buzzerTimestamp);
+                        } else {
+                            throw new Error("cert errir");
+                        }
+                        
                         break;
                     case "motion":
                         String motionDate = json.get("time").toString().substring(1, 10);
@@ -266,7 +305,7 @@ public class FXDashboard extends HBox {
                 
             }
         } catch (Exception e) {
-            // TODO: handle exception
+            //e.printStackTrace();
         }
 
     }

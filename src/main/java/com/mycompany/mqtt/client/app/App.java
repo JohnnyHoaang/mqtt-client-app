@@ -6,12 +6,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.application.Platform;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import java.security.*;
+import java.util.Enumeration;
 /**
  * JavaFX App
  */
 public class App extends Application{
     // private FXDashboard dashboard;
-    private static MqttRun mqtt;
+    public static MqttRun mqtt;
     @Override
     public void start(Stage stage) throws IOException {
         var console = System.console();
@@ -27,8 +29,8 @@ public class App extends Application{
         });
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException{
+    public static void main(String[] args) throws IOException, InterruptedException, KeyStoreException{
         launch();
-
+        
     }
 }

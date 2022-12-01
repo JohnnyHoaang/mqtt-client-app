@@ -9,13 +9,14 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import static com.hivemq.client.mqtt.MqttGlobalPublishFilter.ALL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.*;
+import java.security.*;
 import java.util.Scanner;
 /**
  *
  * @author 2043441
  */
 public class MqttRun {
-
+    private KeyStore ks;
     private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
@@ -23,15 +24,14 @@ public class MqttRun {
         final String host = "061d9ed673164eda847418a5b5609221.s2.eu.hivemq.cloud";
         String username = getUsername();
         String password = getPassword();
-        // String topic = "my/test/topic";
         Mqtt5BlockingClient client = createClient(host);
         System.out.println("Connecting...");
         connectClient(client, username, password);
-        // subscribeToTopic(client, topic);
-        // messageReceived(client);
-        // publishMessage(client, topic);
         return client;
     }
+//    public MqttRun(KeyStore ks){
+//        this.ks = ks;
+//    }
     /**
      * Gets username
      * 
@@ -131,6 +131,12 @@ public class MqttRun {
     }
     public String getResult(){
         return this.result;
+    }
+    public KeyStore getKeyStore(){
+        return this.ks;
+    }
+    public void setKeyStore(KeyStore ks){
+        this.ks = ks;
     }
     /**
      *

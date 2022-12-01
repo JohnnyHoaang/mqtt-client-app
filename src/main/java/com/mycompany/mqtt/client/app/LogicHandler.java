@@ -3,21 +3,18 @@ package com.mycompany.mqtt.client.app;
 import java.io.Console;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.*;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Base64;
 import java.util.Enumeration;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import org.json.*;
 
 public class LogicHandler {
 
@@ -126,5 +123,15 @@ public class LogicHandler {
         
         return validSignature;
     }
-    
+    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks) throws KeyStoreException, CertificateEncodingException{
+        Enumeration<String> enumeration = ks.aliases();
+        String alias = enumeration.nextElement();
+        JSONObject json = new JSONObject();
+        String encodedString = Base64.getEncoder().encodeToString(ks.getCertificate(alias).getEncoded());
+        json.put("certificate", encodedString);
+        mqtt.setKeyStore(ks);
+        mqtt.publishMessage(client, "certificate/"+topicUser+"/", json.toString().getBytes());
+
+        
+    }
 }
