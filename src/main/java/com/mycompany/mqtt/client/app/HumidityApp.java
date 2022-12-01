@@ -14,7 +14,6 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.time.LocalDateTime;
-import java.util.Scanner;
 import org.json.JSONObject;
 
 /**
@@ -30,7 +29,6 @@ public class HumidityApp extends Sensor{
     }
     // Calls humidity and temperature information in a loop to update given tile
     public void sensorLoop(PrivateKey key){
-        Scanner scanner = new Scanner(System.in);
         // TODO: Will take tile parameter to update tile text
         Thread thread = new Thread(()-> {
             try {
@@ -54,13 +52,13 @@ public class HumidityApp extends Sensor{
     }
     @Override
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        byte[] signedTemp = instance.generateSignature("SunEC", key, Double.toString(this.temperature));
-        byte[] signedHumidity = instance.generateSignature("SunEC", key, Double.toString(this.temperature));
+        byte[] signedTemp = instance.generateSignature("SHA256withRSA", key, Double.toString(this.temperature));
+        byte[] signedHumidity = instance.generateSignature("SHA256withRSA", key, Double.toString(this.humidity));
 
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time",LocalDateTime.now());
-        jsonMessage.put("temperature", signedTemp.toString());
-        jsonMessage.put("humidity", signedHumidity.toString());
+        jsonMessage.put("temperature", signedTemp);
+        jsonMessage.put("humidity", signedHumidity);
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
     }
 }
