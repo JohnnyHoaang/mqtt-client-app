@@ -8,6 +8,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -252,17 +253,12 @@ public class FXDashboard extends HBox {
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
             if(json.has("certificate")){
-                byte[] publicBytes = Base64.getDecoder().decode(json.get("certificate").toString());
-                String certificateString = new String(publicBytes);
-                //certificateString = "----BEGIN CERTIFICATE-----\n" + certificateString + "\n-----END CERTIFICATE-----";
-                InputStream is = new ByteArrayInputStream(certificateString.getBytes());
+                String certString = json.get("certificate").toString();
+                //String certificateString = new String(publicBytes);
+                InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                Certificate cert = cf.generateCertificate(is);
-                // if(cert==null){
-                //     throw new Error("No cert");
-                // } else {
-                //     System.out.println(cert.getPublicKey().toString());
-                // }
+                X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+                System.out.println(cert.getPublicKey());
             }
             // check sensor type and display accordingly
             if(topics[0].equals("sensor")){
@@ -293,7 +289,7 @@ public class FXDashboard extends HBox {
                 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
     }
