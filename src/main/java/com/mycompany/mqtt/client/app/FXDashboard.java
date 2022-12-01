@@ -32,6 +32,7 @@ public class FXDashboard extends HBox {
 
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
+    private LogicHandler instance;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
@@ -42,6 +43,7 @@ public class FXDashboard extends HBox {
         
         this.mqtt = mqtt;
         this.client = mqtt.run();
+        this.instance = new LogicHandler();
         try {
             this.buildScreen();
         } catch (IOException e){
@@ -265,13 +267,25 @@ public class FXDashboard extends HBox {
             if(topics[0].equals("sensor")){
                 String sensorType = topics[1];
                 String user = topics[2];
+                PublicKey publicKey = null; 
+                
+                if(user.equals("johnny")){
+                    Certificate cert = mqtt.getKeyStore().getCertificate(user);
+                    publicKey = cert.getPublicKey();
+                }
                 switch(sensorType){
                     case "buzzer":
-                        
-                        String buzzerDate = json.get("time").toString().substring(0, 10);
+                        boolean dateCheck = this.instance.verifySignature(json.get("signedTime").toString().getBytes(), publicKey,"SHA256withECDSA",json.get("time").toString());
+                        if(dateCheck){
+                            String buzzerDate = json.get("time").toString().substring(0, 10);
                         String buzzerTime = json.get("time").toString().substring(11, 22);
                         String buzzerTimestamp = buzzerDate + " | " + buzzerTime;
+                        
                         updateBuzzerTile(user, buzzerTimestamp);
+                        } else {
+                            throw new Error("cert errir");
+                        }
+                        
                         break;
                     case "motion":
                         String motionDate = json.get("time").toString().substring(1, 10);
