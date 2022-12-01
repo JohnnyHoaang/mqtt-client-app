@@ -12,7 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
+import java.security.cert.*;
 import java.util.Scanner;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -32,13 +32,17 @@ public class ConsoleApp {
     // public static String user;
     private LogicHandler instance = new LogicHandler();
 
-    public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, InterruptedException {
+    public static void main(String[] args) throws IOException, UnrecoverableKeyException, 
+            KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, 
+            SignatureException, InterruptedException, CertificateEncodingException {
         ConsoleApp app = new ConsoleApp();
         
         app.menu();
     }
 
-    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, InterruptedException {
+    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, 
+            InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, 
+            InterruptedException, CertificateEncodingException {
         boolean menu = true;
         while (menu) {
             System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
@@ -65,10 +69,10 @@ public class ConsoleApp {
                     break;
 
                 case "3":
-                    topicUser = con.readLine("Enter topic user name");
-                    client = mqtt.run();
-                    instance.sendCertificate(mqtt, client, topicUser);
                     
+                    topicUser = con.readLine("Enter topic user name: ");
+                    client = mqtt.run();
+                    instance.sendCertificate(mqtt, client, topicUser, ks); 
                     humidity = new HumidityApp(mqtt , client, topicUser);
                     humidity.sensorLoop();
                     buzzer = new BuzzerApp(mqtt, client, topicUser);
@@ -93,7 +97,9 @@ public class ConsoleApp {
         }
     }
 
-    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, InterruptedException {
+    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, 
+            KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, 
+            UnsupportedEncodingException, SignatureException, InterruptedException, CertificateEncodingException {
         boolean menu = true;
         while (menu) {
             System.out.println("Press f to exit back to MainMenu");

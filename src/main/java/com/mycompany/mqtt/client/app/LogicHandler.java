@@ -127,17 +127,15 @@ public class LogicHandler {
         
         return validSignature;
     }
-    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser) throws KeyStoreException, CertificateEncodingException{
-        var console = System.console();
-        char [] pass = console.readPassword("Enter password: ");
-        KeyStore ks = this.loadKeystore("./JohnnyECcertif.ks", pass);
+    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks) throws KeyStoreException, CertificateEncodingException{
         Enumeration<String> enumeration = ks.aliases();
         String alias = enumeration.nextElement();
-        Key [] keys = this.extractKeys(ks, pass);
         JSONObject json = new JSONObject();
         String encodedString = Base64.getEncoder().encodeToString(ks.getCertificate(alias).getEncoded());
         json.put("certificate", encodedString);
+        mqtt.setKeyStore(ks);
         mqtt.publishMessage(client, "certificate/"+topicUser+"/", json.toString().getBytes());
+
         
     }
     public void startHumiditySensor(){

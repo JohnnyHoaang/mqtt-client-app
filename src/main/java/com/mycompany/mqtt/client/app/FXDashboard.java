@@ -253,12 +253,13 @@ public class FXDashboard extends HBox {
             JSONObject json = new JSONObject(informations[1]);
             String []topics = informations[0].split("/");
             if(json.has("certificate")){
+                String user = topics[1];
                 String certString = json.get("certificate").toString();
-                //String certificateString = new String(publicBytes);
+
                 InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
-                System.out.println(cert.getPublicKey());
+                mqtt.getKeyStore().setCertificateEntry(user, cert);
             }
             // check sensor type and display accordingly
             if(topics[0].equals("sensor")){
@@ -266,6 +267,7 @@ public class FXDashboard extends HBox {
                 String user = topics[2];
                 switch(sensorType){
                     case "buzzer":
+                        
                         String buzzerDate = json.get("time").toString().substring(0, 10);
                         String buzzerTime = json.get("time").toString().substring(11, 22);
                         String buzzerTimestamp = buzzerDate + " | " + buzzerTime;

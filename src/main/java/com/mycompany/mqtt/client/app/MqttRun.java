@@ -9,13 +9,14 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import static com.hivemq.client.mqtt.MqttGlobalPublishFilter.ALL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.*;
+import java.security.*;
 import java.util.Scanner;
 /**
  *
  * @author 2043441
  */
 public class MqttRun {
-
+    private KeyStore ks = null;
     private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
@@ -127,6 +128,12 @@ public class MqttRun {
     }
     public String getResult(){
         return this.result;
+    }
+    public KeyStore getKeyStore(){
+        return this.ks;
+    }
+    public void setKeyStore(KeyStore ks){
+        this.ks = ks;
     }
     /**
      *
