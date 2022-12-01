@@ -13,7 +13,7 @@ import java.util.Enumeration;
  */
 public class App extends Application{
     // private FXDashboard dashboard;
-    private static MqttRun mqtt;
+    public static MqttRun mqtt;
     @Override
     public void start(Stage stage) throws IOException {
         var console = System.console();

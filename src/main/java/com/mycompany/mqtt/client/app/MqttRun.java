@@ -16,7 +16,7 @@ import java.util.Scanner;
  * @author 2043441
  */
 public class MqttRun {
-    private KeyStore ks = null;
+    private KeyStore ks;
     private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
@@ -29,6 +29,9 @@ public class MqttRun {
         connectClient(client, username, password);
         return client;
     }
+//    public MqttRun(KeyStore ks){
+//        this.ks = ks;
+//    }
     /**
      * Gets username
      * 
