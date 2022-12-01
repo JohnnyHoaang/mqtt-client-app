@@ -64,15 +64,20 @@ public class ConsoleApp {
                     break;
 
                 case "3":
-                    topicUser = con.readLine("Enter topic user name");
-                    client = mqtt.run();
-                    humidity = new HumidityApp(mqtt , client, topicUser);
-                    humidity.sensorLoop((PrivateKey)keys[1]);
-                    buzzer = new BuzzerApp(mqtt, client, topicUser);
-                    buzzer.sensorLoop((PrivateKey)keys[1]);
-                    motion = new MotionSensorApp(mqtt, client, topicUser);
-                    motion.sensorLoop((PrivateKey)keys[1]);
-                    sensorMenu();
+                    if (keys != null && ks != null) {
+                        topicUser = con.readLine("Enter topic user name");
+                        client = mqtt.run();
+                        humidity = new HumidityApp(mqtt , client, topicUser);
+                        humidity.sensorLoop((PrivateKey)keys[1]);
+                        buzzer = new BuzzerApp(mqtt, client, topicUser);
+                        buzzer.sensorLoop((PrivateKey)keys[1]);
+                        motion = new MotionSensorApp(mqtt, client, topicUser);
+                        motion.sensorLoop((PrivateKey)keys[1]);
+                        sensorMenu();
+                    } else {
+                        System.out.println(Colors.RED + "\nEnsure keystore was loaded and keys were extracted" + Colors.RESET);
+                    }
+
                     break;
                    
                 case "4":
