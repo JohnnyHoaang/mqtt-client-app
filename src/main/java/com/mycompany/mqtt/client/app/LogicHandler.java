@@ -121,6 +121,7 @@ public class LogicHandler {
             System.out.println(Colors.RED + "\nSignature is not valid" + Colors.RESET);
         }
         
+        
         return validSignature;
     }
     public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks) throws KeyStoreException, CertificateEncodingException{

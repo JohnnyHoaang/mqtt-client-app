@@ -25,6 +25,8 @@ import javafx.application.Platform;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.concurrent.Task;
+
+import com.hivemq.client.internal.mqtt.datatypes.MqttTopicFilterImplBuilder.Base;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
@@ -275,7 +277,8 @@ public class FXDashboard extends HBox {
                 }
                 switch(sensorType){
                     case "buzzer":
-                        boolean dateCheck = this.instance.verifySignature(json.get("signedTime").toString().getBytes(), publicKey,"SHA256withECDSA",json.get("time").toString());
+                        byte [] signatureBytes  = Base64.getDecoder().decode(json.get("signedTime").toString());
+                        boolean dateCheck = this.instance.verifySignature(signatureBytes, publicKey,"SHA256withECDSA",json.get("time").toString());
                         if(dateCheck){
                             String buzzerDate = json.get("time").toString().substring(0, 10);
                         String buzzerTime = json.get("time").toString().substring(11, 22);
