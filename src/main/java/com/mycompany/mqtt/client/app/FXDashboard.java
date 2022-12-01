@@ -269,22 +269,22 @@ public class FXDashboard extends HBox {
                 String user = topics[2];
                 PublicKey publicKey = null; 
                 
-                if(user.equals("johnny")){
-                    Certificate cert = mqtt.getKeyStore().getCertificate(user);
-                    publicKey = cert.getPublicKey();
-                }
+                // if(user.equals("johnny")){
+                //     Certificate cert = mqtt.getKeyStore().getCertificate(user);
+                //     publicKey = cert.getPublicKey();
+                // }
                 switch(sensorType){
                     case "buzzer":
-                        boolean dateCheck = this.instance.verifySignature(json.get("signedTime").toString().getBytes(), publicKey,"SHA256withECDSA",json.get("time").toString());
-                        if(dateCheck){
-                            String buzzerDate = json.get("time").toString().substring(0, 10);
+                        // boolean dateCheck = this.instance.verifySignature(json.get("signedTime").toString().getBytes(), publicKey,"SHA256withECDSA",json.get("time").toString());
+                        // if(dateCheck){
+                        String buzzerDate = json.get("time").toString().substring(0, 10);
                         String buzzerTime = json.get("time").toString().substring(11, 22);
                         String buzzerTimestamp = buzzerDate + " | " + buzzerTime;
                         
                         updateBuzzerTile(user, buzzerTimestamp);
-                        } else {
-                            throw new Error("cert errir");
-                        }
+                        // } else {
+                        //     throw new Error("cert errir");
+                        // }
                         
                         break;
                     case "motion":
