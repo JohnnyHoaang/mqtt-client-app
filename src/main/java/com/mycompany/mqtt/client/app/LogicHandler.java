@@ -8,6 +8,8 @@ import java.security.cert.Certificate;
 import java.security.cert.*;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Base64;
+import java.util.Enumeration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
