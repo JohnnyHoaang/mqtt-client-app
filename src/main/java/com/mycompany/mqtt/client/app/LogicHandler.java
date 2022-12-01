@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.*;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.*;
@@ -124,7 +125,7 @@ public class LogicHandler {
         
         return validSignature;
     }
-    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser) throws KeyStoreException{
+    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser) throws KeyStoreException, CertificateEncodingException{
         var console = System.console();
         char [] pass = console.readPassword("Enter password: ");
         KeyStore ks = this.loadKeystore("./JohnnyECcertif.ks", pass);
@@ -132,7 +133,7 @@ public class LogicHandler {
         String alias = enumeration.nextElement();
         Key [] keys = this.extractKeys(ks, pass);
         JSONObject json = new JSONObject();
-        String encodedString = Base64.getEncoder().encodeToString(ks.getCertificate(alias).toString().getBytes());
+        String encodedString = Base64.getEncoder().encodeToString(ks.getCertificate(alias).getEncoded());
         json.put("certificate", encodedString);
         mqtt.publishMessage(client, "certificate/"+topicUser+"/", json.toString().getBytes());
         
