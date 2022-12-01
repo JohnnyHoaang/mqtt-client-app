@@ -74,11 +74,11 @@ public class ConsoleApp {
                     client = mqtt.run();
                     instance.sendCertificate(mqtt, client, topicUser, ks); 
                     humidity = new HumidityApp(mqtt , client, topicUser);
-                    humidity.sensorLoop();
+                    humidity.sensorLoop((PrivateKey)keys[1]);
                     buzzer = new BuzzerApp(mqtt, client, topicUser);
-                    buzzer.sensorLoop();
+                    buzzer.sensorLoop((PrivateKey)keys[1]);
                     motion = new MotionSensorApp(mqtt, client, topicUser);
-                    motion.sensorLoop();
+                    motion.sensorLoop((PrivateKey)keys[1]);
                     sensorMenu();
                     break;
                    

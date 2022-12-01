@@ -29,7 +29,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
 public class FXDashboard extends HBox {
-    
+
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();

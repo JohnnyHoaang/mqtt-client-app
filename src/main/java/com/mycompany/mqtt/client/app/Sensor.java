@@ -5,6 +5,13 @@
 package com.mycompany.mqtt.client.app;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.SignatureException;
 import java.time.LocalDateTime;
 import org.json.JSONObject;
 
@@ -20,6 +27,7 @@ public abstract class Sensor {
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
     private String topicUser;
+    private LogicHandler instance;
 
     public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client, String topicUser ){
         this.filePath = filePath;
@@ -27,6 +35,7 @@ public abstract class Sensor {
         this.mqtt = mqtt;
         this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
         this.topicUser = topicUser;
+        this.instance  = new LogicHandler();
     }
     public void getSensorInfo(){
         try {
@@ -52,9 +61,14 @@ public abstract class Sensor {
             this.thread.stop();
         }
     }
-    public void sendSensorData(String topic){
+    public LogicHandler getInstance(){
+        return this.instance;
+    }
+    public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
+        byte[] signedMessage = instance.generateSignature("SunEC", key, LocalDateTime.now().toString());
         JSONObject jsonMessage = new JSONObject();
-        jsonMessage.put("time",LocalDateTime.now());
+        jsonMessage.put("time", LocalDateTime.now());
+        jsonMessage.put("signedTime", signedMessage);
         mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());
     }
     public MqttRun getMqtt(){
@@ -66,6 +80,6 @@ public abstract class Sensor {
     public String getTopicUser(){
         return this.topicUser;
     }
-    abstract void sensorLoop();
+    abstract void sensorLoop(PrivateKey key);
     
 }
