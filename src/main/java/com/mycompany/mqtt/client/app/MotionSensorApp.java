@@ -1,15 +1,17 @@
 package com.mycompany.mqtt.client.app;
 
+import java.security.PrivateKey;
+
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
 public class MotionSensorApp extends Sensor{
 
-    public MotionSensorApp(MqttRun mqtt, Mqtt5BlockingClient client){
-        super("./pi-sensor-code/SenseLED.py", mqtt, client);
+    public MotionSensorApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
+        super("./pi-sensor-code/SenseLED.py", mqtt, client, topicUser);
    
     }
 
-    public void sensorLoop(){
+    public void sensorLoop(PrivateKey key){
         Thread thread = new Thread(() -> {
             try {
                 CameraApp camera = new CameraApp();
@@ -20,13 +22,9 @@ public class MotionSensorApp extends Sensor{
                     String output = this.getOutput();
                     String motionOn = "motion detected >>>";
                     if(output.equals(motionOn) && !previousOutput.equals(motionOn)){
-                        System.out.println("Confirmation: Motion detected.");
-                        System.out.println("Taking picture");
                         camera.execute();
-                        sendSensorData("example/motion/");
-                    } else if (output.equals("no motion detected <<<")){
-                        System.out.println(output);
-                    }
+                        sendSensorData("sensor/motion/"+getTopicUser()+"/", key);
+                    } 
                     previousOutput = this.getOutput();
                 }
             } catch(Exception e) {

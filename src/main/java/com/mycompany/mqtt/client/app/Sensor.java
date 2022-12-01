@@ -5,7 +5,15 @@
 package com.mycompany.mqtt.client.app;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.SignatureException;
 import java.time.LocalDateTime;
+import org.json.JSONObject;
 
 /**
  *
@@ -18,12 +26,16 @@ public abstract class Sensor {
     private ProcessBuilderHandler processBuilder;
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
+    private String topicUser;
+    private LogicHandler instance;
 
-    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client ){
+    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client, String topicUser ){
         this.filePath = filePath;
         this.client = client;
         this.mqtt = mqtt;
         this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
+        this.topicUser = topicUser;
+        this.instance  = new LogicHandler();
     }
     public void getSensorInfo(){
         try {
@@ -49,9 +61,15 @@ public abstract class Sensor {
             this.thread.stop();
         }
     }
-    public void sendSensorData(String topic){
-        String message = String.format("{ time: %s }", LocalDateTime.now());
-        mqtt.publishMessage(client, topic, message.getBytes());
+    public LogicHandler getInstance(){
+        return this.instance;
+    }
+    public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
+        byte[] signedMessage = instance.generateSignature("SHA256withECDSA", key, LocalDateTime.now().toString());
+        JSONObject jsonMessage = new JSONObject();
+        jsonMessage.put("time", LocalDateTime.now());
+        jsonMessage.put("signedTime", signedMessage);
+        mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());
     }
     public MqttRun getMqtt(){
         return this.mqtt;
@@ -59,6 +77,9 @@ public abstract class Sensor {
     public Mqtt5BlockingClient getClient(){
         return this.client;
     }
-    abstract void sensorLoop();
+    public String getTopicUser(){
+        return this.topicUser;
+    }
+    abstract void sensorLoop(PrivateKey key);
     
 }

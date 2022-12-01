@@ -12,7 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
+import java.security.cert.*;
 import java.util.Scanner;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -21,33 +21,37 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 public class ConsoleApp {
 
     private Console con = System.console();
-    private LogicHandler instance = new LogicHandler();
     private KeyStore ks = null;
     private Key[] keys;
     private MqttRun mqtt = new MqttRun();
     private Mqtt5BlockingClient client;
+    private String topicUser = "";
+    private HumidityApp humidity;
+    private BuzzerApp buzzer;
+    private MotionSensorApp motion;
+    // public static String user;
+    private LogicHandler instance = new LogicHandler();
 
-    public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public static void main(String[] args) throws IOException, UnrecoverableKeyException, 
+            KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, 
+            SignatureException, InterruptedException, CertificateEncodingException {
         ConsoleApp app = new ConsoleApp();
         
         app.menu();
     }
 
-    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, 
+            InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, 
+            InterruptedException, CertificateEncodingException {
         boolean menu = true;
         while (menu) {
             System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
 
             System.out.println("1. Load a KeyStore\n"
                               +"2. Extract Keys from KeyStore\n"
-                              +"3. Connect to MQTT Client\n"
+                              +"3. Connect to MQTT and Start all sensors\n"
                               +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
-                              +"5. Send a message\n"
-                              +"6. Start Buzzer Sensor\n"
-                              +"7. Start Temperature/Humidity Sensor\n"
-                              +"8. Start Motion Sensor\n"
-                              +"9. Start all sensors\n"
-                              +"10. Exit");
+                              +"5. Exit");
 
             String choice = con.readLine();
             switch (choice) {
@@ -65,37 +69,28 @@ public class ConsoleApp {
                     break;
 
                 case "3":
-                    client = mqtt.run();
-                    break;
+                    if (keys != null && ks != null) {
+                        topicUser = con.readLine("Enter topic user name");
+                        client = mqtt.run();
+                        humidity = new HumidityApp(mqtt , client, topicUser);
+                        humidity.sensorLoop((PrivateKey)keys[1]);
+                        buzzer = new BuzzerApp(mqtt, client, topicUser);
+                        buzzer.sensorLoop((PrivateKey)keys[1]);
+                        motion = new MotionSensorApp(mqtt, client, topicUser);
+                        motion.sensorLoop((PrivateKey)keys[1]);
+                        sensorMenu();
+                    } else {
+                        System.out.println(Colors.RED + "\nEnsure keystore was loaded and keys were extracted" + Colors.RESET);
+                    }
 
+                    break;
+                   
                 case "4":
                     System.out.println(Colors.YELLOW + "\nCERTIFICATE STORING NOT YET AVAILABLE" + Colors.RESET);
                     
                     break;
 
                 case "5":
-                    writeMessage();
-                    break;
-
-                case "6":
-                    instance.startBuzzerSensor();
-                    sensorMenu();
-                    break;
-                case "7":
-                    instance.startHumiditySensor();
-                    sensorMenu();
-                    break;
-                case "8":
-                    instance.startMotionSensor();
-                    sensorMenu();
-                    break;
-                case "9":
-                    instance.startBuzzerSensor();
-                    instance.startHumiditySensor();
-                    instance.startMotionSensor();
-                    sensorMenu();
-                    break;
-                case "10":
                     System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
@@ -105,7 +100,9 @@ public class ConsoleApp {
         }
     }
 
-    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, 
+            KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, 
+            UnsupportedEncodingException, SignatureException, InterruptedException, CertificateEncodingException {
         boolean menu = true;
         while (menu) {
             System.out.println("Press f to exit back to MainMenu");
@@ -113,9 +110,9 @@ public class ConsoleApp {
 
             switch (choice) {
                 case "f":
-                    instance.stopBuzzerSensor();
-                    instance.stopHumiditySensor();
-                    instance.stopMotionSensor();
+                    humidity.stopThread();
+                    buzzer.stopThread();;
+                    motion.stopThread();;
                     menu();
                     break;
             
@@ -178,6 +175,7 @@ public class ConsoleApp {
         
     }
 
+    // TODO: potentially modify to only sign data sent
     private void writeMessage() {
         System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
         System.out.println("\nFirst please enter the topic you wish to subscribe to:");

@@ -9,27 +9,29 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import static com.hivemq.client.mqtt.MqttGlobalPublishFilter.ALL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.*;
+import java.security.*;
 import java.util.Scanner;
 /**
  *
  * @author 2043441
  */
 public class MqttRun {
+    private KeyStore ks;
+    private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
     public Mqtt5BlockingClient run(){
-        final String host = "a70d21edc42b4ad59d04019f79dd252c.s2.eu.hivemq.cloud";
+        final String host = "061d9ed673164eda847418a5b5609221.s2.eu.hivemq.cloud";
         String username = getUsername();
         String password = getPassword();
-        // String topic = "my/test/topic";
         Mqtt5BlockingClient client = createClient(host);
         System.out.println("Connecting...");
         connectClient(client, username, password);
-        // subscribeToTopic(client, topic);
-        // messageReceived(client);
-        // publishMessage(client, topic);
         return client;
     }
+//    public MqttRun(KeyStore ks){
+//        this.ks = ks;
+//    }
     /**
      * Gets username
      * 
@@ -115,14 +117,27 @@ public class MqttRun {
      * Confirms messaged received
      */
     public void messageReceived(Mqtt5BlockingClient client){
-        client.toAsync().publishes(ALL, publish -> {
-            System.out.println("\nReceived message: " +
-                publish.getTopic() + " -> " +
-                UTF_8.decode(publish.getPayload().get()));
-            client.disconnect();
+        System.out.println("start");
+        Thread thread = new Thread(()->{
+            client.toAsync().publishes(ALL, publish -> {
+            this.result = publish.getTopic() + "'" + UTF_8.decode(publish.getPayload().get()).toString();
         });
+        });
+        thread.start();
+        System.out.println("end");
     }
-    
+    public void close(Mqtt5BlockingClient client){
+        client.disconnect();
+    }
+    public String getResult(){
+        return this.result;
+    }
+    public KeyStore getKeyStore(){
+        return this.ks;
+    }
+    public void setKeyStore(KeyStore ks){
+        this.ks = ks;
+    }
     /**
      *
      * Publishes message
