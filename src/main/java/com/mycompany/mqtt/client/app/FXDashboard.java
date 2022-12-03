@@ -1,19 +1,14 @@
 package com.mycompany.mqtt.client.app;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
 import java.security.PublicKey;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Scanner;
-
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.Tile.ImageMask;
@@ -32,7 +27,6 @@ public class FXDashboard extends HBox {
 
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
-    private LogicHandler instance;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
@@ -42,8 +36,7 @@ public class FXDashboard extends HBox {
     public FXDashboard(MqttRun mqtt, String topicUser){
         
         this.mqtt = mqtt;
-        this.client = mqtt.run();
-        this.instance = new LogicHandler();
+        login();
         try {
             this.buildScreen();
         } catch (IOException e){
@@ -125,12 +118,14 @@ public class FXDashboard extends HBox {
             } else {
                 title = prefix + "Katharina";
             }
+
+            InputStream is = new FileInputStream("src\\assets\\not_found.png");
+            
             var image = TileBuilder.create()
                 .skinType(SkinType.IMAGE)
                 .prefSize(PREF_WIDTH, PREF_HEIGHT)
                 .title(title)
-                .image(null)
-                .imageMask(ImageMask.RECTANGULAR)
+                .image(new Image(is))
                 .text("Image taken when motion is detected")
                 .textAlignment(TextAlignment.LEFT)
                 .textVisible(true)
@@ -173,6 +168,18 @@ public class FXDashboard extends HBox {
         this.setSpacing(5);
 
         retrieveData(); 
+    }
+
+    private void login() {
+        boolean askCredentials = true;
+        while(askCredentials){
+            try {
+                this.client = mqtt.run();
+                askCredentials = false;
+            } catch (Exception e) {
+                System.out.println(Colors.RED + "\nInvalid credentials, please try again" + Colors.RESET);
+            }
+        }
     }
 
     /**

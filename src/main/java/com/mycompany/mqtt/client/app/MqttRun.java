@@ -9,6 +9,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import static com.hivemq.client.mqtt.MqttGlobalPublishFilter.ALL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.security.*;
 import java.util.Scanner;
 /**
@@ -20,12 +21,12 @@ public class MqttRun {
     private String result = "";
     Console cnsl = System.console();
     Scanner sc = new Scanner(System.in);
-    public Mqtt5BlockingClient run(){
+    public Mqtt5BlockingClient run() throws InvocationTargetException{
         final String host = "061d9ed673164eda847418a5b5609221.s2.eu.hivemq.cloud";
         String username = getUsername();
         String password = getPassword();
         Mqtt5BlockingClient client = createClient(host);
-        System.out.println("Connecting...");
+        System.out.println("\nConnecting...");
         connectClient(client, username, password);
         return client;
     }
@@ -87,19 +88,16 @@ public class MqttRun {
      *
      * Connects Client to server
      */
-    public void connectClient(Mqtt5BlockingClient client, String username, String password){
-        try {
-            client.connectWith()
+    public void connectClient(Mqtt5BlockingClient client, String username, String password) throws InvocationTargetException{
+
+        client.connectWith()
             .simpleAuth()
             .username(username)
             .password(UTF_8.encode(password))
             .applySimpleAuth()
             .send();
-            System.out.println(Colors.GREEN + "\nConnected Successfully" + Colors.RESET);
-        } catch (Exception e) {
-            System.out.println(Colors.RED + "\nUnable to connect, ensure username and password are correct or try again later" + Colors.RESET);
-            
-        }
+
+        System.out.println(Colors.GREEN + "\nConnected Successfully" + Colors.RESET);
     }
     
     /**

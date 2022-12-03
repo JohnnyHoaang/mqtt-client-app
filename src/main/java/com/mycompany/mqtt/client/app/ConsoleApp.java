@@ -71,7 +71,16 @@ public class ConsoleApp {
                 case "3":
                     if (keys != null && ks != null) {
                         topicUser = con.readLine("Enter topic user name");
-                        client = mqtt.run();
+                        boolean askCredentials = true;
+                        while (askCredentials) {
+                            try {
+                                client = mqtt.run();
+                                askCredentials = false;
+                            } catch (Exception e) {
+                                System.out.println(Colors.RED + "Invalid credentials, please tru again" + Colors.RESET);
+                                
+                            }
+                        }
                         humidity = new HumidityApp(mqtt , client, topicUser);
                         humidity.sensorLoop((PrivateKey)keys[1]);
                         buzzer = new BuzzerApp(mqtt, client, topicUser);
