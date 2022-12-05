@@ -17,7 +17,7 @@ public class App extends Application{
     @Override
     public void start(Stage stage) throws IOException {
         var console = System.console();
-        // String topicUser = console.readLine("Enter your topic user:");
+
         mqtt = new MqttRun();
         var scene = new Scene(new FXDashboard(mqtt,""), 1215, 600);
         stage.setScene(scene);

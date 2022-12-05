@@ -168,29 +168,4 @@ public class ConsoleApp {
         }
         return ks;
     }
-    
-    // TODO: be used later when fetching certs from mqtt
-    private void storeCertificate(String alias, Certificate cert) throws KeyStoreException{
-        ks.setCertificateEntry(alias, cert);
-        
-    }
-
-    // TODO: potentially modify to only sign data sent
-    private void writeMessage() {
-        System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
-        System.out.println("\nFirst please enter the topic you wish to subscribe to:");
-        String topic = con.readLine();
-        System.out.println("\nNext please enter the message you wish to send:");
-        String message = con.readLine();
-        try {
-            mqtt.publishMessage(client, topic, instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], message));
-            System.out.println(Colors.GREEN + "\nMessage Sent.\n" + Colors.RESET);
-            
-        } catch (Exception e) {
-            System.out.println(Colors.RED + "\nCould not publish message, please ensure you have successfully:\n"
-                              +"- Loaded a keystore\n"
-                              +"- Extracted the keys\n"
-                              +"- Connected to the client\n" + Colors.RESET);
-        }
-    }
 }

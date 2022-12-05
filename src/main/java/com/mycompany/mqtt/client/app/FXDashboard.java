@@ -38,11 +38,11 @@ public class FXDashboard extends HBox {
         mqtt.setKeyStore(ks);
         this.mqtt = mqtt;
         this.client = mqtt.run();
-        this.dataInstance = new DataHandler(mqtt, client, storedUsersPublicKeys, this);
+        this.dataInstance = new DataHandler(mqtt, client, storedUsersPublicKeys, this, ksPath, password);
         try {
             this.buildScreen();
         } catch (IOException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 

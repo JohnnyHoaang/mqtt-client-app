@@ -73,6 +73,7 @@ public abstract class Sensor {
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time", time);
         jsonMessage.put("signedTime", signedMessage);
+        System.out.println("Sending Sensor Confirmation: " + jsonMessage.toString());
         mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());;
     }
     public MqttRun getMqtt(){
