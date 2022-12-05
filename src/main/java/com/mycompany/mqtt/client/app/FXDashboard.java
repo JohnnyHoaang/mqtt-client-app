@@ -41,7 +41,7 @@ public class FXDashboard extends HBox {
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
-    private HashMap storedUserpublicKeys = new HashMap<String, PublicKey>();
+    private HashMap storedUsersPublicKeys = new HashMap<String, PublicKey>();
     Console console = System.console();
 
     public FXDashboard(MqttRun mqtt, String topicUser) {
@@ -277,6 +277,7 @@ public class FXDashboard extends HBox {
                     CertificateFactory cf = CertificateFactory.getInstance("X.509");
                     X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
                     mqtt.getKeyStore().setCertificateEntry(user, cert);
+                    // TODO: Save Keystore into a file
                 }
                 // check sensor type and display accordingly
                 if (topics[0].equals("sensor")) {
@@ -284,25 +285,24 @@ public class FXDashboard extends HBox {
                     String user = topics[2];
                     PublicKey publicKey = null;
 
-                    //if (user.equals("johnny")) {
                     if(mqtt.getKeyStore().getCertificate(user) == null){
                         System.out.println("No matching certificate for user " + user);
                     } else {
                         Certificate cert = mqtt.getKeyStore().getCertificate(user);
                         publicKey = cert.getPublicKey();
-                        this.storedUserpublicKeys.put(user, publicKey);
+                        // Add user public key to public key collection
+                        this.storedUsersPublicKeys.put(user, publicKey);
                     }
-                    
-                    //}
+                    // Update user tiles with MQTT information and signature verificction using user public key
                     switch (sensorType) {
                         case "buzzer":
-                            sensorTimeUpdate(json, user, (PublicKey)this.storedUserpublicKeys.get(user) , "buzzer");
+                            sensorTimeUpdate(json, user, (PublicKey)this.storedUsersPublicKeys.get(user) , "buzzer");
                             break;
                         case "motion":
-                            sensorTimeUpdate(json, user, (PublicKey)this.storedUserpublicKeys.get(user), "motion");
+                            sensorTimeUpdate(json, user, (PublicKey)this.storedUsersPublicKeys.get(user), "motion");
                             break;
                         case "humidity":
-                            sensorAmbientUpdate(json, user, (PublicKey)this.storedUserpublicKeys.get(user));
+                            sensorAmbientUpdate(json, user, (PublicKey)this.storedUsersPublicKeys.get(user));
                             break;
                         default:
                             break;
@@ -316,7 +316,12 @@ public class FXDashboard extends HBox {
         }
 
     }
-
+    /**
+     * Performs signature verification for ambient information and update corresponding user tiles
+     * @param json
+     * @param user
+     * @param publicKey
+     */
     private void sensorAmbientUpdate(JSONObject json, String user, PublicKey publicKey) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
@@ -332,7 +337,13 @@ public class FXDashboard extends HBox {
             updateTempHum(user, temperature, humidity);
         }
     }
-
+    /**
+     * Performs signature verification for time and update corresponding user tiles
+     * @param json
+     * @param user
+     * @param publicKey
+     * @param type
+     */
     private void sensorTimeUpdate(JSONObject json, String user, PublicKey publicKey, String type)
             throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
