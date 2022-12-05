@@ -1,20 +1,9 @@
 package com.mycompany.mqtt.client.app;
 
-import java.io.ByteArrayInputStream;
 import java.io.Console;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PublicKey;
-import java.security.SignatureException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 
 import eu.hansolo.tilesfx.Tile;
@@ -23,13 +12,9 @@ import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
-import javafx.application.Platform;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.concurrent.Task;
-
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
-import org.json.*;
 
 public class FXDashboard extends HBox {
 
@@ -215,6 +200,22 @@ public class FXDashboard extends HBox {
             tiles.add(buzzer);
         }
     }
+
+    /**
+     * Update corresponding tiles for buzzer sensor
+     * @param user
+     * @param time
+     */
+    public void updateBuzzerTile(String user, String time) {
+        if(user.equals("johnny")){
+            tiles.get(6).setDescription(time);
+        } else if(user.equals("alexander")) {
+            tiles.get(7).setDescription(time);
+        } else if(user.equals("katharina")) {
+            tiles.get(8).setDescription(time);
+        }
+    }
+
     /**
      * Update corresponding time tiles for buzzer and motion sensor
      * 
