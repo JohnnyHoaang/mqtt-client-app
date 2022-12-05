@@ -262,45 +262,48 @@ public class FXDashboard extends HBox {
      */
     private void handleResult(String result) throws IOException {
         try {
-            // parse data to get topic and info
-            String[] informations = result.split("'");
-            JSONObject json = new JSONObject(informations[1]);
-            String[] topics = informations[0].split("/");
-            if (json.has("certificate")) {
-                String user = topics[1];
-                String certString = json.get("certificate").toString();
+            if (!result.equals("")) {
+                // parse data to get topic and info
+                String[] informations = result.split("'");
+                JSONObject json = new JSONObject(informations[1]);
+                String[] topics = informations[0].split("/");
+                if (json.has("certificate")) {
+                    String user = topics[1];
+                    String certString = json.get("certificate").toString();
 
-                InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
-                mqtt.getKeyStore().setCertificateEntry(user, cert);
-            }
-            // check sensor type and display accordingly
-            if (topics[0].equals("sensor")) {
-                String sensorType = topics[1];
-                String user = topics[2];
-                PublicKey publicKey = null;
-
-                if (user.equals("johnny")) {
-                    Certificate cert = mqtt.getKeyStore().getCertificate(user);
-                    publicKey = cert.getPublicKey();
+                    InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
+                    CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                    X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+                    mqtt.getKeyStore().setCertificateEntry(user, cert);
                 }
-                switch (sensorType) {
-                    case "buzzer":
-                        sensorTimeUpdate(json, user, publicKey, "buzzer");
-                        break;
-                    case "motion":
-                        sensorTimeUpdate(json, user, publicKey, "motion");
-                        break;
-                    case "humidity":
-                        sensorAmbientUpdate(json, user, publicKey);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
+                // check sensor type and display accordingly
+                if (topics[0].equals("sensor")) {
+                    String sensorType = topics[1];
+                    String user = topics[2];
+                    PublicKey publicKey = null;
 
+                    if (user.equals("johnny")) {
+                        Certificate cert = mqtt.getKeyStore().getCertificate(user);
+                        publicKey = cert.getPublicKey();
+                    }
+                    switch (sensorType) {
+                        case "buzzer":
+                            sensorTimeUpdate(json, user, publicKey, "buzzer");
+                            break;
+                        case "motion":
+                            sensorTimeUpdate(json, user, publicKey, "motion");
+                            break;
+                        case "humidity":
+                            sensorAmbientUpdate(json, user, publicKey);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -309,15 +312,16 @@ public class FXDashboard extends HBox {
 
     private void sensorAmbientUpdate(JSONObject json, String user, PublicKey publicKey) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
-        byte[] temperatureSignature = Base64.getDecoder().decode(json.get("temperature").toString());
-        byte[] humiditySignature = Base64.getDecoder().decode(json.get("humidity").toString());
+        byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
+        byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
-        boolean humidityCheck = this.instance.verifySignature(temperatureSignature, publicKey,
-                "SHA256withECDSA", json.get("time").toString());
-        boolean temperatureCheck = this.instance.verifySignature(humiditySignature, publicKey,
-                "SHA256withECDSA", json.get("time").toString());
-        if (humidityCheck && temperatureCheck) {
+
+        boolean temperatureCheck = this.instance.verifySignature(temperatureSignature, publicKey,
+                "SHA256withECDSA", json.get("temperature").toString());
+        boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
+                "SHA256withECDSA", json.get("humidity").toString());
+        if (temperatureCheck) {
             updateTempHum(user, temperature, humidity);
         }
     }
@@ -333,9 +337,9 @@ public class FXDashboard extends HBox {
             String sensorTime = json.get("time").toString().substring(11, 22);
             String sensorTimestamp = sensorDate + " | " + sensorTime;
             if (type.equals("buzzer")) {
-                updateTimeTile(user, sensorTimestamp,6,7,8);
+                updateTimeTile(user, sensorTimestamp, 6, 7, 8);
             } else if (type.equals("motion")) {
-                updateTimeTile(user, sensorTimestamp,9,10,11);
+                updateTimeTile(user, sensorTimestamp, 9, 10, 11);
             }
         }
     }
