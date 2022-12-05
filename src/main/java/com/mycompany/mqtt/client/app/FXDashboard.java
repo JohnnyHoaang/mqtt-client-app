@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -170,6 +169,9 @@ public class FXDashboard extends HBox {
         retrieveData(); 
     }
 
+    /**
+     * prompt user for credentials until successfully logged in to mqtt
+     */
     private void login() {
         boolean askCredentials = true;
         while(askCredentials){
@@ -239,7 +241,6 @@ public class FXDashboard extends HBox {
                             } catch(IOException e){
                                 e.printStackTrace();
                             }
-                                             
                         }});
                     } catch(Exception e){
 
