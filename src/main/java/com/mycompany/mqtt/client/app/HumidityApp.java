@@ -14,6 +14,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import org.json.JSONObject;
 
 /**
@@ -52,14 +53,13 @@ public class HumidityApp extends Sensor{
     }
     @Override
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        byte[] signedTemp = getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.temperature));
-        byte[] signedHumidity = getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.humidity));
-
+        String signedTemp = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.temperature)));
+        String signedHumidity = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.humidity)));
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time",LocalDateTime.now());
         jsonMessage.put("temperature", this.temperature);
         jsonMessage.put("signedTemp", signedTemp);
-        jsonMessage.put("humidity", this.humidity);
+        jsonMessage.put("humidity", humidity);
         jsonMessage.put("signedHum", signedHumidity);
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
     }
