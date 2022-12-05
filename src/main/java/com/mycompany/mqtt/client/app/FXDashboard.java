@@ -313,7 +313,6 @@ public class FXDashboard extends HBox {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
     }

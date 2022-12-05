@@ -69,8 +69,6 @@ public abstract class Sensor {
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
 
         var time = LocalDateTime.now();
-        var signature = instance.generateSignature("SHA256withECDSA", key, time.toString());
-        
         String signedMessage = Base64.getEncoder().encodeToString(instance.generateSignature("SHA256withECDSA", key, time.toString()));
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time", time);
