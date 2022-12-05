@@ -1,6 +1,7 @@
 package com.mycompany.mqtt.client.app;
 
 import java.io.ByteArrayInputStream;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -40,12 +41,16 @@ public class FXDashboard extends HBox {
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
-
+    Console console = System.console();
     public FXDashboard(MqttRun mqtt, String topicUser){
-        
-        this.mqtt = mqtt;
-        this.client = mqtt.run();
         this.instance = new LogicHandler();
+        String ksPath = console.readLine("Enter Keystore path: ");
+        char [] password = console.readPassword("Enter Keystore password: ");
+        var ks = this.instance.loadKeystore(ksPath, password);
+        this.mqtt = mqtt;
+        mqtt.setKeyStore(ks);
+        this.client = mqtt.run();
+        
         try {
             this.buildScreen();
         } catch (IOException e){
@@ -285,10 +290,7 @@ public class FXDashboard extends HBox {
                         String buzzerTimestamp = buzzerDate + " | " + buzzerTime;
                         
                         updateBuzzerTile(user, buzzerTimestamp);
-                        } else {
-                            throw new Error("cert errir");
-                        }
-                        
+                        } 
                         break;
                     case "motion":
                         String motionDate = json.get("time").toString().substring(1, 10);
@@ -308,7 +310,7 @@ public class FXDashboard extends HBox {
                 
             }
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
