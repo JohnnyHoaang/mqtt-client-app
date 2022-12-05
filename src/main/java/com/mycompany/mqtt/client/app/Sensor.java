@@ -13,6 +13,8 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.time.LocalDateTime;
+import java.util.Base64;
+
 import org.json.JSONObject;
 
 /**
@@ -65,11 +67,13 @@ public abstract class Sensor {
         return this.instance;
     }
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        byte[] signedMessage = instance.generateSignature("SHA256withECDSA", key, LocalDateTime.now().toString());
+
+        var time = LocalDateTime.now();
+        String signedMessage = Base64.getEncoder().encodeToString(instance.generateSignature("SHA256withECDSA", key, time.toString()));
         JSONObject jsonMessage = new JSONObject();
-        jsonMessage.put("time", LocalDateTime.now());
+        jsonMessage.put("time", time);
         jsonMessage.put("signedTime", signedMessage);
-        mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());
+        mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());;
     }
     public MqttRun getMqtt(){
         return this.mqtt;

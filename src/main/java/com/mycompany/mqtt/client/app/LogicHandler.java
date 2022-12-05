@@ -111,7 +111,6 @@ public class LogicHandler {
         
         //Compute the signature.
         sig.update(message.getBytes("UTF-8"));
-        
         //Verify the signature.
         boolean validSignature = sig.verify(signature);
         
@@ -120,6 +119,7 @@ public class LogicHandler {
         } else {
             System.out.println(Colors.RED + "\nSignature is not valid" + Colors.RESET);
         }
+        
         
         return validSignature;
     }
