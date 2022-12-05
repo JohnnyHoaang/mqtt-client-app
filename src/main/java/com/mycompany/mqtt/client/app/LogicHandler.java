@@ -111,8 +111,6 @@ public class LogicHandler {
         
         //Compute the signature.
         sig.update(message.getBytes("UTF-8"));
-        System.out.println("verifying signature");
-        System.out.println(new String(signature));
         //Verify the signature.
         boolean validSignature = sig.verify(signature);
         

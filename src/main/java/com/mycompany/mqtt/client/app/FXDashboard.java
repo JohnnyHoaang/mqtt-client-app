@@ -15,6 +15,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -40,6 +41,7 @@ public class FXDashboard extends HBox {
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
     private int PREF_WIDTH = 300;
     private int PREF_HEIGHT = 200;
+    private HashMap storedUserpublicKeys = new HashMap<String, PublicKey>();
     Console console = System.console();
 
     public FXDashboard(MqttRun mqtt, String topicUser) {
@@ -282,19 +284,25 @@ public class FXDashboard extends HBox {
                     String user = topics[2];
                     PublicKey publicKey = null;
 
-                    if (user.equals("johnny")) {
+                    //if (user.equals("johnny")) {
+                    if(mqtt.getKeyStore().getCertificate(user) == null){
+                        System.out.println("No matching certificate for user " + user);
+                    } else {
                         Certificate cert = mqtt.getKeyStore().getCertificate(user);
                         publicKey = cert.getPublicKey();
+                        this.storedUserpublicKeys.put(user, publicKey);
                     }
+                    
+                    //}
                     switch (sensorType) {
                         case "buzzer":
-                            sensorTimeUpdate(json, user, publicKey, "buzzer");
+                            sensorTimeUpdate(json, user, (PublicKey)this.storedUserpublicKeys.get(user) , "buzzer");
                             break;
                         case "motion":
-                            sensorTimeUpdate(json, user, publicKey, "motion");
+                            sensorTimeUpdate(json, user, (PublicKey)this.storedUserpublicKeys.get(user), "motion");
                             break;
                         case "humidity":
-                            sensorAmbientUpdate(json, user, publicKey);
+                            sensorAmbientUpdate(json, user, (PublicKey)this.storedUserpublicKeys.get(user));
                             break;
                         default:
                             break;
@@ -350,13 +358,13 @@ public class FXDashboard extends HBox {
      * @param user
      * @param time
      */
-    private void updateTimeTile(String user, String time, int first, int second, int third) {
+    private void updateTimeTile(String user, String time, int firstRow, int secondRow, int thirdRow) {
         if (user.equals("johnny")) {
-            tiles.get(first).setDescription(time);
+            tiles.get(firstRow).setDescription(time);
         } else if (user.equals("alexander")) {
-            tiles.get(second).setDescription(time);
+            tiles.get(secondRow).setDescription(time);
         } else if (user.equals("katharina")) {
-            tiles.get(third).setDescription(time);
+            tiles.get(thirdRow).setDescription(time);
         }
     }
 
