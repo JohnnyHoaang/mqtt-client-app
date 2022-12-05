@@ -117,14 +117,12 @@ public class MqttRun {
      * Confirms messaged received
      */
     public void messageReceived(Mqtt5BlockingClient client){
-        System.out.println("start");
         Thread thread = new Thread(()->{
             client.toAsync().publishes(ALL, publish -> {
             this.result = publish.getTopic() + "'" + UTF_8.decode(publish.getPayload().get()).toString();
         });
         });
         thread.start();
-        System.out.println("end");
     }
     public void close(Mqtt5BlockingClient client){
         client.disconnect();

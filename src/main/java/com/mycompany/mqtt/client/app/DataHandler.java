@@ -20,20 +20,27 @@ import javafx.concurrent.Task;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
-public class DataHandler{
+public class DataHandler {
     private MqttRun mqtt;
     private Mqtt5BlockingClient client;
     private HashMap storedUsersPublicKeys;
     private FXDashboard dashboard;
     private LogicHandler instance;
-    public DataHandler(MqttRun mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys,  FXDashboard dashboard){
+    private String ksPath;
+    private char[] ksPassword;
+
+    public DataHandler(MqttRun mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys, FXDashboard dashboard,
+            String ksPath, char[] ksPassword) {
         this.mqtt = mqtt;
         this.client = client;
         this.storedUsersPublicKeys = storedUsersPublicKeys;
         this.dashboard = dashboard;
+        this.ksPath = ksPath;
+        this.ksPassword = ksPassword;
         this.instance = new LogicHandler();
     }
-        /**
+
+    /**
      * Retieve sensor data from the mqtt server
      */
     public void retrieveData() {
@@ -74,6 +81,7 @@ public class DataHandler{
         };
         new Thread(task).start();
     }
+
     /**
      * Parse data accordingly and send to appropriate methods to be displayed
      * 
@@ -94,7 +102,6 @@ public class DataHandler{
                     CertificateFactory cf = CertificateFactory.getInstance("X.509");
                     X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
                     mqtt.getKeyStore().setCertificateEntry(user, cert);
-                    // TODO: Save Keystore into a file
                 }
                 // check sensor type and display accordingly
                 if (topics[0].equals("sensor")) {
@@ -102,24 +109,26 @@ public class DataHandler{
                     String user = topics[2];
                     PublicKey publicKey = null;
 
-                    if(mqtt.getKeyStore().getCertificate(user) == null){
+                    if (mqtt.getKeyStore().getCertificate(user) == null) {
                         System.out.println("No matching certificate for user " + user);
                     } else {
                         Certificate cert = mqtt.getKeyStore().getCertificate(user);
                         publicKey = cert.getPublicKey();
                         // Add user public key to public key collection
                         this.storedUsersPublicKeys.put(user, publicKey);
+                        instance.saveKeystoreToFile(mqtt.getKeyStore(), this.ksPath, this.ksPassword);
                     }
-                    // Update user tiles with MQTT information and signature verificction using user public key
+                    // Update user tiles with MQTT information and signature verificction using user
+                    // public key
                     switch (sensorType) {
                         case "buzzer":
-                            sensorTimeUpdate(json, user, (PublicKey)this.storedUsersPublicKeys.get(user) , "buzzer");
+                            sensorTimeUpdate(json, user, (PublicKey) this.storedUsersPublicKeys.get(user), "buzzer");
                             break;
                         case "motion":
-                            sensorTimeUpdate(json, user, (PublicKey)this.storedUsersPublicKeys.get(user), "motion");
+                            sensorTimeUpdate(json, user, (PublicKey) this.storedUsersPublicKeys.get(user), "motion");
                             break;
                         case "humidity":
-                            sensorAmbientUpdate(json, user, (PublicKey)this.storedUsersPublicKeys.get(user));
+                            sensorAmbientUpdate(json, user, (PublicKey) this.storedUsersPublicKeys.get(user));
                             break;
                         default:
                             break;
@@ -130,17 +139,22 @@ public class DataHandler{
             }
 
         } catch (Exception e) {
+            // e.printStackTrace();
         }
 
     }
+
     /**
-     * Performs signature verification for ambient information and update corresponding user tiles
+     * Performs signature verification for ambient information and update
+     * corresponding user tiles
+     * 
      * @param json
      * @param user
      * @param publicKey
      */
     private void sensorAmbientUpdate(JSONObject json, String user, PublicKey publicKey) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
+        System.out.println("Received from mqtt: " + json.toString());
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
@@ -150,12 +164,16 @@ public class DataHandler{
                 "SHA256withECDSA", json.get("temperature").toString());
         boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
                 "SHA256withECDSA", json.get("humidity").toString());
+        System.out.println("Verified Signature");
         if (temperatureCheck) {
+            System.out.println("Updating ambient tile");
             dashboard.updateTempHum(user, temperature, humidity);
         }
     }
+
     /**
      * Performs signature verification for time and update corresponding user tiles
+     * 
      * @param json
      * @param user
      * @param publicKey
@@ -164,6 +182,7 @@ public class DataHandler{
     private void sensorTimeUpdate(JSONObject json, String user, PublicKey publicKey, String type)
             throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
+        System.out.println("Received from mqtt: " + json.toString());
         byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
         boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
                 "SHA256withECDSA", json.get("time").toString());
@@ -172,8 +191,10 @@ public class DataHandler{
             String sensorTime = json.get("time").toString().substring(11, 22);
             String sensorTimestamp = sensorDate + " | " + sensorTime;
             if (type.equals("buzzer")) {
+                System.out.println("Updating buzzer tile");
                 dashboard.updateTimeTile(user, sensorTimestamp, 6, 7, 8);
             } else if (type.equals("motion")) {
+                System.out.println("Updating motion tile");
                 dashboard.updateTimeTile(user, sensorTimestamp, 9, 10, 11);
             }
         }

@@ -30,7 +30,6 @@ public class HumidityApp extends Sensor{
     }
     // Calls humidity and temperature information in a loop to update given tile
     public void sensorLoop(PrivateKey key){
-        // TODO: Will take tile parameter to update tile text
         Thread thread = new Thread(()-> {
             try {
                 while(true){
@@ -61,6 +60,7 @@ public class HumidityApp extends Sensor{
         jsonMessage.put("signedTemp", signedTemp);
         jsonMessage.put("humidity", humidity);
         jsonMessage.put("signedHum", signedHumidity);
+        System.out.println("Sending ambient data: " + jsonMessage.toString());
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
     }
 }
