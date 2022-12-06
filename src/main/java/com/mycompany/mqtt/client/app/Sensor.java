@@ -13,6 +13,8 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.time.LocalDateTime;
+import java.util.Base64;
+
 import org.json.JSONObject;
 
 /**
@@ -64,22 +66,52 @@ public abstract class Sensor {
     public LogicHandler getInstance(){
         return this.instance;
     }
+
+    /**
+     * Sends the collected data from the sensors to the mqtt server
+     * 
+     * @param topic
+     * @param key
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws UnsupportedEncodingException
+     * @throws SignatureException
+     */
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
-        byte[] signedMessage = instance.generateSignature("SHA256withECDSA", key, LocalDateTime.now().toString());
+
+        var time = LocalDateTime.now();
+        String signedMessage = Base64.getEncoder().encodeToString(instance.generateSignature("SHA256withECDSA", key, time.toString()));
         JSONObject jsonMessage = new JSONObject();
-        jsonMessage.put("time", LocalDateTime.now());
+        jsonMessage.put("time", time);
         jsonMessage.put("signedTime", signedMessage);
-        mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());
+        System.out.println("Sending Sensor Confirmation: " + jsonMessage.toString());
+        mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());;
     }
+
+    /**
+     * 
+     * @return instance on the MqttRun class
+     */
     public MqttRun getMqtt(){
         return this.mqtt;
     }
+
+    /**
+     * 
+     * @return instance of the mqtt client
+     */
     public Mqtt5BlockingClient getClient(){
         return this.client;
     }
+
+    /**
+     * 
+     * @return the name to be used in the topic
+     */
     public String getTopicUser(){
         return this.topicUser;
     }
+
     abstract void sensorLoop(PrivateKey key);
-    
 }

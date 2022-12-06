@@ -40,6 +40,19 @@ public class ConsoleApp {
         app.menu();
     }
 
+    /**
+     * Display a menu for the user
+     * 
+     * @throws UnrecoverableKeyException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws NoSuchProviderException
+     * @throws UnsupportedEncodingException
+     * @throws SignatureException
+     * @throws InterruptedException
+     * @throws CertificateEncodingException
+     */
     private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, 
             InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, 
             InterruptedException, CertificateEncodingException {
@@ -109,6 +122,19 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Menu for when sensors are running, allows the user to eneter f to shut down all sensors
+     * 
+     * @throws UnrecoverableKeyException
+     * @throws InvalidKeyException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws UnsupportedEncodingException
+     * @throws SignatureException
+     * @throws InterruptedException
+     * @throws CertificateEncodingException
+     */
     private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, 
             KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, 
             UnsupportedEncodingException, SignatureException, InterruptedException, CertificateEncodingException {
@@ -131,12 +157,17 @@ public class ConsoleApp {
         }
     }
 
-    // get the path from the user and validate it, promting again if it's invalid
+    /**
+     * get the path from the user and validate it, promting again if it's invalid
+     * 
+     * @return the user given path
+     */
     private String getPath() {
         boolean pathValid = false;
         System.out.println(Colors.PURPLE + "\n<----- Keystore Path ----->" + Colors.RESET);
         String path = "";
 
+        // keep prompting until path is valid
         while (pathValid != true) {
             System.out.println("\nPlease enter the path to your keystore: ");
             path = con.readLine();
@@ -145,11 +176,14 @@ public class ConsoleApp {
         return path;
     }
 
+    /**
+     * @return user given password
+     */
     private char[] getPass() {
         boolean passValid = false;
         char[] pass = {};
         System.out.println(Colors.PURPLE + "\n<----- Keystore Password ----->" + Colors.RESET);
-            
+        
         while (passValid != true) {
             System.out.println("\nPlease enter the password for your keystore");
             pass = con.readPassword();
@@ -158,6 +192,9 @@ public class ConsoleApp {
         return pass;
     }
 
+    /**
+     * @return the users keystore
+     */
     private KeyStore getKeystore() {
         boolean gotKeystore = false;
 
@@ -176,30 +213,5 @@ public class ConsoleApp {
             }
         }
         return ks;
-    }
-    
-    // TODO: be used later when fetching certs from mqtt
-    private void storeCertificate(String alias, Certificate cert) throws KeyStoreException{
-        ks.setCertificateEntry(alias, cert);
-        
-    }
-
-    // TODO: potentially modify to only sign data sent
-    private void writeMessage() {
-        System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
-        System.out.println("\nFirst please enter the topic you wish to subscribe to:");
-        String topic = con.readLine();
-        System.out.println("\nNext please enter the message you wish to send:");
-        String message = con.readLine();
-        try {
-            mqtt.publishMessage(client, topic, instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], message));
-            System.out.println(Colors.GREEN + "\nMessage Sent.\n" + Colors.RESET);
-            
-        } catch (Exception e) {
-            System.out.println(Colors.RED + "\nCould not publish message, please ensure you have successfully:\n"
-                              +"- Loaded a keystore\n"
-                              +"- Extracted the keys\n"
-                              +"- Connected to the client\n" + Colors.RESET);
-        }
     }
 }

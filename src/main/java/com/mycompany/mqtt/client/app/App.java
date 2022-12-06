@@ -5,9 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.application.Platform;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import java.security.*;
-import java.util.Enumeration;
 /**
  * JavaFX App
  */
@@ -17,7 +15,7 @@ public class App extends Application{
     @Override
     public void start(Stage stage) throws IOException {
         var console = System.console();
-        String topicUser = console.readLine("Enter your topic user:");
+        String topicUser = console.readLine("Enter your topic user:\n");
         mqtt = new MqttRun();
         var scene = new Scene(new FXDashboard(mqtt,topicUser), 1215, 600);
         stage.setScene(scene);

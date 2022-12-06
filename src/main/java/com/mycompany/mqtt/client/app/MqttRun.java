@@ -30,12 +30,10 @@ public class MqttRun {
         connectClient(client, username, password);
         return client;
     }
-//    public MqttRun(KeyStore ks){
-//        this.ks = ks;
-//    }
+
     /**
      * Gets username
-     * 
+     * @return the user given username
      */
     public String getUsername(){
         boolean check = false;
@@ -51,8 +49,8 @@ public class MqttRun {
         return username;
     }
     /**
-     *
      * Gets Password
+     * @return the user given password
      */
     public String getPassword(){
         boolean check = false;
@@ -69,10 +67,11 @@ public class MqttRun {
         return pass;
     }
     
-    /**
-     *
-     * Creates Client
-     */
+     /**
+      * Creates MQTT Client
+      * @param host
+      * @return the MQTT client
+      */
     public Mqtt5BlockingClient createClient(String host){
         Mqtt5BlockingClient client = MqttClient.builder()
                 .useMqttVersion5()
@@ -85,8 +84,12 @@ public class MqttRun {
     }
     
     /**
-     *
      * Connects Client to server
+     * 
+     * @param client
+     * @param username
+     * @param password
+     * @throws InvocationTargetException
      */
     public void connectClient(Mqtt5BlockingClient client, String username, String password) throws InvocationTargetException{
 
@@ -99,47 +102,69 @@ public class MqttRun {
 
         System.out.println(Colors.GREEN + "\nConnected Successfully" + Colors.RESET);
     }
-    
-    /**
-     *
-     * Subscribes to Topic of users choice
-     */
+
+     /**
+      * Subscribes to Topic of users choice
+      * @param client
+      * @param topic
+      */
     public void subscribeToTopic(Mqtt5BlockingClient client, String topic){
         client.subscribeWith()
                 .topicFilter(topic)
                 .send();
     }
     
-    /**
-     *
-     * Confirms messaged received
-     */
+     /**
+      * Confirms messaged received
+      * @param client
+      */
     public void messageReceived(Mqtt5BlockingClient client){
-        System.out.println("start");
         Thread thread = new Thread(()->{
             client.toAsync().publishes(ALL, publish -> {
             this.result = publish.getTopic() + "'" + UTF_8.decode(publish.getPayload().get()).toString();
         });
         });
         thread.start();
-        System.out.println("end");
     }
+
+    /**
+     * Closes the mqtt client connection
+     * @param client
+     */
     public void close(Mqtt5BlockingClient client){
         client.disconnect();
     }
+
+    /**
+     * 
+     * @return the payload of received data
+     */
     public String getResult(){
         return this.result;
     }
+
+    /**
+     * 
+     * @return the keystore
+     */
     public KeyStore getKeyStore(){
         return this.ks;
     }
+
+    /**
+     * set retreived keystore to variable
+     * @param ks
+     */
     public void setKeyStore(KeyStore ks){
         this.ks = ks;
     }
-    /**
-     *
-     * Publishes message
-     */
+
+     /**
+      * Publishes message
+      * @param client
+      * @param topic
+      * @param message
+      */
     public void publishMessage(Mqtt5BlockingClient client, String topic, byte[] message){
 
         client.publishWith()
