@@ -89,18 +89,18 @@ public class ConsoleApp {
                             try {
                                 client = mqtt.run();
                                 askCredentials = false;
+                                humidity = new HumidityApp(mqtt , client, topicUser);
+                                humidity.sensorLoop((PrivateKey)keys[1]);
+                                buzzer = new BuzzerApp(mqtt, client, topicUser);
+                                buzzer.sensorLoop((PrivateKey)keys[1]);
+                                motion = new MotionSensorApp(mqtt, client, topicUser);
+                                motion.sensorLoop((PrivateKey)keys[1]);
+                                sensorMenu();
                             } catch (Exception e) {
                                 System.out.println(Colors.RED + "Invalid credentials, please tru again" + Colors.RESET);
-                                
                             }
                         }
-                        humidity = new HumidityApp(mqtt , client, topicUser);
-                        humidity.sensorLoop((PrivateKey)keys[1]);
-                        buzzer = new BuzzerApp(mqtt, client, topicUser);
-                        buzzer.sensorLoop((PrivateKey)keys[1]);
-                        motion = new MotionSensorApp(mqtt, client, topicUser);
-                        motion.sensorLoop((PrivateKey)keys[1]);
-                        sensorMenu();
+
                     } else {
                         System.out.println(Colors.RED + "\nEnsure keystore was loaded and keys were extracted" + Colors.RESET);
                     }
