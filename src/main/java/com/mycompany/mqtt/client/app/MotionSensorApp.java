@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Base64;
 import org.json.JSONObject;
+import java.security.PrivateKey;
+import java.time.LocalDateTime;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
@@ -18,7 +20,7 @@ public class MotionSensorApp extends Sensor{
    
     }
 
-    public void sensorLoop(){
+    public void sensorLoop(PrivateKey key){
         Thread thread = new Thread(() -> {
             try {
                 String previousOutput = "";
@@ -29,7 +31,7 @@ public class MotionSensorApp extends Sensor{
                     String motionOn = "motion detected >>>";
                     if(output.equals(motionOn) && !previousOutput.equals(motionOn)){
                         camera.execute();
-                        sendSensorData("sensor/motion/"+getTopicUser()+"/");
+                        sendSensorData("sensor/motion/"+getTopicUser()+"/", key);
                     } 
                     previousOutput = this.getOutput();
                 }

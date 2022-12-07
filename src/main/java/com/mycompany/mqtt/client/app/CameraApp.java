@@ -50,7 +50,7 @@ public class CameraApp {
         System.out.println("Video taken");
     }
     public String getOutPutPath(){
-        //return this.camera.getOutputPath();
+        return this.camera.getOutputPath();
     }
 
     public int getCameraCount(){
