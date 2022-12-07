@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * @author 2043441
  */
-public class MqttRun {
+public class MqttHandler {
     private KeyStore ks;
     private String result = "";
     Console cnsl = System.console();

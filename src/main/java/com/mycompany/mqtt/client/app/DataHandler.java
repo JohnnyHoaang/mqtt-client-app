@@ -20,15 +20,15 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
 public class DataHandler {
-    private MqttRun mqtt;
+    private MqttHandler mqtt;
     private Mqtt5BlockingClient client;
     private HashMap storedUsersPublicKeys;
     private FXDashboard dashboard;
-    private LogicHandler instance;
+    private SecurityHandler instance;
     private String ksPath;
     private char[] ksPassword;
 
-    public DataHandler(MqttRun mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys, FXDashboard dashboard,
+    public DataHandler(MqttHandler mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys, FXDashboard dashboard,
             String ksPath, char[] ksPassword) {
         this.mqtt = mqtt;
         this.client = client;
@@ -36,7 +36,7 @@ public class DataHandler {
         this.dashboard = dashboard;
         this.ksPath = ksPath;
         this.ksPassword = ksPassword;
-        this.instance = new LogicHandler();
+        this.instance = new SecurityHandler();
     }
 
     /**

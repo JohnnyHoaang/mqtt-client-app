@@ -11,10 +11,10 @@ import java.security.*;
  */
 public class App extends Application{
     // private FXDashboard dashboard;
-    public static MqttRun mqtt;
+    public static MqttHandler mqtt;
     @Override
     public void start(Stage stage) throws IOException {
-        mqtt = new MqttRun();
+        mqtt = new MqttHandler();
         var scene = new Scene(new FXDashboard(mqtt), 1215, 600);
         stage.setScene(scene);
         stage.show();

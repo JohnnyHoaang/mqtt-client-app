@@ -26,18 +26,18 @@ public abstract class Sensor {
     private String output;
     private Thread thread;
     private ProcessBuilderHandler processBuilder;
-    private MqttRun mqtt;
+    private MqttHandler mqtt;
     private Mqtt5BlockingClient client;
     private String topicUser;
-    private LogicHandler instance;
+    private SecurityHandler instance;
 
-    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client, String topicUser ){
+    public Sensor(String filePath, MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser ){
         this.filePath = filePath;
         this.client = client;
         this.mqtt = mqtt;
         this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
         this.topicUser = topicUser;
-        this.instance  = new LogicHandler();
+        this.instance  = new SecurityHandler();
     }
     public void getSensorInfo(){
         try {
@@ -63,7 +63,7 @@ public abstract class Sensor {
             this.thread.stop();
         }
     }
-    public LogicHandler getInstance(){
+    public SecurityHandler getInstance(){
         return this.instance;
     }
 
@@ -93,7 +93,7 @@ public abstract class Sensor {
      * 
      * @return instance on the MqttRun class
      */
-    public MqttRun getMqtt(){
+    public MqttHandler getMqtt(){
         return this.mqtt;
     }
 

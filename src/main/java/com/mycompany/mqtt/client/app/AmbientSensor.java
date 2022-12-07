@@ -21,11 +21,11 @@ import org.json.JSONObject;
  *
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
-public class HumidityApp extends Sensor{
+public class AmbientSensor extends Sensor{
     private double humidity;
     private double temperature;
 
-    public HumidityApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
+    public AmbientSensor(MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser){
         super("./pi-sensor-code/DHT11.py", mqtt, client, topicUser);
     }
 

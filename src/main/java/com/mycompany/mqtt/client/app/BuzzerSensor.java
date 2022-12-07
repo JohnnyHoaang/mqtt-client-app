@@ -7,9 +7,9 @@ import java.security.PrivateKey;
  *
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
-public class BuzzerApp extends Sensor{
+public class BuzzerSensor extends Sensor{
    
-    public BuzzerApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
+    public BuzzerSensor(MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser){
         super("./pi-sensor-code/Doorbell.py", mqtt, client, topicUser);
     }
     

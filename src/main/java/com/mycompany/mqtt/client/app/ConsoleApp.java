@@ -23,14 +23,14 @@ public class ConsoleApp {
     private Console con = System.console();
     private KeyStore ks = null;
     private Key[] keys;
-    private MqttRun mqtt = new MqttRun();
+    private MqttHandler mqtt = new MqttHandler();
     private Mqtt5BlockingClient client;
     private String topicUser = "";
-    private HumidityApp humidity;
-    private BuzzerApp buzzer;
-    private MotionSensorApp motion;
+    private AmbientSensor humidity;
+    private BuzzerSensor buzzer;
+    private MotionSensor motion;
     // public static String user;
-    private LogicHandler instance = new LogicHandler();
+    private SecurityHandler instance = new SecurityHandler();
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, 
             KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, 
@@ -90,11 +90,11 @@ public class ConsoleApp {
                                 client = mqtt.run();
                                 askCredentials = false;
                                 instance.sendCertificate(mqtt, client, topicUser, ks);
-                                humidity = new HumidityApp(mqtt , client, topicUser);
+                                humidity = new AmbientSensor(mqtt , client, topicUser);
                                 humidity.sensorLoop((PrivateKey)keys[1]);
-                                buzzer = new BuzzerApp(mqtt, client, topicUser);
+                                buzzer = new BuzzerSensor(mqtt, client, topicUser);
                                 buzzer.sensorLoop((PrivateKey)keys[1]);
-                                motion = new MotionSensorApp(mqtt, client, topicUser);
+                                motion = new MotionSensor(mqtt, client, topicUser);
                                 motion.sensorLoop((PrivateKey)keys[1]);
                                 sensorMenu();
                             } catch (Exception e) {

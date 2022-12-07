@@ -20,9 +20,9 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
 public class FXDashboard extends HBox {
 
-    private MqttRun mqtt;
+    private MqttHandler mqtt;
     private Mqtt5BlockingClient client;
-    private LogicHandler instance;
+    private SecurityHandler instance;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
@@ -32,8 +32,8 @@ public class FXDashboard extends HBox {
     private DataHandler dataInstance;
     Console console = System.console();
 
-    public FXDashboard(MqttRun mqtt) {
-        this.instance = new LogicHandler();
+    public FXDashboard(MqttHandler mqtt) {
+        this.instance = new SecurityHandler();
         String ksPath = console.readLine("Enter Keystore path: ");
         char[] password = console.readPassword("Enter Keystore password: ");
         var ks = this.instance.loadKeystore(ksPath, password);

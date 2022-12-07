@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
-public class LogicHandler {
+public class SecurityHandler {
 
     Console con = System.console();
 
@@ -163,7 +163,7 @@ public class LogicHandler {
      * @throws KeyStoreException
      * @throws CertificateEncodingException
      */
-    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks)
+    public void sendCertificate(MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks)
             throws KeyStoreException, CertificateEncodingException {
         Enumeration<String> enumeration = ks.aliases();
         String alias = enumeration.nextElement();
