@@ -72,6 +72,7 @@ public class ConsoleApp {
                     if (keys != null && ks != null) {
                         topicUser = con.readLine("Enter topic user name");
                         client = mqtt.run();
+                        instance.sendCertificate(mqtt, client, topicUser, ks);
                         humidity = new HumidityApp(mqtt , client, topicUser);
                         humidity.sensorLoop((PrivateKey)keys[1]);
                         buzzer = new BuzzerApp(mqtt, client, topicUser);
