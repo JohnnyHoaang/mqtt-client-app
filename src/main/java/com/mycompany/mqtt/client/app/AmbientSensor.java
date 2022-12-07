@@ -21,14 +21,18 @@ import org.json.JSONObject;
  *
  * @author Johnny Hoang <johnny.hoang@dawsoncollege.qc.ca>
  */
-public class HumidityApp extends Sensor{
+public class AmbientSensor extends Sensor{
     private double humidity;
     private double temperature;
 
-    public HumidityApp(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser){
+    public AmbientSensor(MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser){
         super("./pi-sensor-code/DHT11.py", mqtt, client, topicUser);
     }
-    // Calls humidity and temperature information in a loop to update given tile
+
+    /**
+     * Calls humidity and temperature information in a loop to update given tile
+     * @param key sent with data to sign it
+     */ 
     public void sensorLoop(PrivateKey key){
         Thread thread = new Thread(()-> {
             try {
@@ -50,6 +54,12 @@ public class HumidityApp extends Sensor{
         setThread(thread);
         thread.start();
     }
+
+    /**
+     * Send temperature and humidity data to the mqtt server
+     * @param topic which topic to publish the data to
+     * @param key Private key to sign the data with
+     */
     @Override
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
         String time = LocalDateTime.now().toString();

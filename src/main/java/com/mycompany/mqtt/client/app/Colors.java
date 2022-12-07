@@ -1,5 +1,6 @@
 package com.mycompany.mqtt.client.app;
 
+// used to color test to differentiate between error messages and successful messages
 public class Colors {
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";

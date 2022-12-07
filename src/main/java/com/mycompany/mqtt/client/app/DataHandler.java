@@ -16,20 +16,19 @@ import java.util.Base64;
 import java.util.HashMap;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
 public class DataHandler {
-    private MqttRun mqtt;
+    private MqttHandler mqtt;
     private Mqtt5BlockingClient client;
     private HashMap storedUsersPublicKeys;
     private FXDashboard dashboard;
-    private LogicHandler instance;
+    private SecurityHandler instance;
     private String ksPath;
     private char[] ksPassword;
 
-    public DataHandler(MqttRun mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys, FXDashboard dashboard,
+    public DataHandler(MqttHandler mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys, FXDashboard dashboard,
             String ksPath, char[] ksPassword) {
         this.mqtt = mqtt;
         this.client = client;
@@ -37,7 +36,7 @@ public class DataHandler {
         this.dashboard = dashboard;
         this.ksPath = ksPath;
         this.ksPassword = ksPassword;
-        this.instance = new LogicHandler();
+        this.instance = new SecurityHandler();
     }
 
     /**
@@ -45,7 +44,7 @@ public class DataHandler {
      */
     public void retrieveData() {
 
-        // subscribe to all topics under sensor
+        // Subscribe to all topics under sensor
         mqtt.subscribeToTopic(this.client, "certificate/#");
         mqtt.subscribeToTopic(this.client, "sensor/#");
 
@@ -59,7 +58,7 @@ public class DataHandler {
                         break;
                     }
                     try {
-                        // used to update display with data retieved from mqtt server
+                        // Update tiles with data retieved from mqtt server
                         Thread.sleep(100);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -90,7 +89,7 @@ public class DataHandler {
     private void handleResult(String result) throws IOException {
         try {
             if (!result.equals("")) {
-                // parse data to get topic and info
+                // Parse data to get topic and info
                 String[] informations = result.split("'");
                 JSONObject json = new JSONObject(informations[1]);
                 String[] topics = informations[0].split("/");
@@ -98,12 +97,13 @@ public class DataHandler {
                     String user = topics[1];
                     String certString = json.get("certificate").toString();
 
+                    // Get certificate and save it to the keystore
                     InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
                     CertificateFactory cf = CertificateFactory.getInstance("X.509");
                     X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
                     mqtt.getKeyStore().setCertificateEntry(user, cert);
                 }
-                // check sensor type and display accordingly
+                // Check sensor type and display accordingly
                 if (topics[0].equals("sensor")) {
                     String sensorType = topics[1];
                     String user = topics[2];
@@ -133,8 +133,6 @@ public class DataHandler {
                         default:
                             break;
                     }
-                } else {
-
                 }
             }
 
@@ -155,15 +153,20 @@ public class DataHandler {
     private void sensorAmbientUpdate(JSONObject json, String user, PublicKey publicKey) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
         System.out.println("Received from mqtt: " + json.toString());
+
+        // get signed data from received data and verify it
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
         byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
-        boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
-                "SHA256withECDSA", json.get("time").toString());
+        
+
+        // only update tiles if data was successfully verified
         boolean temperatureCheck = this.instance.verifySignature(temperatureSignature, publicKey,
                 "SHA256withECDSA", json.get("temperature").toString());
+        boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
+        "SHA256withECDSA", json.get("time").toString());
         boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
                 "SHA256withECDSA", json.get("humidity").toString());
         System.out.println("Verified Signature");
@@ -185,9 +188,13 @@ public class DataHandler {
             throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
         System.out.println("Received from mqtt: " + json.toString());
+
+        // get signed message from received data and verify it
         byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
         boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
                 "SHA256withECDSA", json.get("time").toString());
+
+        // only display data if it passes verification
         if (sensorTimeCheck) {
             String sensorDate = json.get("time").toString().substring(1, 10);
             String sensorTime = json.get("time").toString().substring(11, 22);

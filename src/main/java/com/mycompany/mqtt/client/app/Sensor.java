@@ -26,18 +26,18 @@ public abstract class Sensor {
     private String output;
     private Thread thread;
     private ProcessBuilderHandler processBuilder;
-    private MqttRun mqtt;
+    private MqttHandler mqtt;
     private Mqtt5BlockingClient client;
     private String topicUser;
-    private LogicHandler instance;
+    private SecurityHandler instance;
 
-    public Sensor(String filePath, MqttRun mqtt, Mqtt5BlockingClient client, String topicUser ){
+    public Sensor(String filePath, MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser ){
         this.filePath = filePath;
         this.client = client;
         this.mqtt = mqtt;
         this.processBuilder = new ProcessBuilderHandler(this.filePath, this);
         this.topicUser = topicUser;
-        this.instance  = new LogicHandler();
+        this.instance  = new SecurityHandler();
     }
     public void getSensorInfo(){
         try {
@@ -63,9 +63,21 @@ public abstract class Sensor {
             this.thread.stop();
         }
     }
-    public LogicHandler getInstance(){
+    public SecurityHandler getInstance(){
         return this.instance;
     }
+
+    /**
+     * Sends the collected data from the sensors to the mqtt server
+     * 
+     * @param topic
+     * @param key
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws UnsupportedEncodingException
+     * @throws SignatureException
+     */
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
 
         var time = LocalDateTime.now();
@@ -76,15 +88,30 @@ public abstract class Sensor {
         System.out.println("Sending Sensor Confirmation: " + jsonMessage.toString());
         mqtt.publishMessage(client, topic, jsonMessage.toString().getBytes());;
     }
-    public MqttRun getMqtt(){
+
+    /**
+     * 
+     * @return instance on the MqttRun class
+     */
+    public MqttHandler getMqtt(){
         return this.mqtt;
     }
+
+    /**
+     * 
+     * @return instance of the mqtt client
+     */
     public Mqtt5BlockingClient getClient(){
         return this.client;
     }
+
+    /**
+     * 
+     * @return the name to be used in the topic
+     */
     public String getTopicUser(){
         return this.topicUser;
     }
+
     abstract void sensorLoop(PrivateKey key);
-    
 }

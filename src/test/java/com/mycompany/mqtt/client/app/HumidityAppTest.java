@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 public class HumidityAppTest {
     @Test
     public void getHumidityTest() {
-        HumidityApp humidityApp = new HumidityApp(null, null, null);
+        AmbientSensor humidityApp = new AmbientSensor(null, null, null);
     }
     
 }

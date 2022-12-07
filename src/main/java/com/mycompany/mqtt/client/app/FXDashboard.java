@@ -1,7 +1,9 @@
 package com.mycompany.mqtt.client.app;
 
 import java.io.Console;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +20,9 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
 public class FXDashboard extends HBox {
 
-    private MqttRun mqtt;
+    private MqttHandler mqtt;
     private Mqtt5BlockingClient client;
-    private LogicHandler instance;
+    private SecurityHandler instance;
     private ArrayList<Tile> tiles = new ArrayList<Tile>();
     private ArrayList<VBox> vboxs = new ArrayList<VBox>();
     private ArrayList<HBox> hboxs = new ArrayList<HBox>();
@@ -30,14 +32,14 @@ public class FXDashboard extends HBox {
     private DataHandler dataInstance;
     Console console = System.console();
 
-    public FXDashboard(MqttRun mqtt, String topicUser) {
-        this.instance = new LogicHandler();
+    public FXDashboard(MqttHandler mqtt) {
+        this.instance = new SecurityHandler();
         String ksPath = console.readLine("Enter Keystore path: ");
         char[] password = console.readPassword("Enter Keystore password: ");
         var ks = this.instance.loadKeystore(ksPath, password);
         mqtt.setKeyStore(ks);
         this.mqtt = mqtt;
-        this.client = mqtt.run();
+        login();
         this.dataInstance = new DataHandler(mqtt, client, storedUsersPublicKeys, this, ksPath, password);
         try {
             this.buildScreen();
@@ -120,6 +122,9 @@ public class FXDashboard extends HBox {
             } else {
                 title = prefix + "Katharina";
             }
+
+            InputStream is = new FileInputStream("src\\assets\\not_found.png");
+            
             var image = TileBuilder.create()
                     .skinType(SkinType.IMAGE)
                     .prefSize(PREF_WIDTH, PREF_HEIGHT)
@@ -171,6 +176,22 @@ public class FXDashboard extends HBox {
     }
 
     /**
+     * prompt user for credentials until successfully logged in to mqtt
+     */
+    private void login() {
+        boolean askCredentials = true;
+        while(askCredentials){
+            try {
+                System.out.println("MQTT Credentials");
+                this.client = mqtt.run();
+                askCredentials = false;
+            } catch (Exception e) {
+                System.out.println(Colors.RED + "\nInvalid credentials, please try again" + Colors.RESET);
+            }
+        }
+    }
+
+    /**
      * Create text tiles for timestamps for each member
      * 
      * @param prefix
@@ -207,7 +228,7 @@ public class FXDashboard extends HBox {
      * @param time
      */
     public void updateBuzzerTile(String user, String time) {
-        if(user.equals("johnny")){
+        if(user.equals("johnny") || user.equals("carlton")){
             tiles.get(6).setDescription(time);
         } else if(user.equals("alexander")) {
             tiles.get(7).setDescription(time);
@@ -223,7 +244,7 @@ public class FXDashboard extends HBox {
      * @param time
      */
     public void updateTimeTile(String user, String time, int firstRow, int secondRow, int thirdRow) {
-        if (user.equals("johnny")) {
+        if (user.equals("johnny") || user.equals("carlton")) {
             tiles.get(firstRow).setDescription(time);
         } else if (user.equals("alexander")) {
             tiles.get(secondRow).setDescription(time);
@@ -239,7 +260,7 @@ public class FXDashboard extends HBox {
      * @param time
      */
     public void updateTempHum(String user, double temperature, double humidity) {
-        if (user.equals("johnny")) {
+        if (user.equals("johnny") || user.equals("carlton")) {
             tiles.get(0).setValue(temperature);
             tiles.get(1).setValue(humidity);
         } else if (user.equals("alexander")) {
