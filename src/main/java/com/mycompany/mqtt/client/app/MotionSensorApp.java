@@ -62,8 +62,13 @@ public class MotionSensorApp extends Sensor{
         String encodedString = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, imageByteArray.toString()));
 
         fin.close();
+
+        var time = LocalDateTime.now();
+        String signedMessage = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, time.toString()));
         //String encodedString = Base64.getEncoder().encodeToString(fileContent);
         JSONObject jsonMessage = new JSONObject();
+        jsonMessage.put("time", time);
+        jsonMessage.put("signedTime", signedMessage);
         jsonMessage.put("pic",encodedString);
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
         }
