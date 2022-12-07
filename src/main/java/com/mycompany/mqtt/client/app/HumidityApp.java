@@ -58,7 +58,7 @@ public class HumidityApp extends Sensor{
         jsonMessage.put("time",LocalDateTime.now());
         jsonMessage.put("temperature", this.temperature);
         jsonMessage.put("signedTemp", signedTemp);
-        jsonMessage.put("humidity", humidity);
+        jsonMessage.put("humidity", this.humidity);
         jsonMessage.put("signedHum", signedHumidity);
         System.out.println("Sending ambient data: " + jsonMessage.toString());
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());

@@ -16,8 +16,6 @@ public class App extends Application{
     public static MqttRun mqtt;
     @Override
     public void start(Stage stage) throws IOException {
-        var console = System.console();
-
         mqtt = new MqttRun();
         var scene = new Scene(new FXDashboard(mqtt,""), 1215, 600);
         stage.setScene(scene);
