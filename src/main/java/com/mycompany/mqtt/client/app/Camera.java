@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
  */
 public class Camera extends Component{
     private static int cameraCount = 0;
-    private String outputPath = "home/" + System.getenv("USER") + "/Pictures";
+    private String outputPath = "home/" + System.getenv("USER") + "/Pictures/";
     /**
      * Constructor for using the picture and video functionality
      * calling the init function to test if a camera is active

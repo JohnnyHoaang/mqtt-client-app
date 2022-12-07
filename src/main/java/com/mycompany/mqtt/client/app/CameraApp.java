@@ -11,6 +11,7 @@ package com.mycompany.mqtt.client.app;
 public class CameraApp {
     //Pi4J code to control camera
     private Camera camera;
+    public static int cameraNum = 0;
     public void execute() {
         System.out.println("\nInitializing the camera");
         camera = new Camera();
@@ -19,7 +20,7 @@ public class CameraApp {
         System.out.println("/home/" + System.getenv("USER") + "/Pictures/");
         //Configure the camera setup
         var config = Camera.PicConfig.Builder.newInstance()
-            .outputPath("/home/" + System.getenv("USER") + "/Pictures/")
+            .outputPath("/home/" + System.getenv("USER") + "/Pictures/"+ cameraNum)
 		    .delay(3000)
 		    .disablePreview(true)
 		    .encoding(Camera.PicEncoding.PNG)
@@ -31,6 +32,7 @@ public class CameraApp {
 
         //Take the picture
         camera.takeStill(config);
+        cameraNum++;
 
         System.out.println("Picture taken");
 
@@ -40,7 +42,7 @@ public class CameraApp {
             .outputPath("/home/" + System.getenv("USER") + "/Videos/")
             .disablePreview(true)
             .recordTime(3000)
-            .useDate(true)
+            .useDate(false)
             .build();
 
         
