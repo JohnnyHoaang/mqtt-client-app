@@ -182,6 +182,7 @@ public class FXDashboard extends HBox {
         boolean askCredentials = true;
         while(askCredentials){
             try {
+                System.out.println("MQTT Credentials");
                 this.client = mqtt.run();
                 askCredentials = false;
             } catch (Exception e) {
