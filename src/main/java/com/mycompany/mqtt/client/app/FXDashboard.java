@@ -1,5 +1,6 @@
 package com.mycompany.mqtt.client.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.Console;
 import java.io.IOException;
 import java.security.PublicKey;
@@ -11,6 +12,7 @@ import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.Tile.ImageMask;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -248,6 +250,17 @@ public class FXDashboard extends HBox {
         } else if (user.equals("katharina")) {
             tiles.get(4).setValue(temperature);
             tiles.get(5).setValue(humidity);
+        }
+    }
+
+    public void updateImage(String user, byte[] pictureByteArray) {
+        Image img = new Image(new ByteArrayInputStream(pictureByteArray));
+        if (user.equals("johnny")) {
+            tiles.get(13).setImage(img);
+        } else if (user.equals("alexander")) {
+            tiles.get(14).setImage(img);
+        } else if (user.equals("katharina")) {
+            tiles.get(15).setImage(img);
         }
     }
 }
