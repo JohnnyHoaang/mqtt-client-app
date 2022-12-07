@@ -227,7 +227,7 @@ public class FXDashboard extends HBox {
      * @param time
      */
     public void updateBuzzerTile(String user, String time) {
-        if(user.equals("johnny")){
+        if(user.equals("johnny") || user.equals("carlton")){
             tiles.get(6).setDescription(time);
         } else if(user.equals("alexander")) {
             tiles.get(7).setDescription(time);
@@ -243,7 +243,7 @@ public class FXDashboard extends HBox {
      * @param time
      */
     public void updateTimeTile(String user, String time, int firstRow, int secondRow, int thirdRow) {
-        if (user.equals("johnny")) {
+        if (user.equals("johnny") || user.equals("carlton")) {
             tiles.get(firstRow).setDescription(time);
         } else if (user.equals("alexander")) {
             tiles.get(secondRow).setDescription(time);
@@ -259,7 +259,7 @@ public class FXDashboard extends HBox {
      * @param time
      */
     public void updateTempHum(String user, double temperature, double humidity) {
-        if (user.equals("johnny")) {
+        if (user.equals("johnny") || user.equals("carlton")) {
             tiles.get(0).setValue(temperature);
             tiles.get(1).setValue(humidity);
         } else if (user.equals("alexander")) {

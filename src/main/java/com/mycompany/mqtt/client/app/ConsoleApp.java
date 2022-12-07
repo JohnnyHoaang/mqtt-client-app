@@ -89,6 +89,7 @@ public class ConsoleApp {
                             try {
                                 client = mqtt.run();
                                 askCredentials = false;
+                                instance.sendCertificate(mqtt, client, topicUser, ks);
                                 humidity = new HumidityApp(mqtt , client, topicUser);
                                 humidity.sensorLoop((PrivateKey)keys[1]);
                                 buzzer = new BuzzerApp(mqtt, client, topicUser);
