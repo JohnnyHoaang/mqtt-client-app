@@ -159,13 +159,15 @@ public class DataHandler {
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
-
+        byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
+        boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
+                "SHA256withECDSA", json.get("time").toString());
         boolean temperatureCheck = this.instance.verifySignature(temperatureSignature, publicKey,
                 "SHA256withECDSA", json.get("temperature").toString());
         boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
                 "SHA256withECDSA", json.get("humidity").toString());
         System.out.println("Verified Signature");
-        if (temperatureCheck) {
+        if (temperatureCheck && sensorTimeCheck) {
             System.out.println("Updating ambient tile");
             dashboard.updateTempHum(user, temperature, humidity);
         }
