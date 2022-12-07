@@ -32,7 +32,7 @@ public class FXDashboard extends HBox {
     private DataHandler dataInstance;
     Console console = System.console();
 
-    public FXDashboard(MqttRun mqtt, String topicUser) {
+    public FXDashboard(MqttRun mqtt) {
         this.instance = new LogicHandler();
         String ksPath = console.readLine("Enter Keystore path: ");
         char[] password = console.readPassword("Enter Keystore password: ");

@@ -63,8 +63,7 @@ public class ConsoleApp {
             System.out.println("1. Load a KeyStore\n"
                               +"2. Extract Keys from KeyStore\n"
                               +"3. Connect to MQTT and Start all sensors\n"
-                              +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
-                              +"5. Exit");
+                              +"4. Exit");
 
             String choice = con.readLine();
             switch (choice) {
@@ -83,10 +82,11 @@ public class ConsoleApp {
 
                 case "3":
                     if (keys != null && ks != null) {
-                        topicUser = con.readLine("Enter topic user name");
+                        topicUser = con.readLine("\nEnter topic user name: \n");
                         boolean askCredentials = true;
                         while (askCredentials) {
                             try {
+                                System.out.println(Colors.PURPLE + "\nMQTT Credentials" + Colors.RESET);
                                 client = mqtt.run();
                                 askCredentials = false;
                                 instance.sendCertificate(mqtt, client, topicUser, ks);
@@ -98,7 +98,7 @@ public class ConsoleApp {
                                 motion.sensorLoop((PrivateKey)keys[1]);
                                 sensorMenu();
                             } catch (Exception e) {
-                                System.out.println(Colors.RED + "Invalid credentials, please tru again" + Colors.RESET);
+                                System.out.println(Colors.RED + "Invalid credentials, please try again" + Colors.RESET);
                             }
                         }
 
@@ -107,13 +107,8 @@ public class ConsoleApp {
                     }
 
                     break;
-                   
-                case "4":
-                    System.out.println(Colors.YELLOW + "\nCERTIFICATE STORING NOT YET AVAILABLE" + Colors.RESET);
-                    
-                    break;
 
-                case "5":
+                case "4":
                     System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
