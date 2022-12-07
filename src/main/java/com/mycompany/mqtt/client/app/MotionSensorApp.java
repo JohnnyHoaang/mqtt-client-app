@@ -53,23 +53,23 @@ public class MotionSensorApp extends Sensor{
     @Override
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
         try{
-        //byte[] fileContent = FileUtils.readFileToByteArray(new File(camera.getOutPutPath() + camera.getCameraCount()));
-        File f = new File(camera.getOutPutPath() + camera.getCameraCount());
-        FileInputStream fin = new FileInputStream(f);
-        byte imageByteArray[] = new byte[(int)f.length()];
-        fin.read(imageByteArray);
-        //String encodedString = Base64.getEncoder().encodeToString(imageByteArray);
-        String encodedString = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, imageByteArray.toString()));
+        ////byte[] fileContent = FileUtils.readFileToByteArray(new File(camera.getOutPutPath() + camera.getCameraCount()));
+        // File f = new File(camera.getOutPutPath() + camera.getCameraCount());
+        // FileInputStream fin = new FileInputStream(f);
+        // byte imageByteArray[] = new byte[(int)f.length()];
+        // fin.read(imageByteArray);
+        ////String encodedString = Base64.getEncoder().encodeToString(imageByteArray);
+        //String encodedString = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, imageByteArray.toString()));
 
-        fin.close();
+        //fin.close();
 
         var time = LocalDateTime.now();
         String signedMessage = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, time.toString()));
-        //String encodedString = Base64.getEncoder().encodeToString(fileContent);
+        ////String encodedString = Base64.getEncoder().encodeToString(fileContent);
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time", time);
         jsonMessage.put("signedTime", signedMessage);
-        jsonMessage.put("pic",encodedString);
+        //jsonMessage.put("pic",encodedString);
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
         }
         catch(IOException exception){
