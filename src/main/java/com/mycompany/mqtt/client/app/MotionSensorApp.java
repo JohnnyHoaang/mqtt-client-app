@@ -4,8 +4,16 @@ package com.mycompany.mqtt.client.app;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import org.json.JSONObject;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.SignatureException;
+import java.time.LocalDateTime;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 
@@ -18,7 +26,7 @@ public class MotionSensorApp extends Sensor{
    
     }
 
-    public void sensorLoop(){
+    public void sensorLoop(PrivateKey key){
         Thread thread = new Thread(() -> {
             try {
                 String previousOutput = "";
@@ -29,7 +37,7 @@ public class MotionSensorApp extends Sensor{
                     String motionOn = "motion detected >>>";
                     if(output.equals(motionOn) && !previousOutput.equals(motionOn)){
                         camera.execute();
-                        sendSensorData("sensor/motion/"+getTopicUser()+"/");
+                        sendSensorData("sensor/motion/"+getTopicUser()+"/", key);
                     } 
                     previousOutput = this.getOutput();
                 }
@@ -43,14 +51,16 @@ public class MotionSensorApp extends Sensor{
     }
 
     @Override
-    public void sendSensorData(String topic){
+    public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
         try{
         //byte[] fileContent = FileUtils.readFileToByteArray(new File(camera.getOutPutPath() + camera.getCameraCount()));
         File f = new File(camera.getOutPutPath() + camera.getCameraCount());
         FileInputStream fin = new FileInputStream(f);
         byte imageByteArray[] = new byte[(int)f.length()];
         fin.read(imageByteArray);
-        String encodedString = Base64.getEncoder().encodeToString(imageByteArray);
+        //String encodedString = Base64.getEncoder().encodeToString(imageByteArray);
+        String encodedString = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, imageByteArray.toString()));
+
         fin.close();
         //String encodedString = Base64.getEncoder().encodeToString(fileContent);
         JSONObject jsonMessage = new JSONObject();

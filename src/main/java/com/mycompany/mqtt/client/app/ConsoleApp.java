@@ -12,7 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
+import java.security.cert.*;
 import java.util.Scanner;
 
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
@@ -32,13 +32,17 @@ public class ConsoleApp {
     // public static String user;
     private LogicHandler instance = new LogicHandler();
 
-    public static void main(String[] args) throws IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public static void main(String[] args) throws IOException, UnrecoverableKeyException, 
+            KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, 
+            SignatureException, InterruptedException, CertificateEncodingException {
         ConsoleApp app = new ConsoleApp();
         
         app.menu();
     }
 
-    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, 
+            InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, 
+            InterruptedException, CertificateEncodingException {
         boolean menu = true;
         while (menu) {
             System.out.println(Colors.PURPLE + "\n<|--------------- MQTT Client App ---------------|>\n" + Colors.RESET);
@@ -65,15 +69,20 @@ public class ConsoleApp {
                     break;
 
                 case "3":
-                    topicUser = con.readLine("Enter topic user name");
-                    client = mqtt.run();
-                    humidity = new HumidityApp(mqtt , client, topicUser);
-                    humidity.sensorLoop();
-                    buzzer = new BuzzerApp(mqtt, client, topicUser);
-                    buzzer.sensorLoop();
-                    motion = new MotionSensorApp(mqtt, client, topicUser);
-                    motion.sensorLoop();
-                    sensorMenu();
+                    if (keys != null && ks != null) {
+                        topicUser = con.readLine("Enter topic user name");
+                        client = mqtt.run();
+                        humidity = new HumidityApp(mqtt , client, topicUser);
+                        humidity.sensorLoop((PrivateKey)keys[1]);
+                        buzzer = new BuzzerApp(mqtt, client, topicUser);
+                        buzzer.sensorLoop((PrivateKey)keys[1]);
+                        motion = new MotionSensorApp(mqtt, client, topicUser);
+                        motion.sensorLoop((PrivateKey)keys[1]);
+                        sensorMenu();
+                    } else {
+                        System.out.println(Colors.RED + "\nEnsure keystore was loaded and keys were extracted" + Colors.RESET);
+                    }
+
                     break;
                    
                 case "4":
@@ -91,7 +100,9 @@ public class ConsoleApp {
         }
     }
 
-    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException {
+    private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, 
+            KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, 
+            UnsupportedEncodingException, SignatureException, InterruptedException, CertificateEncodingException {
         boolean menu = true;
         while (menu) {
             System.out.println("Press f to exit back to MainMenu");
@@ -156,30 +167,5 @@ public class ConsoleApp {
             }
         }
         return ks;
-    }
-    
-    // TODO: be used later when fetching certs from mqtt
-    private void storeCertificate(String alias, Certificate cert) throws KeyStoreException{
-        ks.setCertificateEntry(alias, cert);
-        
-    }
-
-    // TODO: potentially modify to only sign data sent
-    private void writeMessage() {
-        System.out.println(Colors.PURPLE + "\n<----- Write a Message ----->" + Colors.RESET);
-        System.out.println("\nFirst please enter the topic you wish to subscribe to:");
-        String topic = con.readLine();
-        System.out.println("\nNext please enter the message you wish to send:");
-        String message = con.readLine();
-        try {
-            mqtt.publishMessage(client, topic, instance.generateSignature("SHA256withECDSA", (PrivateKey)keys[1], message));
-            System.out.println(Colors.GREEN + "\nMessage Sent.\n" + Colors.RESET);
-            
-        } catch (Exception e) {
-            System.out.println(Colors.RED + "\nCould not publish message, please ensure you have successfully:\n"
-                              +"- Loaded a keystore\n"
-                              +"- Extracted the keys\n"
-                              +"- Connected to the client\n" + Colors.RESET);
-        }
     }
 }
