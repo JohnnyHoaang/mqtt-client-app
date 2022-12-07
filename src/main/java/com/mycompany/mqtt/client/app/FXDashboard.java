@@ -4,6 +4,7 @@ import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyStore;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,9 +35,15 @@ public class FXDashboard extends HBox {
 
     public FXDashboard(MqttHandler mqtt) {
         this.instance = new SecurityHandler();
-        String ksPath = console.readLine("Enter Keystore path: ");
-        char[] password = console.readPassword("Enter Keystore password: ");
-        var ks = this.instance.loadKeystore(ksPath, password);
+        String ksPath = null;
+        char[] password = null;
+        KeyStore ks = null;
+        do {
+            ksPath = console.readLine("Enter Keystore path: ");
+            password = console.readPassword("Enter Keystore password: ");
+            ks = this.instance.loadKeystore(ksPath, password);
+        } while (ks == null);
+
         mqtt.setKeyStore(ks);
         this.mqtt = mqtt;
         login();
