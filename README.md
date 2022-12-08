@@ -31,6 +31,8 @@ On startup you will need to follow the prompts in the console
 - Enter your MQTT credentials to connect to the server
 - When all is valid the GUI will launch and wait for data
 
+**NOTE: When logged in with teacher credentials top row "Johnny" tiles will update**
+
 ## Use - ConsoleApp
 
 On startup you will be presented with a menu
@@ -48,6 +50,10 @@ On startup you will be presented with a menu
 4. Exit - will exit the app
 
 ### Teachers user credentials
+
+Topic username: carlton
+
+MQTT
 
 username: carlton
 pass: teacher420-540
