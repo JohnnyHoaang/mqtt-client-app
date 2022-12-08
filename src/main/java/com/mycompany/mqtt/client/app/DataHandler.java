@@ -28,7 +28,8 @@ public class DataHandler {
     private String ksPath;
     private char[] ksPassword;
 
-    public DataHandler(MqttHandler mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys, FXDashboard dashboard,
+    public DataHandler(MqttHandler mqtt, Mqtt5BlockingClient client, HashMap storedUsersPublicKeys,
+            FXDashboard dashboard,
             String ksPath, char[] ksPassword) {
         this.mqtt = mqtt;
         this.client = client;
@@ -155,21 +156,22 @@ public class DataHandler {
         // get signed data from received data and verify it
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
+
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
         byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
-        
 
         // only update tiles if data was successfully verified
         boolean temperatureCheck = this.instance.verifySignature(temperatureSignature, publicKey,
                 "SHA256withECDSA", json.get("temperature").toString());
         boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
-        "SHA256withECDSA", json.get("time").toString());
+                "SHA256withECDSA", json.get("time").toString());
         boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
                 "SHA256withECDSA", json.get("humidity").toString());
         if (temperatureCheck && sensorTimeCheck) {
             dashboard.updateTempHum(user, temperature, humidity);
         }
+
     }
 
     /**
@@ -197,7 +199,15 @@ public class DataHandler {
             if (type.equals("buzzer")) {
                 dashboard.updateTimeTile(user, sensorTimestamp, 6, 7, 8);
             } else if (type.equals("motion")) {
+                // Set image if motion is detected
+                byte[] pictureSignature = Base64.getDecoder().decode(json.get("picture").toString());
                 dashboard.updateTimeTile(user, sensorTimestamp, 9, 10, 11);
+                boolean pictureCheck = this.instance.verifySignature(pictureSignature, publicKey,
+                        "SHA256withECDSA", json.get("picture").toString());
+                byte[] pictureByteArray = json.get("pic").toString().getBytes();
+                if (pictureCheck) {
+                    dashboard.updateImage(user, pictureByteArray);
+                }
             }
         }
     }
