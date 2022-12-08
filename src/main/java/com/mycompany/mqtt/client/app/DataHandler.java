@@ -156,7 +156,6 @@ public class DataHandler {
         // get signed data from received data and verify it
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
-        byte[] pictureSignature = Base64.getDecoder().decode(json.get("picture").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
         byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
