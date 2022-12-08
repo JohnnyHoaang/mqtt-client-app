@@ -157,18 +157,29 @@ public class DataHandler {
         // get signed data from received data and verify it
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
+        byte[] pictureSignature = Base64.getDecoder().decode(json.get("picture").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
+        byte[] pictureByteArray = json.get("pic").toString().getBytes();
+        
 
         // only update tiles if data was successfully verified
         boolean temperatureCheck = this.instance.verifySignature(temperatureSignature, publicKey,
                 "SHA256withECDSA", json.get("temperature").toString());
         boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
                 "SHA256withECDSA", json.get("humidity").toString());
+
+        boolean pictureCheck = this.instance.verifySignature(pictureSignature, publicKey, 
+                "SHA256withECDSA", json.get("picture").toString());
+        System.out.println(pictureCheck);
         System.out.println("Verified Signature");
         if (temperatureCheck) {
             System.out.println("Updating ambient tile");
             dashboard.updateTempHum(user, temperature, humidity);
+        }
+        if(pictureCheck){
+            System.out.println("Updating ambient tile");
+            dashboard.updateImage(user, pictureByteArray);
         }
     }
 
