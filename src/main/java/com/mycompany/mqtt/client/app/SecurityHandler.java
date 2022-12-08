@@ -144,12 +144,6 @@ public class SecurityHandler {
         // Verify the signature.
         boolean validSignature = sig.verify(signature);
 
-        if (validSignature) {
-            System.out.println(Colors.GREEN + "\nSignature is valid" + Colors.RESET);
-        } else {
-            System.out.println(Colors.RED + "\nSignature is not valid" + Colors.RESET);
-        }
-
         return validSignature;
     }
 
