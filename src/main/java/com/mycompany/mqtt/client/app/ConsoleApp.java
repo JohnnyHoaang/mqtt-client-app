@@ -23,14 +23,14 @@ public class ConsoleApp {
     private Console con = System.console();
     private KeyStore ks = null;
     private Key[] keys;
-    private MqttRun mqtt = new MqttRun();
+    private MqttHandler mqtt = new MqttHandler();
     private Mqtt5BlockingClient client;
     private String topicUser = "";
-    private HumidityApp humidity;
-    private BuzzerApp buzzer;
-    private MotionSensorApp motion;
+    private AmbientSensor humidity;
+    private BuzzerSensor buzzer;
+    private MotionSensor motion;
     // public static String user;
-    private LogicHandler instance = new LogicHandler();
+    private SecurityHandler instance = new SecurityHandler();
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, 
             KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, 
@@ -40,6 +40,19 @@ public class ConsoleApp {
         app.menu();
     }
 
+    /**
+     * Display a menu for the user
+     * 
+     * @throws UnrecoverableKeyException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws NoSuchProviderException
+     * @throws UnsupportedEncodingException
+     * @throws SignatureException
+     * @throws InterruptedException
+     * @throws CertificateEncodingException
+     */
     private void menu() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, 
             InvalidKeyException, NoSuchProviderException, UnsupportedEncodingException, SignatureException, 
             InterruptedException, CertificateEncodingException {
@@ -50,8 +63,7 @@ public class ConsoleApp {
             System.out.println("1. Load a KeyStore\n"
                               +"2. Extract Keys from KeyStore\n"
                               +"3. Connect to MQTT and Start all sensors\n"
-                              +"4. Store certificate to KeyStore " + Colors.YELLOW + "IN PROGRESS\n" + Colors.RESET
-                              +"5. Exit");
+                              +"4. Exit");
 
             String choice = con.readLine();
             switch (choice) {
@@ -70,28 +82,33 @@ public class ConsoleApp {
 
                 case "3":
                     if (keys != null && ks != null) {
-                        topicUser = con.readLine("Enter topic user name");
-                        client = mqtt.run();
-                        instance.sendCertificate(mqtt, client, topicUser, ks);
-                        humidity = new HumidityApp(mqtt , client, topicUser);
-                        humidity.sensorLoop((PrivateKey)keys[1]);
-                        buzzer = new BuzzerApp(mqtt, client, topicUser);
-                        buzzer.sensorLoop((PrivateKey)keys[1]);
-                        motion = new MotionSensorApp(mqtt, client, topicUser);
-                        motion.sensorLoop((PrivateKey)keys[1]);
-                        sensorMenu();
+                        topicUser = con.readLine("\nEnter topic user name: \n");
+                        boolean askCredentials = true;
+                        while (askCredentials) {
+                            try {
+                                System.out.println(Colors.PURPLE + "\nMQTT Credentials" + Colors.RESET);
+                                client = mqtt.run();
+                                askCredentials = false;
+                                instance.sendCertificate(mqtt, client, topicUser, ks);
+                                humidity = new AmbientSensor(mqtt , client, topicUser);
+                                humidity.sensorLoop((PrivateKey)keys[1]);
+                                buzzer = new BuzzerSensor(mqtt, client, topicUser);
+                                buzzer.sensorLoop((PrivateKey)keys[1]);
+                                motion = new MotionSensor(mqtt, client, topicUser);
+                                motion.sensorLoop((PrivateKey)keys[1]);
+                                sensorMenu();
+                            } catch (Exception e) {
+                                System.out.println(Colors.RED + "Invalid credentials, please try again" + Colors.RESET);
+                            }
+                        }
+
                     } else {
                         System.out.println(Colors.RED + "\nEnsure keystore was loaded and keys were extracted" + Colors.RESET);
                     }
 
                     break;
-                   
-                case "4":
-                    System.out.println(Colors.YELLOW + "\nCERTIFICATE STORING NOT YET AVAILABLE" + Colors.RESET);
-                    
-                    break;
 
-                case "5":
+                case "4":
                     System.exit(1);
                 default:
                     System.out.println(Colors.RED + "\nThat is not a valid menu option" + Colors.RESET);
@@ -101,6 +118,19 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Menu for when sensors are running, allows the user to eneter f to shut down all sensors
+     * 
+     * @throws UnrecoverableKeyException
+     * @throws InvalidKeyException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws UnsupportedEncodingException
+     * @throws SignatureException
+     * @throws InterruptedException
+     * @throws CertificateEncodingException
+     */
     private void sensorMenu() throws UnrecoverableKeyException, InvalidKeyException, 
             KeyStoreException, NoSuchAlgorithmException, NoSuchProviderException, 
             UnsupportedEncodingException, SignatureException, InterruptedException, CertificateEncodingException {
@@ -123,12 +153,17 @@ public class ConsoleApp {
         }
     }
 
-    // get the path from the user and validate it, promting again if it's invalid
+    /**
+     * get the path from the user and validate it, promting again if it's invalid
+     * 
+     * @return the user given path
+     */
     private String getPath() {
         boolean pathValid = false;
         System.out.println(Colors.PURPLE + "\n<----- Keystore Path ----->" + Colors.RESET);
         String path = "";
 
+        // keep prompting until path is valid
         while (pathValid != true) {
             System.out.println("\nPlease enter the path to your keystore: ");
             path = con.readLine();
@@ -137,11 +172,14 @@ public class ConsoleApp {
         return path;
     }
 
+    /**
+     * @return user given password
+     */
     private char[] getPass() {
         boolean passValid = false;
         char[] pass = {};
         System.out.println(Colors.PURPLE + "\n<----- Keystore Password ----->" + Colors.RESET);
-            
+        
         while (passValid != true) {
             System.out.println("\nPlease enter the password for your keystore");
             pass = con.readPassword();
@@ -150,6 +188,9 @@ public class ConsoleApp {
         return pass;
     }
 
+    /**
+     * @return the users keystore
+     */
     private KeyStore getKeystore() {
         boolean gotKeystore = false;
 

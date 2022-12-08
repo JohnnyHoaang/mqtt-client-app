@@ -1,7 +1,6 @@
 package com.mycompany.mqtt.client.app;
 
 import java.io.Console;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,16 +13,21 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Base64;
 import java.util.Enumeration;
-import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import org.json.*;
 
-public class LogicHandler {
+public class SecurityHandler {
 
     Console con = System.console();
 
+    /**
+     * Load the users keystore
+     * @param path
+     * @param pass
+     * @return keystore
+     */
     public KeyStore loadKeystore(String path, char[] pass) {
         try {
             KeyStore ks = KeyStore.getInstance("JKS");
@@ -37,6 +41,12 @@ public class LogicHandler {
         }
     }
 
+    /**
+     * get public and private keys from the keystore
+     * @param ks
+     * @param pass
+     * @return array of public and private keys
+     */
     public Key[] extractKeys(KeyStore ks, char[] pass) {
         try {
             Enumeration<String> enumeration = ks.aliases();
@@ -53,6 +63,12 @@ public class LogicHandler {
         return null;
     }
 
+    /**
+     * Check that given path is a valid format
+     * 
+     * @param path
+     * @return boolean of whether path is valid
+     */
     public boolean validatePath(String path) {
         if (path.length() < 250 && path.length() != 0) {
             Pattern pattern = Pattern
@@ -70,6 +86,11 @@ public class LogicHandler {
         return false;
     }
 
+    /**
+     * @param pass
+     * @return Boolean if pass is valide
+     * TODO: remove as not really needed
+     */
     public Boolean validatePass(char[] pass) {
         if (pass.length > 6 && pass.length < 30) {
 
@@ -106,7 +127,7 @@ public class LogicHandler {
      * Method for verifying digital signature.
      * 
      * @author Carlton Davis
-     *         TODO: Be used to verify received messages from mqtt later
+     *  
      */
     boolean verifySignature(byte[] signature, PublicKey publickey, String algorithm, String message)
             throws NoSuchAlgorithmException, NoSuchProviderException,
@@ -123,16 +144,20 @@ public class LogicHandler {
         // Verify the signature.
         boolean validSignature = sig.verify(signature);
 
-        if (validSignature) {
-            System.out.println(Colors.GREEN + "\nSignature is valid" + Colors.RESET);
-        } else {
-            System.out.println(Colors.RED + "\nSignature is not valid" + Colors.RESET);
-        }
-
         return validSignature;
     }
 
-    public void sendCertificate(MqttRun mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks)
+    /**
+     * Send the certificate from the keystore to the MQTT server
+     * 
+     * @param mqtt
+     * @param client
+     * @param topicUser
+     * @param ks
+     * @throws KeyStoreException
+     * @throws CertificateEncodingException
+     */
+    public void sendCertificate(MqttHandler mqtt, Mqtt5BlockingClient client, String topicUser, KeyStore ks)
             throws KeyStoreException, CertificateEncodingException {
         Enumeration<String> enumeration = ks.aliases();
         String alias = enumeration.nextElement();
