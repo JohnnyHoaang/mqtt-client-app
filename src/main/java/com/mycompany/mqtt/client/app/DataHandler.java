@@ -137,7 +137,7 @@ public class DataHandler {
             }
 
         } catch (Exception e) {
-            // e.printStackTrace();
+             e.printStackTrace();
         }
 
     }
@@ -152,34 +152,22 @@ public class DataHandler {
      */
     private void sensorAmbientUpdate(JSONObject json, String user, PublicKey publicKey) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
-        System.out.println("Received from mqtt: " + json.toString());
 
         // get signed data from received data and verify it
         byte[] temperatureSignature = Base64.getDecoder().decode(json.get("signedTemp").toString());
         byte[] humiditySignature = Base64.getDecoder().decode(json.get("signedHum").toString());
-        byte[] pictureSignature = Base64.getDecoder().decode(json.get("picture").toString());
         double temperature = Double.parseDouble(json.get("temperature").toString());
         double humidity = Double.parseDouble(json.get("humidity").toString());
-        byte[] pictureByteArray = json.get("pic").toString().getBytes();
-        
-
+        byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
         // only update tiles if data was successfully verified
+        boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
+                "SHA256withECDSA", json.get("time").toString());
         boolean temperatureCheck = this.instance.verifySignature(temperatureSignature, publicKey,
                 "SHA256withECDSA", json.get("temperature").toString());
         boolean humidityCheck = this.instance.verifySignature(humiditySignature, publicKey,
                 "SHA256withECDSA", json.get("humidity").toString());
-
-        boolean pictureCheck = this.instance.verifySignature(pictureSignature, publicKey, 
-                "SHA256withECDSA", json.get("picture").toString());
-        System.out.println(pictureCheck);
-        System.out.println("Verified Signature");
-        if (temperatureCheck) {
-            System.out.println("Updating ambient tile");
+        if (temperatureCheck && sensorTimeCheck) {
             dashboard.updateTempHum(user, temperature, humidity);
-        }
-        if(pictureCheck){
-            System.out.println("Updating ambient tile");
-            dashboard.updateImage(user, pictureByteArray);
         }
     }
 
@@ -194,8 +182,6 @@ public class DataHandler {
     private void sensorTimeUpdate(JSONObject json, String user, PublicKey publicKey, String type)
             throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException, SignatureException {
-        System.out.println("Received from mqtt: " + json.toString());
-
         // get signed message from received data and verify it
         byte[] signatureMotionTimeBytes = Base64.getDecoder().decode(json.get("signedTime").toString());
         boolean sensorTimeCheck = this.instance.verifySignature(signatureMotionTimeBytes, publicKey,
@@ -207,10 +193,8 @@ public class DataHandler {
             String sensorTime = json.get("time").toString().substring(11, 22);
             String sensorTimestamp = sensorDate + " | " + sensorTime;
             if (type.equals("buzzer")) {
-                System.out.println("Updating buzzer tile");
                 dashboard.updateTimeTile(user, sensorTimestamp, 6, 7, 8);
             } else if (type.equals("motion")) {
-                System.out.println("Updating motion tile");
                 dashboard.updateTimeTile(user, sensorTimestamp, 9, 10, 11);
             }
         }

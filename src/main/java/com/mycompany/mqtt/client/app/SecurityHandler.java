@@ -127,7 +127,7 @@ public class SecurityHandler {
      * Method for verifying digital signature.
      * 
      * @author Carlton Davis
-     *         TODO: Be used to verify received messages from mqtt later
+     *  
      */
     boolean verifySignature(byte[] signature, PublicKey publickey, String algorithm, String message)
             throws NoSuchAlgorithmException, NoSuchProviderException,
@@ -143,12 +143,6 @@ public class SecurityHandler {
         sig.update(message.getBytes("UTF-8"));
         // Verify the signature.
         boolean validSignature = sig.verify(signature);
-
-        if (validSignature) {
-            System.out.println(Colors.GREEN + "\nSignature is valid" + Colors.RESET);
-        } else {
-            System.out.println(Colors.RED + "\nSignature is not valid" + Colors.RESET);
-        }
 
         return validSignature;
     }
