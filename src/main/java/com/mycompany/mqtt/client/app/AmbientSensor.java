@@ -71,7 +71,7 @@ public class AmbientSensor extends Sensor{
         jsonMessage.put("signedTime", signedTime);
         jsonMessage.put("temperature", this.temperature);
         jsonMessage.put("signedTemp", signedTemp);
-        jsonMessage.put("humidity", humidity);
+        jsonMessage.put("humidity", this.humidity);
         jsonMessage.put("signedHum", signedHumidity);
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
     }
