@@ -46,7 +46,7 @@ On startup you will be presented with a menu
        - carlton <-- to be used by teacher
     - Enter username and password of the MQTT client
     - All sensors will start and send data to the MQTT server
-      - Can stop all sendors by entering f
+      - Can stop all sensors by entering f
 4. Exit - will exit the app
 
 ### Teachers user credentials
