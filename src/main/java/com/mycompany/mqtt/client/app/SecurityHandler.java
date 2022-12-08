@@ -127,7 +127,7 @@ public class SecurityHandler {
      * Method for verifying digital signature.
      * 
      * @author Carlton Davis
-     *         TODO: Be used to verify received messages from mqtt later
+     *  
      */
     boolean verifySignature(byte[] signature, PublicKey publickey, String algorithm, String message)
             throws NoSuchAlgorithmException, NoSuchProviderException,

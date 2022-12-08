@@ -67,7 +67,7 @@ public class AmbientSensor extends Sensor{
         String signedHumidity = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.humidity)));
         String signedTime = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, time));
         JSONObject jsonMessage = new JSONObject();
-        jsonMessage.put("time",LocalDateTime.now());
+        jsonMessage.put("time",time);
         jsonMessage.put("signedTime", signedTime);
         jsonMessage.put("temperature", this.temperature);
         jsonMessage.put("signedTemp", signedTemp);
