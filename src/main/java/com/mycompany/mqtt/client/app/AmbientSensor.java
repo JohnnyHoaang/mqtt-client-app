@@ -62,15 +62,17 @@ public class AmbientSensor extends Sensor{
      */
     @Override
     public void sendSensorData(String topic, PrivateKey key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, SignatureException{
+        String time = LocalDateTime.now().toString();
         String signedTemp = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.temperature)));
         String signedHumidity = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, Double.toString(this.humidity)));
+        String signedTime = Base64.getEncoder().encodeToString(getInstance().generateSignature("SHA256withECDSA", key, time));
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("time",LocalDateTime.now());
+        jsonMessage.put("signedTime", signedTime);
         jsonMessage.put("temperature", this.temperature);
         jsonMessage.put("signedTemp", signedTemp);
         jsonMessage.put("humidity", humidity);
         jsonMessage.put("signedHum", signedHumidity);
-        System.out.println("Sending ambient data: " + jsonMessage.toString());
         getMqtt().publishMessage(getClient(), topic, jsonMessage.toString().getBytes());
     }
 }
